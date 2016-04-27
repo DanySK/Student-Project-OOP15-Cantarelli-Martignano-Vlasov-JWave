@@ -1,0 +1,6 @@
+syntax: glob
+*.class
+*_gen
+*_trace
+*/bin/*
+*hs_err_pid*
