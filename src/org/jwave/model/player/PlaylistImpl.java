@@ -1,11 +1,17 @@
 package org.jwave.model.player;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
 
-public class PlaylistImpl implements Playlist {
+public class PlaylistImpl implements Playlist, Serializable {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4440054649095302226L;
     //to be checked if it is possible to avoid song duplication with a different implementation
 //    private Set<Song> s = new HashSet<>();
     private List<Song> list;
