@@ -73,6 +73,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     @Override
     public void reset() {
+        //add isEmpty() method in Playlist so this method can check it and optimize operations.
         this.loadedPlaylist = new PlaylistImpl();
     }
 
