@@ -1,14 +1,16 @@
 package org.jwave.model.player;
 
+import java.util.Optional;
+
 public interface Playlist {
     
     void addSong(Song newSong);
     
-    void moveSongToPosition(int position) throws IllegalArgumentException;
+    void moveSongToPosition(int songToMoveIndex, int position) throws IllegalArgumentException;
     
     void removeFromPlaylist(Song... songNames);
     
-    Song getCurrentSelected();
+    Optional<Song> getCurrentSelected();
     
     Song getNext();
     
