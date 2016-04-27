@@ -1,50 +1,94 @@
 package org.jwave.controller.player;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.jwave.model.player.Playlist;
+import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.Song;
+import org.jwave.model.player.SongImpl;
+import org.omg.DynamicAny.DynValueOperations;
 
 public class PlaylistManagerImpl implements PlaylistManager {
 
+    private Playlist loadedPlaylist;
+    
+    public PlaylistManagerImpl() {
+        this.loadedPlaylist = new PlaylistImpl();
+    }
+    
     @Override
-    public void savePlaylistToFile(String name, String path) {
-        // TODO Auto-generated method stub
-        
+    public void savePlaylistToFile(final String name, final String path) throws FileNotFoundException, IOException {
+       try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
+               new FileOutputStream(new File(path + System.getProperty("file.separator") + name + ".jwo"))))) {
+           oos.writeObject(this.loadedPlaylist);
+       }
     }
 
     @Override
-    public Playlist loadPlaylist(String path) {
-        // TODO Auto-generated method stub
-        return null;
+    public void loadPlaylist(final String path) throws IllegalArgumentException, ClassNotFoundException, IOException {
+        if (!path.contains(".jwo")) {
+            throw new IllegalArgumentException("File not recognized");
+        }
+        try (final ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(
+                new FileInputStream(new File(path))))) {
+            this.loadedPlaylist = (Playlist) ois.readObject();
+        }
     }
 
     @Override
-    public Playlist openFile(String path, boolean enqueue) {
-        // TODO Auto-generated method stub
-        return null;
+    public void openFile(final String path, final boolean enqueue) {
+        this.checkEnqueue(enqueue);
+        this.loadedPlaylist.addSong(new SongImpl(path));
     }
 
     @Override
-    public Playlist openDir(String path, boolean enqueue) {
-        // TODO Auto-generated method stub
-        return null;
+    public void openDir(final String path, final boolean enqueue) {
+        this.checkEnqueue(enqueue);
+        final File dir = new File(path);
+//        final Path dir = Paths.get(path);
+//      Files.newDirectoryStream(dir, filter) da provare che è più elegante
+        final List<File> filesList = Arrays.asList(dir.listFiles());
+        final List<File> audioFiles = filesList.stream()
+                .filter(s -> s.getName().contains(".mp3") || s.getName().contains(".wav"))
+                .collect(Collectors.toList());
+        audioFiles.forEach(f -> {
+            this.loadedPlaylist.addSong(new SongImpl(f.getAbsolutePath()));
+        });
     }
 
     @Override
     public void reset() {
-        // TODO Auto-generated method stub
-        
+        this.loadedPlaylist = new PlaylistImpl();
     }
 
     @Override
-    public Song getCurrentLoaded() {
-        // TODO Auto-generated method stub
-        return null;
+    public Optional<Song> getCurrentLoaded() {
+        return this.getPlayingQueue().getCurrentSelected();
     }
 
     @Override
     public Playlist getPlayingQueue() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.loadedPlaylist;
     }
 
+    private void checkEnqueue(final boolean enqueueValue) {
+        if (!enqueueValue) {
+            this.reset();
+        }
+    }
 }

@@ -1,5 +1,9 @@
 package org.jwave.controller.player;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Optional;
+
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.Song;
 
@@ -8,19 +12,19 @@ import org.jwave.model.player.Song;
  */
 public interface PlaylistManager {
 
-    public void savePlaylistToFile(String name, String path);
+    void savePlaylistToFile(String name, String path) throws FileNotFoundException, IOException;
 
-    public Playlist loadPlaylist(String path);
+    void loadPlaylist(String path) throws IllegalArgumentException, ClassNotFoundException, IOException;
 
-    public Playlist openFile(String path, boolean enqueue);
+    void openFile(String path, boolean enqueue);
 
-    public Playlist openDir(String path, boolean enqueue);
+    void openDir(String path, boolean enqueue);
 
-    public void reset();
+    void reset();
 
-    public Song getCurrentLoaded();
+    Optional<Song> getCurrentLoaded();
     
-    public Playlist getPlayingQueue();
+    Playlist getPlayingQueue();
 
 
 }

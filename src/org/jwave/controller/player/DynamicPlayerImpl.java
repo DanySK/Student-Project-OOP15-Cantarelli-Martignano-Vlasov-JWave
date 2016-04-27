@@ -3,72 +3,84 @@ package org.jwave.controller.player;
 import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Song;
 
+import ddf.minim.AudioOutput;
+import ddf.minim.AudioPlayer;
+import ddf.minim.Minim;
+import ddf.minim.ugens.FilePlayer;
+
 public class DynamicPlayerImpl implements DynamicPlayer {
 
+    private static final int BUFFER_SIZE = 1024;
+    private static final int OUT_BIT_RATE = 16;
+    
+    private Minim minim; 
+    private FilePlayer player;
+    private AudioOutput out;
+    private PlayMode currentPlayMode;
+    
+    public DynamicPlayerImpl() { 
+        this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
+    }
+    
+    
     @Override
     public void play() {
-        // TODO Auto-generated method stub
-        
+        this.player.play();
     }
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
-        
+        this.player.pause();
     }
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
-        
+        this.player.pause();
+        this.player.rewind();
     }
 
     @Override
-    public void cue(int millis) {
-        // TODO Auto-generated method stub
-        
+    public void cue(final int millis) {
+        this.player.cue(millis);
     }
 
     @Override
     public boolean isPlaying() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.player.isPlaying();
     }
 
     @Override
     public int getLength() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.player.length();
     }
 
     @Override
     public int getPosition() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.player.position();
     }
 
     @Override
     public PlayMode getPlayMode() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.currentPlayMode;
     }
 
     @Override
-    public void setVolume(int amount) {
+    public void setVolume(final int amount) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setPlayMode(PlayMode playMode) {
-        // TODO Auto-generated method stub
-        
+    public void setPlayMode(final PlayMode playMode) {
+        this.currentPlayMode = playMode;
     }
 
     @Override
-    public void setPlayer(Song song) {
-        // TODO Auto-generated method stub
-        
+    public void setPlayer(final Song song) {
+        final AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
+        this.player = new FilePlayer(this.minim.loadFileStream(song.getAbsolutePath(), BUFFER_SIZE, true));
+        this.pause();
+        this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_RATE);
+        this.player.patch(this.out);
     }
-
 }
