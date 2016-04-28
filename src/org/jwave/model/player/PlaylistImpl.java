@@ -16,12 +16,10 @@ public class PlaylistImpl implements Playlist, Serializable {
 //    private Set<Song> s = new HashSet<>();
     private List<Song> list;
     private Optional<Song> currentSelected;
-    private ListIterator<Song> it;
     
     public PlaylistImpl() {
         this.list = new LinkedList<>();
         this.currentSelected = Optional.empty();
-        this.it = this.list.listIterator();
     }
     
     @Override
@@ -55,27 +53,29 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
 
     @Override
-    public Song getNext() {
-        if (!this.it.hasNext()) {
-            throw new IllegalStateException();
-        }
-        this.currentSelected = Optional.of(this.it.next());
-        return this.currentSelected.get();
+    public Song selectSong(final String name) throws IllegalArgumentException  {
+        final Song out = this.list.stream()
+                                .filter(s -> s.getName().equals(name))
+                                .findFirst().get();
+        this.setCurrentSong(out);
+        return out;
     }
 
     @Override
-    public Song getPrev() {
-        if (!this.it.hasPrevious()) {
-            throw new IllegalStateException();
-        }
-        this.currentSelected = Optional.of(this.it.previous());
-        return this.currentSelected.get();
+    public Song selectSong(final int index) throws IllegalArgumentException {
+        final Song out = this.list.get(index);
+        this.setCurrentSong(out);
+        return out;        
     }
-
+    
     @Override
     public void printPlaylist() {
         this.list.forEach(s -> {
             System.out.println(this.list.indexOf(s) + " " + s.getName() + "\n");
         });
+    }
+    
+    private void setCurrentSong(final Song newCurrentSong) {
+        this.currentSelected = Optional.of(newCurrentSong);
     }
 }

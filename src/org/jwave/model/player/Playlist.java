@@ -12,9 +12,9 @@ public interface Playlist {
     
     Optional<Song> getCurrentSelected();
     
-    Song getNext();
+    Song selectSong(String name) throws IllegalArgumentException;
     
-    Song getPrev();
+    Song selectSong(int index) throws IllegalArgumentException;
     
     void printPlaylist();
 }
