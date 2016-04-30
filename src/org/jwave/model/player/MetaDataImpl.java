@@ -1,5 +1,6 @@
 package org.jwave.model.player;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -16,8 +17,13 @@ import org.jwave.controller.player.FileSystemHandler;
  * This class contains metadata of a file.
  *
  */
-public class MetaDataImpl implements MetaData {
+public class MetaDataImpl implements MetaData, Serializable {
    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -854965524145699984L;
+
     private enum MData {
         ALBUM, AUTHOR, COMMENT, COMPOSER, COPYRIGHT, DATE, DISC, ENCODED, FILENAME, GENRE, LENGTH, LYRICS, 
         ORCHESTRA, PUBLISHER, SAMPLE_FRAME_COUNT, TITLE, TRACK;

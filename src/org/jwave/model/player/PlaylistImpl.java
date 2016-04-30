@@ -15,7 +15,7 @@ public class PlaylistImpl implements Playlist, Serializable {
     //to be checked if it is possible to avoid song duplication with a different implementation
 //    private Set<Song> s = new HashSet<>();
     private List<Song> list;
-    private Optional<Song> currentSelected;
+    private transient Optional<Song> currentSelected;
     
     public PlaylistImpl() {
         this.list = new LinkedList<>();
