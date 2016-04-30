@@ -9,9 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +16,14 @@ import java.util.stream.Collectors;
 
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistImpl;
+import org.jwave.model.player.PlaylistNavigator;
 import org.jwave.model.player.Song;
 import org.jwave.model.player.SongImpl;
-import org.omg.DynamicAny.DynValueOperations;
 
 public class PlaylistManagerImpl implements PlaylistManager {
 
     private Playlist loadedPlaylist;
+    private PlaylistNavigator surfer;
     
     public PlaylistManagerImpl() {
         this.loadedPlaylist = new PlaylistImpl();
@@ -87,9 +85,17 @@ public class PlaylistManagerImpl implements PlaylistManager {
         return this.loadedPlaylist;
     }
 
+ 
+    
     private void checkEnqueue(final boolean enqueueValue) {
         if (!enqueueValue) {
             this.reset();
         }
+    }
+
+    @Override
+    public void setSurfer(PlaylistNavigator surfer) {
+        this.surfer = surfer;
+        
     }
 }

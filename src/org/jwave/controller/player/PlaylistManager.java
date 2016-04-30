@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.jwave.model.player.Playlist;
+import org.jwave.model.player.PlaylistNavigator;
 import org.jwave.model.player.Song;
 
 /**
@@ -26,5 +27,5 @@ public interface PlaylistManager {
     
     Playlist getPlayingQueue();
 
-
+    void setSurfer(PlaylistNavigator surfer);
 }

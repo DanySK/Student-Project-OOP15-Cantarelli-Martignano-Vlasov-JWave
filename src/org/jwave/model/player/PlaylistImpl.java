@@ -62,7 +62,7 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
 
     @Override
-    public Song selectSong(final int index) throws IllegalArgumentException {
+    public synchronized Song selectSong(final int index) throws IllegalArgumentException {
         final Song out = this.list.get(index);
         this.setCurrentSong(out);
         return out;        
