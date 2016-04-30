@@ -29,8 +29,8 @@ public class MetaDataImpl implements MetaData, Serializable {
         ORCHESTRA, PUBLISHER, SAMPLE_FRAME_COUNT, TITLE, TRACK;
     }
     
-    private Minim minim;
-    private AudioPlayer metaDataLoader;
+    private transient Minim minim;
+    private transient AudioPlayer metaDataLoader;
     
     private Map<MData, String> data;
    

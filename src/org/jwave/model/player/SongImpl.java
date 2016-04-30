@@ -13,8 +13,7 @@ public class SongImpl extends File implements Song, Serializable {
 //    private String absolutePath;
 //    private String name;
     
-    //temporary transient
-    private transient MetaData metaData;
+    private MetaData metaData;
     
     /**
      * Creates a new song object.

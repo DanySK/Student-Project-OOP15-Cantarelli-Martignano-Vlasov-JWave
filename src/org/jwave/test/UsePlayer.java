@@ -8,9 +8,11 @@ import org.jwave.controller.player.DynamicPlayer;
 import org.jwave.controller.player.PlaylistManager;
 import org.jwave.model.player.Song;
 
-public class UsePlayer {
+public final class UsePlayer {
 
     private static final String PATH = "/home/canta/Music";
+    
+    private UsePlayer() { }
     
     public static void main(final String... args) throws FileNotFoundException, IOException, IllegalArgumentException, ClassNotFoundException {
         final DynamicPlayer player = AudioSystem.getAudioSystem().getDynamicPlayer();
@@ -20,9 +22,11 @@ public class UsePlayer {
         manager.loadPlaylist(PATH + "/playlistProva.jwo");
         manager.getPlayingQueue().printPlaylist();
 //        player.setPlayer(new SongImpl(PATH + "/03. The Gift Of Music.mp3"));
-        player.setPlayer(manager.getPlayingQueue().selectSong(1));
+        player.setPlayer(manager.getPlayingQueue().selectSong(4));
         player.play();
         System.out.println("current loaded: " + manager.getCurrentLoaded().get().getName());
+        //retrieving a value from metadata
+        System.out.println(manager.getPlayingQueue().getCurrentSelected().get().getMetaData().getAlbum());
     }
 
 }
