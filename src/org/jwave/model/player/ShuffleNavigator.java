@@ -8,12 +8,10 @@ import java.util.Random;
  * This is an implementation of PlaylistSurfer.
  *
  */
-public final class ShuffleNavigator implements PlaylistNavigator {
+public final class ShuffleNavigator extends PlaylistNavigatorImpl {
     
-    private List<Integer> shuffledList;
-    private int playlistDimension;
     private Random seed;
-    private Integer currentIndex;
+    private List<Integer> shuffledList;
     
     /**
      * Creates a new instance of the class.
@@ -21,48 +19,40 @@ public final class ShuffleNavigator implements PlaylistNavigator {
      * @param playlistDimension
      */
     public ShuffleNavigator(final int playlistDimension) {
+        super(playlistDimension);
         this.seed = new Random();
         this.shuffledList = new ArrayList<>();
-        this.setPlaylistDimension(playlistDimension);
-        this.currentIndex = 0;
     }
     
     @Override
     public int next() {        
-        if (this.currentIndex.equals(this.shuffledList.size() - 1)) {
+        if (this.getCurrentIndex().equals(this.shuffledList.size() - 1)) {
             this.shuffle();
         }
-        this.currentIndex++;
-        return this.currentIndex;
+        this.incIndex();
+        return this.getCurrentIndex();
     }
 
     //check if it can be implemented better.
     @Override
     public int prev() {
-        if (this.currentIndex.equals(0)) {
+        if (this.getCurrentIndex().equals(0)) {
             return 0;
         }
-        this.currentIndex--;
-        return this.currentIndex;
-    }
-
-    @Override
-    public void setPlaylistDimension(final int newDimension) {
-        this.playlistDimension = newDimension;
-        this.shuffle();
+        this.decIndex();
+        return this.getCurrentIndex();
     }
     
     //can be implemented better
     private void shuffle() {
         final List<Integer> tempShuffled = new ArrayList<>();
         int index;
-        for (int i = 0; i < this.playlistDimension; i++) {
+        for (int i = 0; i < this.getPlaylistDimension(); i++) {
             do {
-                index = this.seed.nextInt(this.playlistDimension);
+                index = this.seed.nextInt(this.getPlaylistDimension());
             } while(this.shuffledList.contains(index));
             tempShuffled.add(index);
         }
         this.shuffledList.addAll(tempShuffled);
     }
-
 }
