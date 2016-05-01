@@ -16,5 +16,7 @@ public interface Playlist {
     
     Song selectSong(int index) throws IllegalArgumentException;
     
+    boolean isEmpty();
+    
     void printPlaylist();
 }

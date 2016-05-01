@@ -26,6 +26,8 @@ public interface PlaylistManager {
     Optional<Song> getCurrentLoaded();
     
     Playlist getPlayingQueue();
+    
+    PlaylistNavigator getPlaylistNavigator();
 
     void setSurfer(PlaylistNavigator surfer);
 }

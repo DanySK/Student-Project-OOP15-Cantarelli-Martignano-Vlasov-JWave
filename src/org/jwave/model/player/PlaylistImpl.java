@@ -69,6 +69,11 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
     
     @Override
+    public boolean isEmpty() {
+        return this.list.isEmpty();
+    }
+    
+    @Override
     public void printPlaylist() {
         this.list.forEach(s -> {
             System.out.println(this.list.indexOf(s) + " " + s.getName() + "\n");
