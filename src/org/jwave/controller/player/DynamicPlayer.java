@@ -4,29 +4,77 @@ import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Song;
 
 /**
- * Interface DynamicPlayer
+ * This interface represents a dynamic player.
  */
 public interface DynamicPlayer {
 
-    public void play();
+    /**
+     * Starts reproducing audio.
+     */
+    void play();
 
-    public void pause();
+    /**
+     * Pauses audio reproduction.
+     */
+    void pause();
 
-    public void stop();
+    /**
+     * Stops audio reproduction, rewinds the loaded audio file.
+     */
+    void stop();
     
-    public void cue(int millis);
+    /**
+     * Moves the reproduction cursor in a specific position of the audio file.
+     * 
+     * @param millis
+     *          the point of the file where the cursor has to be moved.
+     */
+    void cue(int millis);
 
-    public boolean isPlaying();
+    /**
+     * @return
+     *          if the dynamic player is playing.
+     */
+    boolean isPlaying();
     
-    public int getLength();
+    /**
+     * @return
+     *          the length of the loaded file in milliseconds.
+     */
+    int getLength();
 
-    public int getPosition();
+    /**
+     * @return
+     *          the current position in the loaded audio file.
+     */
+    int getPosition();
 
-    public PlayMode getPlayMode();
+    /**
+     * @return
+     *          the current play mode (default is {@link}Playmode.NO_LOOP)
+     */
+    PlayMode getPlayMode();
     
-    public void setVolume(int amount);
+    /**
+     * Modifies the current volume.
+     * 
+     * @param amount
+     *          the amount of volume to be set.         
+     */
+    void setVolume(int amount);
     
-    public void setPlayMode(PlayMode playMode);
+    /**
+     * 
+     * @param playMode
+     *          the play mode to be set.
+     */
+    void setPlayMode(PlayMode playMode);
     
-    public void setPlayer(Song song);
+    /**
+     * Sets the player by loading a song.
+     * 
+     * @param song
+     *          the song to be loaded.
+     */
+    void setPlayer(Song song);
 }

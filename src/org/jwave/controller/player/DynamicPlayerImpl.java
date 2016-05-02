@@ -8,6 +8,9 @@ import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 import ddf.minim.ugens.FilePlayer;
 
+/**
+ * This class is an implementation of {@link}DynamicPlayer.
+ */
 public class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
@@ -18,6 +21,9 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     private AudioOutput out;
     private PlayMode currentPlayMode;
     
+    /**
+     * Creates a new DynamicPlayerImpl.
+     */
     public DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
     }

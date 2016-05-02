@@ -44,6 +44,7 @@ public final class ShuffleNavigator extends PlaylistNavigatorImpl {
     }
     
     //can be implemented better
+    //TODO check how to manage an openFile/openDir operation result while shuffling.
     private void shuffle() {
         final List<Integer> tempShuffled = new ArrayList<>();
         int index;

@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 /**
- * Class FileSystemHandler
+ * A FileSystemHandler contains some basic methods to interface the system 
  */
 public final class FileSystemHandler {
    

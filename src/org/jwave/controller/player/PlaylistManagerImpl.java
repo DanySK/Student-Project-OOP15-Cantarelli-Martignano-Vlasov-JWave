@@ -84,8 +84,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
     public Playlist getPlayingQueue() {
         return this.loadedPlaylist;
     }
-
- 
     
     private void checkEnqueue(final boolean enqueueValue) {
         if (!enqueueValue) {
