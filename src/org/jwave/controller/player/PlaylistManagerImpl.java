@@ -99,8 +99,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
     
     @Override
-    public void setSurfer(final PlaylistNavigator surfer) {
-        this.surfer = surfer;
-        
+    public void setSurfer(final PlaylistNavigator newNavigator) {
+        this.surfer = newNavigator;
     }
 }
