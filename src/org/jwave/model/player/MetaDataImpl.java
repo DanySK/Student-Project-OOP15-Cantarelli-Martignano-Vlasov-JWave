@@ -59,9 +59,10 @@ public class MetaDataImpl implements MetaData, Serializable {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            }
-            
+            } 
         });
+        this.metaDataLoader.close();
+        this.minim.stop();
     }
     
     @Override

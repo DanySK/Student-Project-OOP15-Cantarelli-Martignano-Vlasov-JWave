@@ -1,6 +1,6 @@
 package org.jwave.controller.player;
 
-public class AudioSystem {
+public final class AudioSystem {
 
 	private static final AudioSystem SINGLETON = new AudioSystem();
 	private DynamicPlayer player = new DynamicPlayerImpl();
