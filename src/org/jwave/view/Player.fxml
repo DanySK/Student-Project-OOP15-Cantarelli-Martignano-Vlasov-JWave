@@ -17,7 +17,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jwave.view.GUI">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -80,15 +80,15 @@
                   <Insets left="20.0" right="20.0" top="20.0" />
                </padding>
             </Slider>
-            <Button alignment="CENTER" layoutX="415.0" layoutY="62.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="83.0" text="▶" textAlignment="CENTER">
+            <Button alignment="CENTER" layoutX="415.0" layoutY="62.0" mnemonicParsing="false" onAction="#play" prefHeight="49.0" prefWidth="83.0" text="▶" textAlignment="CENTER">
                <font>
                   <Font size="30.0" />
                </font></Button>
-            <Button layoutX="343.0" layoutY="72.0" mnemonicParsing="false" text="⏮">
+            <Button layoutX="343.0" layoutY="72.0" mnemonicParsing="false" onAction="#prev" text="⏮">
                <font>
                   <Font size="20.0" />
                </font></Button>
-            <Button alignment="CENTER_RIGHT" layoutX="522.0" layoutY="72.0" mnemonicParsing="false" text="⏭">
+            <Button alignment="CENTER_RIGHT" layoutX="522.0" layoutY="72.0" mnemonicParsing="false" onAction="#next" text="⏭">
                <font>
                   <Font size="20.0" />
                </font></Button>

@@ -5,8 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.fxml.FXML;
 
-public class GUI extends Application implements UI{
+public class GUI extends Application implements UI{   
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -22,4 +24,18 @@ public class GUI extends Application implements UI{
         launch(args);
     }    
 
+    @FXML
+    public void play(){
+        System.out.println("play");
+    }
+    
+    @FXML
+    public void next(){
+        System.out.println("next");
+    }
+    
+    @FXML
+    public void prev(){
+        System.out.println("prev");
+    }
 }
