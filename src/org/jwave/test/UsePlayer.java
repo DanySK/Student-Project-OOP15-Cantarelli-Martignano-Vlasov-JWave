@@ -10,7 +10,7 @@ import org.jwave.model.player.Song;
 
 public final class UsePlayer {
 
-    private static final String PATH = "/home/canta/Music";
+    private static final String PATH = "/Users/alexvlasov/Music";
     
     private UsePlayer() { }
     
@@ -22,7 +22,7 @@ public final class UsePlayer {
         manager.loadPlaylist(PATH + "/playlistProva.jwo");
         manager.getPlayingQueue().printPlaylist();
 //        player.setPlayer(new SongImpl(PATH + "/03. The Gift Of Music.mp3"));
-        player.setPlayer(manager.getPlayingQueue().selectSong(4));
+        player.setPlayer(manager.getPlayingQueue().selectSong(0));
         player.play();
         System.out.println("current loaded: " + manager.getCurrentLoaded().get().getName());
         //retrieving a value from metadata
