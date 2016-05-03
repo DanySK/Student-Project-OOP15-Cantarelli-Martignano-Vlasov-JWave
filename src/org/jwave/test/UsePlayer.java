@@ -14,6 +14,15 @@ public final class UsePlayer {
     
     private UsePlayer() { }
     
+    /**
+     * Main to test some features while developing.
+     * 
+     * @param args
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws ClassNotFoundException
+     */
     public static void main(final String... args) throws FileNotFoundException, IOException, IllegalArgumentException, ClassNotFoundException {
         final DynamicPlayer player = AudioSystem.getAudioSystem().getDynamicPlayer();
         final PlaylistManager manager = AudioSystem.getAudioSystem().getPlaylistManager();
