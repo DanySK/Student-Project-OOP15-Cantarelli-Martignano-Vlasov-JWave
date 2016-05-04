@@ -9,6 +9,8 @@ import ddf.minim.AudioSample;
 import ddf.minim.Minim;
 
 public class EditorImpl implements Editor {
+	private final ArrayList<Cut> editCuts;
+	
 	private int selectionFrom;
 	private int selectionTo;
 	
@@ -20,6 +22,7 @@ public class EditorImpl implements Editor {
 	private boolean songLoaded = false;
 	
 	public EditorImpl() {
+		editCuts = new ArrayList<>();
 		this.selectionFrom = -1;
 		this.selectionTo = -1;
 		this.copiedFrom = -1;
