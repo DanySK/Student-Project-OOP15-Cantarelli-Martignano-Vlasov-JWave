@@ -1,8 +1,31 @@
 package org.jwave.model.editor;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.jwave.controller.player.FileSystemHandler;
+
+import ddf.minim.AudioSample;
+import ddf.minim.Minim;
+
 public class EditorImpl implements Editor {
+	private int selectionFrom;
+	private int selectionTo;
+	
+	private int copiedFrom;
+	private int copiedTo;
+	
+	final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
+	AudioSample song;
+	private boolean songLoaded = false;
+	
+	public EditorImpl() {
+		this.selectionFrom = -1;
+		this.selectionTo = -1;
+		this.copiedFrom = -1;
+		this.copiedTo = -1;
+	}	
+	
 	@Override
 	public void loadSongToEdit(String songPath) {
 		// TODO Auto-generated method stub
