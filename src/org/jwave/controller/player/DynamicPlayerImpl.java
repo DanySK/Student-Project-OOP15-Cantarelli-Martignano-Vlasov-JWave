@@ -26,6 +26,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
      */
     public DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
+        this.currentPlayMode = PlayMode.NO_LOOP;
     }
     
     

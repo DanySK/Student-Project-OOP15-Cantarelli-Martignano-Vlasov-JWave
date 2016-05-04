@@ -83,4 +83,9 @@ public class PlaylistImpl implements Playlist, Serializable {
     private void setCurrentSong(final Song newCurrentSong) {
         this.currentSelected = Optional.of(newCurrentSong);
     }
+
+    @Override
+    public int getDimension() {
+        return this.list.size();
+    }
 }

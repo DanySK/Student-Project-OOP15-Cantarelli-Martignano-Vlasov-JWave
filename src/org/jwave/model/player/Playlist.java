@@ -12,6 +12,8 @@ public interface Playlist {
     
     Optional<Song> getCurrentSelected();
     
+    int getDimension();
+    
     Song selectSong(String name) throws IllegalArgumentException;
     
     Song selectSong(int index) throws IllegalArgumentException;

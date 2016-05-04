@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.jwave.model.player.NoLoopNavigator;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistNavigator;
@@ -23,10 +24,14 @@ import org.jwave.model.player.SongImpl;
 public class PlaylistManagerImpl implements PlaylistManager {
 
     private Playlist loadedPlaylist;
-    private PlaylistNavigator surfer;
+    private PlaylistNavigator navigator;
     
+    /**
+     * Creates a new PlaylistManagerImpl.
+     */
     public PlaylistManagerImpl() {
         this.loadedPlaylist = new PlaylistImpl();
+        this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension());
     }
     
     @Override
@@ -93,11 +98,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     @Override
     public PlaylistNavigator getPlaylistNavigator() {
-       return this.surfer;
+       return this.navigator;
     }
     
     @Override
     public void setSurfer(final PlaylistNavigator newNavigator) {
-        this.surfer = newNavigator;
+        this.navigator = newNavigator;
     }
 }
