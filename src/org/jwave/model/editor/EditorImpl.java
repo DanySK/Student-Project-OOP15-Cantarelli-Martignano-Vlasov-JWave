@@ -1,6 +1,7 @@
 package org.jwave.model.editor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jwave.controller.player.FileSystemHandler;
@@ -17,9 +18,13 @@ public class EditorImpl implements Editor {
 	private int copiedFrom;
 	private int copiedTo;
 	
-	final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
+	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
 	AudioSample song;
 	private boolean songLoaded = false;
+	
+	// temporary variables currently needed for debugging
+	private int lengthOfSong;
+	private int bufferSize = 2048;
 	
 	public EditorImpl() {
 		editCuts = new ArrayList<>();
@@ -31,92 +36,99 @@ public class EditorImpl implements Editor {
 	
 	@Override
 	public void loadSongToEdit(String songPath) {
-		// TODO Auto-generated method stub
+		song = minim.loadSample(songPath, bufferSize);
 		
+		lengthOfSong = song.length(); // in ms
+		
+		songLoaded = true;
+		
+		// default initial cut, entire original song in a single cut
+		editCuts.add(new Cut(0, lengthOfSong, new ArrayList<Pair<Integer, Integer>>(Arrays.asList(new Pair<>(new Integer(0), new Integer(lengthOfSong))))));
+	
+		System.out.println("Song loaded.");
 	}
 
 	@Override
 	public boolean isSongLoaded() {
-		// TODO Auto-generated method stub
-		return false;
+		return songLoaded;
 	}
 
 	@Override
 	public int getSongLength() {
-		// TODO Auto-generated method stub
-		return 0;
+		if (isSongLoaded()) {
+			return lengthOfSong;
+		} else {
+			return -1;
+		}
 	}
 
 	@Override
 	public void setSelectionFrom(int ms) {
-		// TODO Auto-generated method stub
-		
+		this.selectionFrom = ms;		
 	}
 
 	@Override
 	public void setSelectionTo(int ms) {
-		// TODO Auto-generated method stub
-		
+		this.selectionTo = ms;
 	}
 
 	@Override
 	public int getSelectionFrom() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.selectionFrom;
 	}
 
 	@Override
 	public int getSelectionTo() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.selectionTo;
 	}
 
 	@Override
 	public void deselectSelection() {
-		// TODO Auto-generated method stub
-		
+		this.selectionFrom = -1;
+		this.selectionTo = -1;
 	}
 
 	@Override
 	public boolean isCursorSet() {
-		// TODO Auto-generated method stub
-		return false;
+		return (this.selectionFrom >= 0);
 	}
 
 	@Override
 	public boolean isSomethingSelected() {
-		// TODO Auto-generated method stub
-		return false;
+		return (this.selectionFrom >= 0 && this.selectionTo >= 0);
 	}
 
 	@Override
 	public boolean copySelection() {
-		// TODO Auto-generated method stub
-		return false;
+		if (isSomethingSelected()) {
+			this.copiedFrom = this.selectionFrom;
+			this.copiedTo = this.selectionTo;
+			
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public int getCopiedFrom() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.copiedFrom;
 	}
 
 	@Override
 	public int getCopiedTo() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.copiedTo;
 	}
 
 	@Override
 	public void resetCopiedSelection() {
-		// TODO Auto-generated method stub
-		
+		this.copiedFrom = -1;
+		this.copiedTo = -1;
 	}
 
 	@Override
 	public boolean isSomethingCopied() {
-		// TODO Auto-generated method stub
-		return false;
+		return (this.copiedFrom >= 0 && this.copiedTo >= 0);
 	}
 
 	@Override
@@ -145,8 +157,15 @@ public class EditorImpl implements Editor {
 
 	@Override
 	public void printAllCuts() {
-		// TODO Auto-generated method stub
+		System.out.println("Current selection: from " + getSelectionFrom() + "ms to " + getSelectionTo() + "ms");
+		System.out.println("Copied selection: from " + getCopiedFrom() + "ms to " + getCopiedTo() + "ms");
 		
+		for (int i = 0; i < editCuts.size(); i++) {
+			System.out.println("Cut " + i + ": from " + editCuts.get(i).getCutFrom() + "ms to " + editCuts.get(i).getCutTo() + "ms");
+			for (int j = 0; j < editCuts.get(i).getSegments().size(); j++) {
+				System.out.println("    Segment " + j + ": from " + editCuts.get(i).getSegments().get(j).getX() + "ms to " + editCuts.get(i).getSegments().get(j).getY() + "ms");
+			}
+		}
 	}
 
 	@Override
