@@ -1,6 +1,6 @@
 package org.jwave.controller;
 
-import org.jwave.view.GUI;
+import org.jwave.view.FXGUI;
 import org.jwave.view.UI;
 
 public class JWaveApp {
@@ -9,7 +9,7 @@ public class JWaveApp {
     //private final Model playerModel;
     
     public JWaveApp(){
-        this.ui = new GUI();
+        this.ui = new FXGUI();
         this.ui.launcher(new String[] {});
     }
 }

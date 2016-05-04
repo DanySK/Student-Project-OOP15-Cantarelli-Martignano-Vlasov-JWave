@@ -1,14 +1,18 @@
 package org.jwave.view;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
 
-public class GUI extends Application implements UI{   
+public class FXGUI extends Application implements UI, Initializable{   
 
     @FXML
     Button btnPlay;
@@ -25,30 +29,32 @@ public class GUI extends Application implements UI{
     @Override
     public void launcher(String[] args) {
         launch(args);
-    }     
+    }   
     
-    @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
+    @Override // This method is called by the FXMLLoader when initialization is complete
+    public void initialize(URL location, ResourceBundle resources) {
         assert btnPlay != null : "fx:id=\"btnPlay\" was not injected: check your FXML file 'Player.fxml'.";
     }
 
     @FXML
-    public void play(){
+    private void play(){
         System.out.println("play");
     }
     
     @FXML
-    public void stopPlay(){
+    private void stopPlay(){
         System.out.println("stop");
     }
     
     @FXML
-    public void next(){
+    private void next(){
         System.out.println("next");
     }
     
     @FXML
-    public void prev(){
+    private void prev(){
         System.out.println("prev");
     }
+
+    
 }
