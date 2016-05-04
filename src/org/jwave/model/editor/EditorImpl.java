@@ -24,7 +24,7 @@ public class EditorImpl implements Editor {
 		this.selectionTo = -1;
 		this.copiedFrom = -1;
 		this.copiedTo = -1;
-	}	
+	}
 	
 	@Override
 	public void loadSongToEdit(String songPath) {
