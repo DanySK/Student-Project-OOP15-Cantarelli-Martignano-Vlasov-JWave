@@ -1,5 +1,7 @@
 package org.jwave.model.editor;
 
+import java.util.List;
+
 public interface Editor {
 	// Carica una canzone (dal percorso passato) e la prepara per essere modificata
 	void loadSongToEdit(String songPath);
@@ -62,4 +64,8 @@ public interface Editor {
 	
 	// debug method to see what's going on in console
 	void printAllCuts();
+	
+	// Returns the waveform from ms to ms, a constant maximum amount of values will be returned,
+	// the minimum depending on the level of detail requested (closeness of from and to parameters)
+	List<Integer> getWaveform(int from, int to);
 }
