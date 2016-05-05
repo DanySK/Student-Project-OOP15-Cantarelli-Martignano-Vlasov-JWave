@@ -130,11 +130,122 @@ public class EditorImpl implements Editor {
 	public boolean isSomethingCopied() {
 		return (this.copiedFrom >= 0 && this.copiedTo >= 0);
 	}
+	
+	private Cut generateCopiedCut() {
+		int copiedCutLength = getCopiedTo() - getCopiedFrom();
+		ArrayList<Pair<Integer, Integer>> copiedSegments = new ArrayList<>();
+		
+		int currentCutIndex = -1;
+		int currentSegmentIndex = -1;	
+		
+		// we find the initial cut from which to begin transfering segments
+		int i = 0;
+		while (i < editCuts.size() && currentCutIndex == -1) {
+			if (editCuts.get(i).getCutFrom() <= getCopiedFrom() && editCuts.get(i).getCutTo() >= getCopiedFrom()) {
+				currentCutIndex = i;
+			}
+			
+			i++;
+		}
+		
+		// and the initial segment
+		i = 0; // segment index counter
+		int j = 0; // millisecond counter
+		int currentSegmentLength;
+		int initialSegmentOffset = 0;
+		int copiedOffset = getCopiedFrom() - editCuts.get(currentCutIndex).getCutFrom(); // WithRespectToCutFrom
+		while (currentSegmentIndex == -1) {
+			currentSegmentLength = editCuts.get(currentCutIndex).getSegments().get(i).getY() - editCuts.get(currentCutIndex).getSegments().get(i).getX();
+			if (j <= copiedOffset && (j + currentSegmentLength) >= copiedOffset) {
+				currentSegmentIndex = i;
+				initialSegmentOffset = copiedOffset - j;
+			}
+			
+			j += currentSegmentLength;
+			i++;
+		}
+		
+		// start copying in segments
+		int totalCopied = 0; // in ms
+		i = currentCutIndex;
+		j = currentSegmentIndex;
+		while (totalCopied < copiedCutLength) {
+			currentSegmentLength = editCuts.get(i).getSegments().get(j).getY() - (editCuts.get(i).getSegments().get(j).getX() + initialSegmentOffset);
+		
+			copiedSegments.add(new Pair<>(new Integer(editCuts.get(i).getSegments().get(j).getX() + initialSegmentOffset),
+										  new Integer(totalCopied + currentSegmentLength < copiedCutLength ? 
+												  		editCuts.get(i).getSegments().get(j).getY() :
+												  		editCuts.get(i).getSegments().get(j).getY() - (totalCopied + currentSegmentLength - copiedCutLength)
+												  	  )));
+			
+			initialSegmentOffset = 0;
+			totalCopied += copiedSegments.get(copiedSegments.size() - 1).getY() - copiedSegments.get(copiedSegments.size() - 1).getX();
+			
+			j++;
+			if (j >= editCuts.get(i).getSegments().size()) {
+				j = 0;
+				i++;
+			}
+		}
+		
+		return new Cut(getSelectionFrom(), getSelectionFrom() + copiedCutLength, copiedSegments);
+	}	
 
 	@Override
 	public boolean pasteCopiedSelection() {
-		// TODO Auto-generated method stub
-		return false;
+		if (isCursorSet() && isSomethingCopied()) {
+			int cutToDivideIndex = 0;
+			Cut cutToDivide = null;
+			Cut cutToInsert = generateCopiedCut();
+			
+			for (int i = 0; i < editCuts.size(); i++) {
+				if (editCuts.get(i).getCutFrom() <= getSelectionFrom() && editCuts.get(i).getCutTo() >= getSelectionFrom()) {
+					cutToDivideIndex = i;
+					cutToDivide = editCuts.get(cutToDivideIndex);
+				}
+			}
+			
+			int leftHalfLength = getSelectionFrom() - cutToDivide.getCutFrom();
+			int rightHalfLength = cutToDivide.getCutLength() - leftHalfLength;
+			int halfPoint = cutToDivide.getCutFrom() + leftHalfLength;
+			ArrayList<Pair<Integer, Integer>> leftSegments = new ArrayList<>();
+			ArrayList<Pair<Integer, Integer>> rightSegments = new ArrayList<>();
+			
+			int i = 0;
+			int segmentCounter = 0;
+			while (segmentCounter + (cutToDivide.getSegments().get(i).getY() - cutToDivide.getSegments().get(i).getX()) < leftHalfLength) {
+				leftSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX(), cutToDivide.getSegments().get(i).getY()));
+				segmentCounter += (cutToDivide.getSegments().get(i).getY() - cutToDivide.getSegments().get(i).getX());
+				i++;
+			}
+			
+			// middle segments
+			leftSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX(), cutToDivide.getSegments().get(i).getX() + (leftHalfLength - segmentCounter)));
+			rightSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX() + (leftHalfLength - segmentCounter), cutToDivide.getSegments().get(i).getY()));
+			
+			for (i++; i < cutToDivide.getSegments().size(); i++) {
+				rightSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX(), cutToDivide.getSegments().get(i).getY()));
+			}
+			
+			Cut leftCut = new Cut(cutToDivide.getCutFrom(), halfPoint, leftSegments);
+			Cut rightCut = new Cut(cutToInsert.getCutTo(), cutToInsert.getCutTo() + rightHalfLength, rightSegments);			
+			
+			// shift all cuts after cut that was divided
+			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+			for (i = editCuts.size() - 1; i > cutToDivideIndex + 1; i--) {
+				editCuts.set(i, editCuts.get(i - 2));
+			}
+			
+			// finally set all three cuts to the new ones
+			editCuts.set(cutToDivideIndex, leftCut);
+			editCuts.set(cutToDivideIndex + 1, cutToInsert);
+			editCuts.set(cutToDivideIndex + 2, rightCut);
+			
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
