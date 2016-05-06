@@ -28,8 +28,11 @@ public interface DynamicPlayer {
      * 
      * @param millis
      *          the point of the file where the cursor has to be moved.
+     *          
+     * @throws IllegalArgumentException
+     *                   
      */
-    void cue(int millis);
+    void cue(int millis) throws IllegalArgumentException;
 
     /**
      * @return

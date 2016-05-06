@@ -48,12 +48,21 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public void cue(final int millis) {
+        if (millis > this.getLength()) {
+            throw new IllegalArgumentException();
+        }
         this.player.cue(millis);
     }
 
     @Override
     public boolean isPlaying() {
-        return this.player.isPlaying();
+        boolean out = false;
+        try {
+            out = this.player.isPlaying();
+            return out;
+        } catch (NullPointerException n) {
+            return true;
+        }
     }
 
     @Override
@@ -89,5 +98,6 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.pause();
         this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_RATE);
         this.player.patch(this.out);
+        sampleRateRetriever.close();
     }
 }

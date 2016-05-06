@@ -9,7 +9,7 @@ import org.jwave.model.player.PlaylistNavigator;
 import org.jwave.model.player.Song;
 
 /**
- * Interface PlaylistManager
+ * Interface PlaylistManager.
  */
 public interface PlaylistManager {
 
@@ -29,5 +29,5 @@ public interface PlaylistManager {
     
     PlaylistNavigator getPlaylistNavigator();
 
-    void setSurfer(PlaylistNavigator surfer);
+    void setNavigator(PlaylistNavigator newNavigator);
 }

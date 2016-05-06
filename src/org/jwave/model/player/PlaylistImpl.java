@@ -69,6 +69,11 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
     
     @Override
+    public int getDimension() {
+        return this.list.size();
+    }
+    
+    @Override
     public boolean isEmpty() {
         return this.list.isEmpty();
     }
@@ -82,10 +87,5 @@ public class PlaylistImpl implements Playlist, Serializable {
     
     private void setCurrentSong(final Song newCurrentSong) {
         this.currentSelected = Optional.of(newCurrentSong);
-    }
-
-    @Override
-    public int getDimension() {
-        return this.list.size();
     }
 }
