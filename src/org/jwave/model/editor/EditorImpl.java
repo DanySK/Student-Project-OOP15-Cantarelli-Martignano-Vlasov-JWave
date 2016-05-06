@@ -250,8 +250,93 @@ public class EditorImpl implements Editor {
 
 	@Override
 	public boolean cutSelection() {
-		// TODO Auto-generated method stub
-		return false;
+		if (isSomethingSelected()) {
+			int i;
+			int selectionLength = getSelectionTo() - getSelectionFrom();
+			
+			int firstCutToDivideIndex = 0;
+			Cut firstCutToDivide = null;
+			
+			for (i = 0; i < editCuts.size(); i++) {
+				if (editCuts.get(i).getCutFrom() <= getSelectionFrom() && editCuts.get(i).getCutTo() >= getSelectionFrom()) {
+					firstCutToDivideIndex = i;
+					firstCutToDivide = editCuts.get(firstCutToDivideIndex);
+				}
+			}
+			
+			int newFirstCutLength = getSelectionFrom() - firstCutToDivide.getCutFrom();
+			ArrayList<Pair<Integer, Integer>> leftSegments = new ArrayList<>();
+			
+			i = 0;
+			int segmentCounter = 0;
+			while (segmentCounter + (firstCutToDivide.getSegments().get(i).getY() - firstCutToDivide.getSegments().get(i).getX()) < newFirstCutLength) {
+				leftSegments.add(new Pair<>(firstCutToDivide.getSegments().get(i).getX(), firstCutToDivide.getSegments().get(i).getY()));				
+				segmentCounter += (firstCutToDivide.getSegments().get(i).getY() - firstCutToDivide.getSegments().get(i).getX());
+				i++;
+			}
+			
+			leftSegments.add(new Pair<>(firstCutToDivide.getSegments().get(i).getX(), firstCutToDivide.getSegments().get(i).getX() + (newFirstCutLength - segmentCounter)));			
+			
+			int secondCutToDivideIndex = 0;
+			Cut secondCutToDivide = null;
+			
+			for (i = 0; i < editCuts.size(); i++) {
+				if (editCuts.get(i).getCutFrom() <= getSelectionTo() && editCuts.get(i).getCutTo() >= getSelectionTo()) {
+					secondCutToDivideIndex = i;
+					secondCutToDivide = editCuts.get(secondCutToDivideIndex);
+				}
+			}
+			
+			int newSecondCutLength = getSelectionTo() - secondCutToDivide.getCutFrom(); // length of part being cut away
+			ArrayList<Pair<Integer, Integer>> rightSegments = new ArrayList<>();
+			
+			i = 0;
+			segmentCounter = 0;
+			
+			System.out.println(newSecondCutLength);
+			System.out.println(segmentCounter + (secondCutToDivide.getSegments().get(i).getY() - secondCutToDivide.getSegments().get(i).getX()));
+			
+			while (segmentCounter + (secondCutToDivide.getSegments().get(i).getY() - secondCutToDivide.getSegments().get(i).getX()) < newSecondCutLength) {				
+				segmentCounter += (secondCutToDivide.getSegments().get(i).getY() - secondCutToDivide.getSegments().get(i).getX());
+				i++;
+			}
+			
+			rightSegments.add(new Pair<>(secondCutToDivide.getSegments().get(i).getX() + (newSecondCutLength - segmentCounter), secondCutToDivide.getSegments().get(i).getY()));
+			
+			for (i++; i < secondCutToDivide.getSegments().size(); i++) {
+				rightSegments.add(new Pair<>(secondCutToDivide.getSegments().get(i).getX(), secondCutToDivide.getSegments().get(i).getY()));
+			}
+			
+			for (i = secondCutToDivideIndex - 1; i > firstCutToDivideIndex; i--) {
+				// remove all and any cuts between the two cuts
+				editCuts.remove(i);
+			}
+			
+			// set new cuts only after building the new ones
+			if (firstCutToDivideIndex == secondCutToDivideIndex) {
+				editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+			
+				// shift actual cuts down to account that single cut will become two cuts
+				for (i = editCuts.size() - 1; i > firstCutToDivideIndex + 1; i--) {
+					editCuts.set(i, editCuts.get(i - 1));					
+				}
+			}
+				
+			int secondCutFrom = firstCutToDivideIndex != secondCutToDivideIndex ? secondCutToDivide.getCutFrom() - (selectionLength - (getSelectionTo() - secondCutToDivide.getCutFrom())) : firstCutToDivide.getCutFrom() + newFirstCutLength;
+			
+			editCuts.set(firstCutToDivideIndex + 1, new Cut(secondCutFrom, secondCutToDivide.getCutTo() - selectionLength, rightSegments));
+			editCuts.set(firstCutToDivideIndex, new Cut(firstCutToDivide.getCutFrom(), firstCutToDivide.getCutFrom() + newFirstCutLength, leftSegments));
+			
+			// shift cut from's and to's down to account for the gap
+			for (i = firstCutToDivideIndex + 2; i < editCuts.size(); i++) {
+				editCuts.get(i).setCutFrom(editCuts.get(i).getCutFrom() - selectionLength);
+				editCuts.get(i).setCutTo(editCuts.get(i).getCutTo() - selectionLength);
+			}
+			
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
