@@ -67,5 +67,5 @@ public interface Editor {
 	
 	// Returns the waveform from ms to ms, a constant maximum amount of values will be returned,
 	// the minimum depending on the level of detail requested (closeness of from and to parameters)
-	List<Integer> getWaveform(int from, int to);
+	List<Float> getWaveform(int from, int to);
 }

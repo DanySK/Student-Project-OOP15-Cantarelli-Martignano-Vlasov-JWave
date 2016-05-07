@@ -1,13 +1,17 @@
 package org.jwave.model.editor;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.sound.sampled.AudioFormat;
 
 import org.jwave.controller.player.FileSystemHandler;
 
 import ddf.minim.AudioSample;
 import ddf.minim.Minim;
+import ddf.minim.analysis.FFT;
 
 public class EditorImpl implements Editor {
 	private final ArrayList<Cut> editCuts;
@@ -365,8 +369,86 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public List<Integer> getWaveform(int from, int to) {
-		// TODO Auto-generated method stub
-		return null;
+	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	public List<Float> getWaveform(int from, int to) {
+		List<Float> waveformValues = new ArrayList<Float>();
+		ArrayList<FloatBuffer> buffers;
+		float[][] spectra;
+		FloatBuffer left;
+		FloatBuffer right;
+		float lengthOfChunks;		
+		
+		if (songLoaded) {
+			AudioFormat format = song.getFormat();
+			
+			buffers = new ArrayList<FloatBuffer>(20);
+			left = FloatBuffer.allocate(bufferSize * 10);
+			if (format.getChannels() == Minim.STEREO) {
+			  right = FloatBuffer.allocate(bufferSize * 10);
+			} else {
+			  right = null;
+			}		
+			
+			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
+			float[] leftChannel = song.getChannel(AudioSample.LEFT);
+			
+			int fftSize = 1024;
+			float[] fftSamplesLeft = new float[fftSize];
+			float[] fftSamplesRight = new float[fftSize];
+			  
+			FFT fft = new FFT(fftSize, song.sampleRate());
+			  
+			int totalChunks = (leftChannel.length / fftSize) + 1;
+			  
+			lengthOfChunks = (float) lengthOfSong / (float) totalChunks;
+			
+			spectra = new float[totalChunks][fftSize / 2];
+			
+			for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
+				int chunkStartIndex = chunkIdx * fftSize;
+				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, fftSize);
+				
+				System.arraycopy(leftChannel, chunkStartIndex, fftSamplesLeft, 0, chunkSize);
+				System.arraycopy(rightChannel, chunkStartIndex, fftSamplesRight, 0, chunkSize);
+				
+				if (chunkSize < fftSize) {
+					for (int i = chunkSize; i < fftSamplesLeft.length - 1; i++) {
+						fftSamplesLeft[i] = (float) 0.0;
+					}
+					
+					for (int i = chunkSize; i < fftSamplesRight.length - 1; i++) {
+						fftSamplesRight[i] = (float) 0.0;
+					}
+				}
+				
+				fft.forward(fftSamplesLeft);
+				fft.forward(fftSamplesRight);
+				
+				for (int i = 0; i < 512; ++i) {				
+					spectra[chunkIdx][i] = fft.getBand(i);
+				}
+				
+				float total = 0;			
+				for (int i = 0; i < spectra[chunkIdx].length - 1; ++i) {		
+					total += spectra[chunkIdx][i];
+				}
+				
+				waveformValues.add(total);
+			}					
+		}
+		
+		return waveformValues;
+	}
+	
+	public void printWaveform() {
+		if (songLoaded) {
+			List<Float> results = getWaveform(0, getSongLength());
+			
+			System.out.println(results.size());
+			
+			for (int i = 0; i < results.size(); i++) {
+				System.out.println(i + ", " + results.get(i));
+			}
+		}		
 	}
 }
