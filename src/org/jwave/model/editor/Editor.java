@@ -66,6 +66,6 @@ public interface Editor {
 	void printAllCuts();
 	
 	// Returns the waveform from ms to ms, a constant maximum amount of values will be returned,
-	// the minimum depending on the level of detail requested (closeness of from and to parameters)
-	List<Float> getWaveform(int from, int to);
+	// the minimum depending on the level of detail requested (number of samples)
+	List<Float> getWaveform(int from, int to, int samples);
 }

@@ -370,13 +370,14 @@ public class EditorImpl implements Editor {
 
 	@Override
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<Float> getWaveform(int from, int to) {
+	public List<Float> getWaveform(int from, int to, int samples) {
 		List<Float> waveformValues = new ArrayList<Float>();
 		ArrayList<FloatBuffer> buffers;
 		float[][] spectra;
 		FloatBuffer left;
 		FloatBuffer right;
-		float lengthOfChunks;		
+		float lengthOfChunks;
+		float runningTotal = 0;
 		
 		if (songLoaded) {
 			AudioFormat format = song.getFormat();
@@ -399,12 +400,18 @@ public class EditorImpl implements Editor {
 			FFT fft = new FFT(fftSize, song.sampleRate());
 			  
 			int totalChunks = (leftChannel.length / fftSize) + 1;
+			int loopLength = totalChunks / samples;
 			  
 			lengthOfChunks = (float) lengthOfSong / (float) totalChunks;
 			
 			spectra = new float[totalChunks][fftSize / 2];
 			
 			for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
+				if (chunkIdx % loopLength == 0) { // then we have collected enough song samples, get the average
+					waveformValues.add(runningTotal / loopLength);
+					runningTotal = 0; // and then reset the running total
+				}
+				
 				int chunkStartIndex = chunkIdx * fftSize;
 				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, fftSize);
 				
@@ -433,7 +440,7 @@ public class EditorImpl implements Editor {
 					total += spectra[chunkIdx][i];
 				}
 				
-				waveformValues.add(total);
+				runningTotal += total;
 			}					
 		}
 		
@@ -442,7 +449,7 @@ public class EditorImpl implements Editor {
 	
 	public void printWaveform() {
 		if (songLoaded) {
-			List<Float> results = getWaveform(0, getSongLength());
+			List<Float> results = getWaveform(0, getSongLength(), 1000);
 			
 			System.out.println(results.size());
 			
