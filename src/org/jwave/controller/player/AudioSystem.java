@@ -10,14 +10,14 @@ public final class AudioSystem {
 	
 	//inspired by prof.Viroli slides
 	public static synchronized AudioSystem getAudioSystem() {
-		return SINGLETON;
+	    return SINGLETON;
 	}
 	
 	public synchronized DynamicPlayer getDynamicPlayer() {
-		return this.player;
+	    return this.player;
 	}
 	
 	public synchronized PlaylistManager getPlaylistManager() {
-		return this.playlistManager;
+	    return this.playlistManager;
 	}
 }
