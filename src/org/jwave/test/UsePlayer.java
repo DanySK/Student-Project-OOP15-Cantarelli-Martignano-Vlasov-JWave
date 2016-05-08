@@ -37,10 +37,9 @@ public final class UsePlayer {
         player.play();
         t.start();
         player.cue(230000);
-        player.pause();
         System.out.println("current loaded: " + manager.getCurrentLoaded().get().getName());
         //retrieving a value from metadata
-        System.out.println(manager.getPlayingQueue().getCurrentSelected().get().getMetaData().getAlbum());
+//        System.out.println(manager.getPlayingQueue().getCurrentSelected().get().getMetaData().getAlbum());
     }
 
 }

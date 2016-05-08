@@ -12,6 +12,7 @@ public class PlaybackThread implements Runnable {
     private PlaylistManager playlistManager;
     private PlaylistNavigator navigator;
     private boolean stopped;
+    private boolean playerInitialized;
 //    AudioPlayer player;
 //    List<Cut> editCuts;
 //    Pair<Integer, Integer> currentSegment;
@@ -30,6 +31,7 @@ public class PlaybackThread implements Runnable {
         this.playlistManager = AudioSystem.getAudioSystem().getPlaylistManager();
         this.navigator = this.playlistManager.getPlaylistNavigator();
         this.stopped = true;
+        this.playerInitialized = false;
 //        player = playa;
 //        editCuts = new ArrayList<Cut>(cuts);
         System.out.println("Creating " +  threadName );
@@ -43,6 +45,7 @@ public class PlaybackThread implements Runnable {
        System.out.println("Running " +  threadName );
        try {
            while (!this.isStopped()) {
+//               System.out.println("Dentro al while");
 //                   if (player.position() >= (int)currentSegment.getY()) {
 //                           currentSegmentIndex++;
 //                           
@@ -54,14 +57,17 @@ public class PlaybackThread implements Runnable {
 //                           
 //                           player.cue((int)currentSegment.getX());
 //                   }
-               this.checkInReproduction();
+               try {
+                   this.checkInReproduction();
+               } catch (NullPointerException n) {
+                   System.out.println("Null avoided");
+               }
                Thread.sleep(10L);
            }
        } catch (InterruptedException e) {
            // System.out.println("Thread " +  threadName + " interrupted.");
-       } catch (NullPointerException n) { }
-       
-       // System.out.println("Thread " +  threadName + " exiting.");
+       } 
+//        System.out.println("Thread " +  threadName + " exiting.");
     }
     
     public void start() {
@@ -80,14 +86,38 @@ public class PlaybackThread implements Runnable {
     }
     
     private void checkInReproduction() {
-        if (!this.dynPlayer.isPlaying()) {
-            this.dynPlayer.setPlayer(this.playlistManager.getPlayingQueue().selectSong(
-                    this.navigator.next()));
-            this.dynPlayer.play();
+        if (this.isPlayerPresent()) {
+            if (!this.isPlayerInitialized()) {
+                this.playerInitialized = true;
+                System.out.println("Player initialized");
+            }
+            System.out.println("Player is playing");
+            return;
         }
+        if (!this.isPlayerInitialized()) {
+            System.out.println("Player not init");
+            return;
+        }
+        System.out.println("Setting player...");
+        this.dynPlayer.setPlayer(this.playlistManager.getPlayingQueue().selectSong
+               (this.playlistManager.getPlaylistNavigator().next()));
+        return;
     }
     
     private void setStopped(boolean value) {
         this.stopped = value;
+    }
+    
+    private boolean isPlayerInitialized() {
+        return this.playerInitialized;
+    }
+    
+    private boolean isPlayerPresent() {
+        try {
+            this.dynPlayer.isPlaying();
+        } catch(NullPointerException ne) {
+            return false;
+        } 
+        return true;
     }
  }

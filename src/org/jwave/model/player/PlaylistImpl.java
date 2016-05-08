@@ -3,7 +3,6 @@ package org.jwave.model.player;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Optional;
 
 public class PlaylistImpl implements Playlist, Serializable {

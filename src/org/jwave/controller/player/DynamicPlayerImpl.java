@@ -59,10 +59,10 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         boolean out = false;
         try {
             out = this.player.isPlaying();
-            return out;
         } catch (NullPointerException n) {
             return true;
         }
+        return out;
     }
 
     @Override
