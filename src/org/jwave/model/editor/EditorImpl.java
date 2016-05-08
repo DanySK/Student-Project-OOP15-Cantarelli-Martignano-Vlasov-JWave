@@ -378,6 +378,7 @@ public class EditorImpl implements Editor {
 		FloatBuffer right;
 		float lengthOfChunks;
 		float runningTotal = 0;
+		float maxLoopAverage = 0;
 		
 		if (songLoaded) {
 			AudioFormat format = song.getFormat();
@@ -408,7 +409,13 @@ public class EditorImpl implements Editor {
 			
 			for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
 				if (chunkIdx % loopLength == 0) { // then we have collected enough song samples, get the average
-					waveformValues.add(runningTotal / loopLength);
+					float loopAverage = runningTotal / loopLength;
+					waveformValues.add(loopAverage);
+					
+					if (loopAverage > maxLoopAverage) {
+						maxLoopAverage = loopAverage; // find the max value for normalization at the end
+					}
+					
 					runningTotal = 0; // and then reset the running total
 				}
 				
@@ -441,7 +448,12 @@ public class EditorImpl implements Editor {
 				}
 				
 				runningTotal += total;
-			}					
+			}
+			
+			// perform some normalization on the waveform values
+			for (int i = 0; i < waveformValues.size(); i++) {
+				waveformValues.set(i, waveformValues.get(i) / maxLoopAverage);
+			}
 		}
 		
 		return waveformValues;
