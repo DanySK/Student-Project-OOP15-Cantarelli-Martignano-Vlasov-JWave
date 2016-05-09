@@ -63,14 +63,12 @@ public class PlaybackThread implements Runnable {
     
     private void checkInReproduction() {
         if (this.isPlayerPresent()) {
-            if (!this.dynPlayer.isPlaying()) {
-                System.out.println("Entra qui");
-                if (this.wasPreviouslyPaused()){
-                    System.out.println("Setting player");
-                    this.dynPlayer.setPlayer(this.playlistManager.getPlayingQueue().selectSong(1));
-                    this.dynPlayer.play();
-                    return;
-                }
+            if (!this.dynPlayer.isPlaying() && !this.wasPreviouslyPaused()) {
+                //brano terminato
+                System.out.println("Setting player");
+                this.dynPlayer.setPlayer(this.playlistManager.getPlayingQueue().selectSong(1));
+                this.dynPlayer.play();
+                return;
             }
             //no reproducing
             return;

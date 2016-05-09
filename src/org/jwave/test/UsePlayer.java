@@ -39,7 +39,7 @@ public final class UsePlayer {
         t.start();
         player.cue(230000);
         System.out.println("current loaded: " + manager.getCurrentLoaded().get().getName());
-        System.out.println(player.isPlaying());
+//        System.out.println(player.isPlaying());
         //retrieving a value from metadata
 //        System.out.println(manager.getPlayingQueue().getCurrentSelected().get().getMetaData().getAlbum());
     }
