@@ -99,6 +99,9 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public void setPlayer(final Song song) {
         final AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
+        if (this.player != null) {
+            this.player.close();
+        }
         this.player = new FilePlayer(this.minim.loadFileStream(song.getAbsolutePath(), BUFFER_SIZE, true));
         this.pause();
         this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_RATE);
