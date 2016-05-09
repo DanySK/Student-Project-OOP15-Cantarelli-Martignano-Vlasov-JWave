@@ -40,6 +40,8 @@ public interface DynamicPlayer {
      */
     boolean isPlaying();
     
+    boolean isPaused();
+    
     /**
      * @return
      *          the length of the loaded file in milliseconds.

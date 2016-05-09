@@ -20,6 +20,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     private FilePlayer player;
     private AudioOutput out;
     private PlayMode currentPlayMode;
+    private boolean paused;
     
     /**
      * Creates a new DynamicPlayerImpl.
@@ -27,17 +28,22 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     public DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
         this.currentPlayMode = PlayMode.NO_LOOP;
+        this.paused = false;
     }
     
     
     @Override
     public void play() {
+        if (this.isPaused()) {
+            this.setPaused(false);
+        }
         this.player.play();
     }
 
     @Override
     public void pause() {
         this.player.pause();
+        this.setPaused(true);
     }
 
     @Override
@@ -56,13 +62,12 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public boolean isPlaying() {
-        boolean out = false;
-        try {
-            out = this.player.isPlaying();
-        } catch (NullPointerException n) {
-            return true;
-        }
-        return out;
+        return this.player.isPlaying();
+    }
+    
+    @Override
+    public boolean isPaused() {
+        return this.paused;
     }
 
     @Override
@@ -99,5 +104,9 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_RATE);
         this.player.patch(this.out);
         sampleRateRetriever.close();
+    }
+    
+    private void setPaused(final boolean value) {
+        this.paused = value;
     }
 }

@@ -12,12 +12,9 @@ public class PlaybackThread implements Runnable {
     private PlaylistManager playlistManager;
     private PlaylistNavigator navigator;
     private boolean stopped;
-    private boolean playerInitialized;
-//    AudioPlayer player;
-//    List<Cut> editCuts;
-//    Pair<Integer, Integer> currentSegment;
-//    int currentSegmentIndex;
-//    int currentCutIndex;
+    private boolean previouslyPaused;
+    
+    
     
     /**
      * Consrtuctor
@@ -30,34 +27,17 @@ public class PlaybackThread implements Runnable {
         this.dynPlayer = AudioSystem.getAudioSystem().getDynamicPlayer();
         this.playlistManager = AudioSystem.getAudioSystem().getPlaylistManager();
         this.navigator = this.playlistManager.getPlaylistNavigator();
-        this.stopped = true;
-        this.playerInitialized = false;
-//        player = playa;
-//        editCuts = new ArrayList<Cut>(cuts);
+        this.stopped = false;
+        this.previouslyPaused = false;
         System.out.println("Creating " +  threadName );
-        
-//        currentSegmentIndex = 0;
-//        currentCutIndex = 0;
-//        currentSegment = editCuts.get(currentCutIndex).getSegments().get(currentSegmentIndex);
     }
     
     public void run() {
        System.out.println("Running " +  threadName );
        try {
            while (!this.isStopped()) {
-//               System.out.println("Dentro al while");
-//                   if (player.position() >= (int)currentSegment.getY()) {
-//                           currentSegmentIndex++;
-//                           
-//                           if (currentSegmentIndex >= editCuts.get(currentCutIndex).getSegments().size()) {
-//                                   currentCutIndex++;
-//                                   currentSegmentIndex = 0;
-//                                   currentSegment = editCuts.get(currentCutIndex).getSegments().get(currentSegmentIndex);
-//                           }
-//                           
-//                           player.cue((int)currentSegment.getX());
-//                   }
                try {
+                   this.previouslyPaused = this.dynPlayer.isPaused();
                    this.checkInReproduction();
                } catch (NullPointerException n) {
                    System.out.println("Null avoided");
@@ -81,35 +61,34 @@ public class PlaybackThread implements Runnable {
         this.setStopped(true);
     }
     
+    private void checkInReproduction() {
+        if (this.isPlayerPresent()) {
+            if (!this.dynPlayer.isPlaying()) {
+                System.out.println("Entra qui");
+                if (this.wasPreviouslyPaused()){
+                    System.out.println("Setting player");
+                    this.dynPlayer.setPlayer(this.playlistManager.getPlayingQueue().selectSong(1));
+                    this.dynPlayer.play();
+                    return;
+                }
+            }
+            //no reproducing
+            return;
+        }
+        //player absent
+        return;
+    }
+    
     private boolean isStopped() {
         return this.stopped;
     }
     
-    private void checkInReproduction() {
-        if (this.isPlayerPresent()) {
-            if (!this.isPlayerInitialized()) {
-                this.playerInitialized = true;
-                System.out.println("Player initialized");
-            }
-            System.out.println("Player is playing");
-            return;
-        }
-        if (!this.isPlayerInitialized()) {
-            System.out.println("Player not init");
-            return;
-        }
-        System.out.println("Setting player...");
-        this.dynPlayer.setPlayer(this.playlistManager.getPlayingQueue().selectSong
-               (this.playlistManager.getPlaylistNavigator().next()));
-        return;
+    private boolean wasPreviouslyPaused() {
+        return this.previouslyPaused;
     }
     
-    private void setStopped(boolean value) {
+    private void setStopped(final boolean value) {
         this.stopped = value;
-    }
-    
-    private boolean isPlayerInitialized() {
-        return this.playerInitialized;
     }
     
     private boolean isPlayerPresent() {

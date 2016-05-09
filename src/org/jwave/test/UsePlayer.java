@@ -35,9 +35,11 @@ public final class UsePlayer {
 //        player.setPlayer(new SongImpl(PATH + "/03. The Gift Of Music.mp3"));
         player.setPlayer(manager.getPlayingQueue().selectSong(0));
         player.play();
+//        player.pause();
         t.start();
         player.cue(230000);
         System.out.println("current loaded: " + manager.getCurrentLoaded().get().getName());
+        System.out.println(player.isPlaying());
         //retrieving a value from metadata
 //        System.out.println(manager.getPlayingQueue().getCurrentSelected().get().getMetaData().getAlbum());
     }
