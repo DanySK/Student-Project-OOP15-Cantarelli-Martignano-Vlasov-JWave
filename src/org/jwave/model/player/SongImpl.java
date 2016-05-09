@@ -2,6 +2,8 @@ package org.jwave.model.player;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class SongImpl extends File implements Song, Serializable {
 
@@ -22,7 +24,7 @@ public class SongImpl extends File implements Song, Serializable {
      *          the path in the fileSystem
      */
     public SongImpl(final String absoluteName) {
-        super(absoluteName);
+        super(Paths.get(absoluteName).toString());
 //        this.absolutePath = absoluteName;
 //        this.name = absoluteName.substring(absoluteName.lastIndexOf(System.getProperty("file.separator")));
         this.metaData = new MetaDataImpl(this.getAbsolutePath());

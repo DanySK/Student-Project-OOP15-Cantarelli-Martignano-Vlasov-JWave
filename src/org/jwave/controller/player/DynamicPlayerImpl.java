@@ -137,7 +137,8 @@ public class DynamicPlayerImpl implements DynamicPlayer {
             System.out.println("null catched in checkInReproduction");
         }
         if (this.isPlayerPresent() && !this.isPlaying() && this.hasStarted() && !this.isPaused()) {
-            this.setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(3));
+            this.setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue()
+                    .selectSong(AudioSystem.getAudioSystem().getPlaylistManager().getPlaylistNavigator().next()));
             this.play();
         }
     }
