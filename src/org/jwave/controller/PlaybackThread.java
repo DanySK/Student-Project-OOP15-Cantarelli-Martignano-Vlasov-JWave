@@ -36,12 +36,7 @@ public class PlaybackThread implements Runnable {
        System.out.println("Running " +  threadName );
        try {
            while (!this.isStopped()) {
-               try {
-                   this.previouslyPaused = this.dynPlayer.isPaused();
-                   this.checkInReproduction();
-               } catch (NullPointerException n) {
-                   System.out.println("Null avoided");
-               }
+              this.checkInReproduction(); //contiene notifica per il player
                Thread.sleep(10L);
            }
        } catch (InterruptedException e) {
@@ -62,19 +57,7 @@ public class PlaybackThread implements Runnable {
     }
     
     private void checkInReproduction() {
-        if (this.isPlayerPresent()) {
-            if (!this.dynPlayer.isPlaying() && !this.wasPreviouslyPaused()) {
-                //brano terminato
-                System.out.println("Setting player");
-                this.dynPlayer.setPlayer(this.playlistManager.getPlayingQueue().selectSong(1));
-                this.dynPlayer.play();
-                return;
-            }
-            //no reproducing
-            return;
-        }
-        //player absent
-        return;
+       //notify player
     }
     
     private boolean isStopped() {
@@ -90,11 +73,6 @@ public class PlaybackThread implements Runnable {
     }
     
     private boolean isPlayerPresent() {
-        try {
-            this.dynPlayer.isPlaying();
-        } catch(NullPointerException ne) {
-            return false;
-        } 
-        return true;
+        return AudioSystem.getAudioSystem().getDynamicPlayer()!= null;
     }
  }

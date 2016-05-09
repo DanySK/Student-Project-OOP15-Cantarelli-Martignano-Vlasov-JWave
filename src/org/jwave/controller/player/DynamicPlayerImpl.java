@@ -20,7 +20,9 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     private FilePlayer player;
     private AudioOutput out;
     private PlayMode currentPlayMode;
+    private boolean started;
     private boolean paused;
+    private ClockAgent agent;
     
     /**
      * Creates a new DynamicPlayerImpl.
@@ -28,16 +30,21 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     public DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
         this.currentPlayMode = PlayMode.NO_LOOP;
+        this.started = false;
         this.paused = false;
+        this.agent = new ClockAgent("Playback");
     }
     
     
     @Override
     public void play() {
+        this.player.play();
         if (this.isPaused()) {
             this.setPaused(false);
         }
-        this.player.play();
+        if (!this.hasStarted()) {
+            this.started = true;
+        }
     }
 
     @Override
@@ -57,17 +64,9 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         if (millis > this.getLength()) {
             throw new IllegalArgumentException();
         }
+        this.setPaused(true);
         this.player.cue(millis);
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return this.player.isPlaying();
-    }
-    
-    @Override
-    public boolean isPaused() {
-        return this.paused;
+        this.setPaused(false);
     }
 
     @Override
@@ -97,13 +96,16 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
 
     @Override
-    public void setPlayer(final Song song) {
-        final AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
+    public synchronized void setPlayer(final Song song) {
+        AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
         if (this.player != null) {
-            this.player.close();
+            this.stop();
+            this.out.close();
         }
+        this.started = false;
         this.player = new FilePlayer(this.minim.loadFileStream(song.getAbsolutePath(), BUFFER_SIZE, true));
-        this.pause();
+        this.stop();
+        
         this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_RATE);
         this.player.patch(this.out);
         sampleRateRetriever.close();
@@ -111,5 +113,75 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     
     private void setPaused(final boolean value) {
         this.paused = value;
+    }
+    
+    private boolean isPlaying() {
+        return this.player.isPlaying();
+    }
+    
+    private boolean isPaused() {
+        return this.paused;
+    }
+    
+    private boolean hasStarted() {
+        return this.started;
+    }
+    
+    private void checkInReproduction() {
+        try {
+//            System.out.println(this.isPlaying());
+            System.out.println("Player present: " + this.isPlayerPresent() + 
+                    "isPlaying: " + this.isPlaying() + "Started: " + this.hasStarted() + 
+                    "paused:" + this.isPaused());
+        } catch (NullPointerException ex) {
+            System.out.println("null catched in checkInReproduction");
+        }
+        if (this.isPlayerPresent() && !this.isPlaying() && this.hasStarted() && !this.isPaused()) {
+            this.setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(3));
+            this.play();
+        }
+    }
+    
+    private boolean isPlayerPresent() {
+        return this.player != null;
+    }
+    
+    private class ClockAgent implements Runnable {
+
+        private Thread t;
+        private String name;
+        private boolean stopped;
+        
+        public ClockAgent(final String threadName) {
+            this.stopped = false;
+            this.name = threadName;
+            this.t = new Thread(this, this.name);
+            this.t.start();
+        }
+        
+        @Override
+        public void run() {
+            System.out.println("Running thread" + this.name);
+            while(!this.isStopped()) {
+                try {
+                    DynamicPlayerImpl.this.checkInReproduction();
+                    Thread.sleep(10L);
+                } catch (InterruptedException e) {
+                    System.out.println("Thread interrupted");
+                }
+            }
+        }
+        
+        public void stop() {
+            this.setStopped(true);
+        }
+        
+        private boolean isStopped() {
+            return this.stopped;
+        }
+        
+        private void setStopped(final boolean value) {
+            this.stopped = value;
+        }
     }
 }

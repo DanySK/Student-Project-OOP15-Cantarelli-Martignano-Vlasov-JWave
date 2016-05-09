@@ -33,14 +33,6 @@ public interface DynamicPlayer {
      *                   
      */
     void cue(int millis) throws IllegalArgumentException;
-
-    /**
-     * @return
-     *          if the dynamic player is playing.
-     */
-    boolean isPlaying();
-    
-    boolean isPaused();
     
     /**
      * @return
