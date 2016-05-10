@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 
 import org.jwave.controller.player.FileSystemHandler;
@@ -14,7 +15,7 @@ import ddf.minim.Minim;
 import ddf.minim.analysis.FFT;
 
 public class EditorImpl implements Editor {
-	private final ArrayList<Cut> editCuts;
+	private final List<Cut> editCuts;
 	
 	private int selectionFrom;
 	private int selectionTo;
@@ -344,9 +345,72 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
+	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	public void exportSong(String exportPath) {
-		// TODO Auto-generated method stub
+		ArrayList<FloatBuffer> buffers;
+		float[][] spectra;
+		FloatBuffer left;
+		FloatBuffer right;
 		
+		String exportName = exportPath;
+		AudioFileFormat.Type type = AudioFileFormat.Type.WAVE;
+		AudioFormat format = song.getFormat();		
+		
+		buffers = new ArrayList<FloatBuffer>(20);
+		left = FloatBuffer.allocate(bufferSize * 10);
+		if (format.getChannels() == Minim.STEREO) {
+		  right = FloatBuffer.allocate(bufferSize * 10);
+		} else {
+		  right = null;
+		}		
+		
+		float[] rightChannel = song.getChannel(AudioSample.RIGHT);
+		float[] leftChannel = song.getChannel(AudioSample.LEFT);
+		
+		int fftSize = 1024;
+		float[] fftSamplesLeft = new float[fftSize];
+		float[] fftSamplesRight = new float[fftSize];
+		  
+		FFT fft = new FFT(fftSize, song.sampleRate());
+		  
+		int totalChunks = (leftChannel.length / fftSize) + 1;
+		
+		spectra = new float[totalChunks][fftSize / 2];
+		
+		for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
+			int chunkStartIndex = chunkIdx * fftSize;
+			int chunkSize = Math.min(leftChannel.length - chunkStartIndex, fftSize);
+			
+			System.arraycopy(leftChannel, chunkStartIndex, fftSamplesLeft, 0, chunkSize);
+			System.arraycopy(rightChannel, chunkStartIndex, fftSamplesRight, 0, chunkSize);
+			
+			if (chunkSize < fftSize) {
+				for (int i = chunkSize; i < fftSamplesLeft.length - 1; i++) {
+					fftSamplesLeft[i] = (float) 0.0;
+				}
+				
+				for (int i = chunkSize; i < fftSamplesRight.length - 1; i++) {
+					fftSamplesRight[i] = (float) 0.0;
+				}
+			}
+			
+			fft.forward(fftSamplesLeft);
+			fft.forward(fftSamplesRight);
+			
+			for (int i = 0; i < 512; ++i) {				
+				spectra[chunkIdx][i] = fft.getBand(i);
+			}
+			
+			left.put(fftSamplesLeft);
+			right.put(fftSamplesRight);
+			
+			if (!left.hasRemaining()) {
+				buffers.add(left);
+				buffers.add(right);
+				left = FloatBuffer.allocate(left.capacity());
+				right = FloatBuffer.allocate(right.capacity());				
+			}
+		}
 	}
 
 	@Override
