@@ -2,9 +2,11 @@ package org.jwave.model.player;
 
 import java.io.File;
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-
+/**
+ * An implementation of Song that can be serialized.
+ *
+ */
 public class SongImpl extends File implements Song, Serializable {
 
     /**
