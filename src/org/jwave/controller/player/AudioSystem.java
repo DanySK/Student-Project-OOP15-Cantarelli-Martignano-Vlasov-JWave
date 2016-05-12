@@ -9,7 +9,7 @@ public final class AudioSystem {
 	private AudioSystem() {
 	    this.player = new DynamicPlayerImpl();
 	    this.playlistManager = new PlaylistManagerImpl();
-	    this.getDynamicPlayer().addEObserver(this.getPlaylistManager());
+	    this.getDynamicPlayer().addEObserver(getPlaylistManager());
 	};
 	
 	//inspired by prof.Viroli slides

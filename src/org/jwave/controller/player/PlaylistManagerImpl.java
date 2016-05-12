@@ -37,7 +37,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
      */
     public PlaylistManagerImpl() {
         this.loadedPlaylist = new PlaylistImpl();
-        this.setNavigator(PlayMode.NO_LOOP);
+        this.navigator = new NoLoopNavigator(this.getPlayingQueue().getDimension(), 0);
+        this.currentLoaded = Optional.empty();
+        this.currentIndexLoaded = Optional.empty();
     }
     
     @Override
@@ -89,7 +91,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     @Override
     public Optional<Song> getCurrentLoaded() {
-        return this.getPlayingQueue().getCurrentSelected();
+        return this.currentLoaded;
     }
     
     @Override

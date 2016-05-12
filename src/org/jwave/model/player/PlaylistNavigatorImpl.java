@@ -11,6 +11,7 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
     
     public PlaylistNavigatorImpl(final int initDimension, final int currentIndex) {
         this.playlistDimension = initDimension;
+        this.currentIndex = currentIndex;
     }
     
     public abstract int next();
