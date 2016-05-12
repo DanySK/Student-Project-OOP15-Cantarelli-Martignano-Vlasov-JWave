@@ -195,13 +195,13 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
 
     @Override
-    public void addEObserver(EObserver<? super Optional<PlayMode>, ? super Optional<Song>> obs) {
+    public void addEObserver(final EObserver<? super Optional<PlayMode>, ? super Optional<Song>> obs) {
         this.set.add(obs);
     }
 
 
     @Override
-    public void notifyEObservers(Optional<PlayMode> arg1, Optional<Song> arg2) {
+    public void notifyEObservers(final Optional<PlayMode> arg1, final Optional<Song> arg2) {
         this.set.forEach(obs -> obs.update(this, arg1, arg2));
     }
 }

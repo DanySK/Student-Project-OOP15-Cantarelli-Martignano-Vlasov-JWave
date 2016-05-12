@@ -11,6 +11,7 @@ public class NoLoopNavigator extends PlaylistNavigatorImpl {
         if (this.getCurrentIndex() < (this.getPlaylistDimension() - 1)) {
             this.incIndex();
         }
+//        System.out.println("Current index: " + this.getCurrentIndex());
         return this.getCurrentIndex();
     }
 
@@ -19,6 +20,7 @@ public class NoLoopNavigator extends PlaylistNavigatorImpl {
         if (this.getCurrentIndex() > 0) {
             this.decIndex();
         }
+//        System.out.println("Current index: " + this.getCurrentIndex());
         return this.getCurrentIndex();
     }
 }
