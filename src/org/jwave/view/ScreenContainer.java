@@ -3,11 +3,21 @@ package org.jwave.view;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
+/**
+ * A container for JavaFX nodes
+ * which is simple to set the content
+ * 
+ * @author Alessandro Martignano
+ *
+ */
 public class ScreenContainer {
     
     private Pane mainPane;
     
-    public ScreenContainer(Pane mainPane){
+    /**
+     * @param mainPane
+     */
+    public ScreenContainer(final Pane mainPane){
         this.mainPane = mainPane;
     }
 
@@ -16,7 +26,7 @@ public class ScreenContainer {
      *
      * @param node the screen node to be swapped in.
      */
-    public void setScreen(Node node) {
+    public void setScreen(final Node node) {
         this.mainPane.getChildren().setAll(node);
     }
 
