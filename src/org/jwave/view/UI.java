@@ -1,7 +1,7 @@
 package org.jwave.view;
 
 /**
- * Interface for a generic User Interface
+ * Interface for a generic User Interface.
  * 
  * @author Alessandro Martignano
  *
@@ -9,8 +9,8 @@ package org.jwave.view;
 public interface UI {
     
     /**
-     * @param args
+     * @param args args
      */
-    public void launcher(final String[] args);
+    void launcher(final String[] args);
 
 }

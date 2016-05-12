@@ -5,7 +5,7 @@ import javafx.scene.layout.Pane;
 
 /**
  * A container for JavaFX nodes
- * which is simple to set the content
+ * which is simple to set the content.
  * 
  * @author Alessandro Martignano
  *
@@ -15,10 +15,10 @@ public class ScreenContainer {
     private Pane mainPane;
     
     /**
-     * @param mainPane
+     * @param pane main Pane
      */
-    public ScreenContainer(final Pane mainPane){
-        this.mainPane = mainPane;
+    public ScreenContainer(final Pane pane) {
+        this.mainPane = pane;
     }
 
     /**

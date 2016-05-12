@@ -3,6 +3,8 @@ package org.jwave.view;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.jwave.view.screens.FXMLScreens;
+
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,18 +15,18 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
- * A GUI based on JavaFX
+ * A GUI based on JavaFX.
  * 
  * @author Alessandro Martignano
  *
  */
-public class FXGUI extends Application implements UI, Initializable{   
+public class FXGUI extends Application implements UI, Initializable {   
  
     /**
      * 
      */
     @FXML
-    Button btnPlay;
+    private Button btnPlay;
 
     /* (non-Javadoc)
      * @see javafx.application.Application#start(javafx.stage.Stage)
@@ -55,7 +57,7 @@ public class FXGUI extends Application implements UI, Initializable{
      * @see javafx.fxml.Initializable#initialize(java.net.URL, java.util.ResourceBundle)
      */
     @Override // This method is called by the FXMLLoader when initialization is complete
-    public void initialize(final URL location,final  ResourceBundle resources) {
+    public void initialize(final URL location, final  ResourceBundle resources) {
         assert btnPlay != null : "fx:id=\"btnPlay\" was not injected: check your FXML file 'Player.fxml'.";
     }
 
@@ -79,7 +81,7 @@ public class FXGUI extends Application implements UI, Initializable{
      * 
      */
     @FXML
-    private void next(){
+    private void next() {
         System.out.println("next");
     }
     

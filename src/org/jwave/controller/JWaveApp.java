@@ -17,9 +17,9 @@ public class JWaveApp {
     private final UI ui;
     
     /**
-     * Initialize the UI and launches it
+     * Initialize the UI and launches it.
      */
-    public JWaveApp(){
+    public JWaveApp() {
         this.ui = new FXGUI();
         this.ui.launcher(new String[] {});
     }
