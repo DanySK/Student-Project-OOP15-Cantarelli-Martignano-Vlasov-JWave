@@ -37,7 +37,7 @@ public final class UsePlayer {
         player.play();
 //        player.pause();
 //        t.start();
-        player.cue(230000);
+        player.cue(235000);
 //        System.out.println("current loaded: " + manager.getCurrentLoaded().get().getName());
 //        System.out.println(player.isPlaying());
         //retrieving a value from metadata

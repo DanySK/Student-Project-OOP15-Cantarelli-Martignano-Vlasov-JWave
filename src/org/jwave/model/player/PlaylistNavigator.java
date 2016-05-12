@@ -29,5 +29,5 @@ public interface PlaylistNavigator extends EObserver<Optional<Integer>, Optional
      * 
      * @param newDimension
      */
-    void setPlaylistDimension(int newDimension);
+    void setPlaylistDimension(int newDimension);        //to be removed if the navigator update himself privately.
 }

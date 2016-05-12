@@ -8,9 +8,10 @@ public class NoLoopNavigator extends PlaylistNavigatorImpl {
 
     @Override
     public int next() {
-        if (this.getCurrentIndex() < this.getPlaylistDimension() - 1) {
+        if (this.getCurrentIndex() < (this.getPlaylistDimension() - 1)) {
             this.incIndex();
         }
+        this.incIndex();
         return this.getCurrentIndex();
     }
 

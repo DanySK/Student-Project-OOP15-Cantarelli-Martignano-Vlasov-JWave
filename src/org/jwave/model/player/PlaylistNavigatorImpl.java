@@ -24,18 +24,22 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
     }
     
     public void incIndex() {
+        System.out.println("Incrementa indice");
         this.currentIndex++;
     }
     
     public void decIndex() {
+        System.out.println("Decrementa indice");
         this.currentIndex--;
     }
     
     public Integer getCurrentIndex() {
+        System.out.println("Ritorna indice corrente");
         return this.currentIndex;
     }
     
     public int getPlaylistDimension() {
+        System.out.println("RItorna dimPlaylist del navigator");
         return this.playlistDimension;
     }
     
