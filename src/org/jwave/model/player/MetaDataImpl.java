@@ -33,15 +33,6 @@ public class MetaDataImpl implements MetaData, Serializable {
     private transient AudioPlayer metaDataLoader;
     
     private Map<MData, String> data;
-   
-//    private Optional<String> album;
-//    private Optional<String> author;
-//    private Optional<String> comment;
-//    private Optional<String> composer;
-//    private Optional<String> copyright;
-//    private Optional<String> date;
-//    private Optional<String> disc;
-//    private Optional<String> encoded;
     
     //to be checked if deleting AudioPlayer after loading metadata is possible then enumType ecc.. is useless.
     public MetaDataImpl(final String absoluteFilePath) {

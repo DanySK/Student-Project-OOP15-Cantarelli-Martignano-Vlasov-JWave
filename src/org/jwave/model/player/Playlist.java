@@ -15,6 +15,8 @@ public interface Playlist extends ESource<Optional<Integer>, Optional<Integer>> 
     
     Optional<Song> getCurrentSelected();
     
+    int indexOf(Song song);
+    
     int getDimension();
     
     Song selectSong(String name) throws IllegalArgumentException;

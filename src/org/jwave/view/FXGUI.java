@@ -3,17 +3,24 @@ package org.jwave.view;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.jwave.controller.player.AudioSystem;
+import org.jwave.controller.player.DynamicPlayer;
+import org.jwave.controller.player.PlaylistManager;
+
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import javafx.fxml.FXML;
 
 public class FXGUI extends Application implements UI, Initializable{   
 
+//    private final DynamicPlayer player = AudioSystem.getAudioSystem().getDynamicPlayer();
+//    private final PlaylistManager manager = AudioSystem.getAudioSystem().getPlaylistManager();
+//    
     @FXML
     Button btnPlay;
 
@@ -37,24 +44,32 @@ public class FXGUI extends Application implements UI, Initializable{
     }
 
     @FXML
-    private void play(){
+    private void play() {
+//        manager.openDir("/home/canta/Music", false);
+//        player.setPlayer(manager.getPlayingQueue().selectSong(0));
+//        player.play();
         System.out.println("play");
     }
     
     @FXML
-    private void stopPlay(){
+    private void stopPlay() {
+//        player.stop();
         System.out.println("stop");
     }
     
     @FXML
     private void next(){
+//        player.setPlayer(manager.getPlayingQueue().selectSong(manager.getPlaylistNavigator().next()));
+//        player.play();
         System.out.println("next");
+//        System.out.println(manager.getPlayingQueue().getDimension());
+//        manager.getPlayingQueue().printPlaylist();
     }
     
     @FXML
-    private void prev(){
+    private void prev() {
+//        player.setPlayer(manager.getPlayingQueue().selectSong(manager.getPlaylistNavigator().prev()));
+//        player.play();
         System.out.println("prev");
     }
-
-    
 }

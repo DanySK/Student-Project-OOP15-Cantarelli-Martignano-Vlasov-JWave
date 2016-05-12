@@ -96,7 +96,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     
     @Override
     public Optional<Integer> getCurrentLoadedIndex() {
-        return this.currentIndexLoaded;
+        return Optional.of(this.loadedPlaylist.indexOf(this.currentLoaded.get()));
     }
 
     @Override
@@ -117,12 +117,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
     
     private void setNavigator(final PlayMode mode) {
         final int dimension = this.getPlayingQueue().getDimension();
-        int index; 
+        int index = 0; 
         if (this.currentIndexLoaded.isPresent()) {
             index = this.getCurrentLoadedIndex().get();
         }
-        index = 0;
-        
        switch (mode) {
            case NO_LOOP:        this.navigator = new NoLoopNavigator(dimension, index);
                                break;
@@ -145,6 +143,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         }
         if (arg2.isPresent()) {
             this.currentLoaded = arg2;
+            this.getPlaylistNavigator().setCurrentIndex(this.getCurrentLoadedIndex().get());
         }
     }
 }
