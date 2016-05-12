@@ -26,7 +26,7 @@ public class FXGUI extends Application implements UI, Initializable{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Player.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource(FXMLScreens.PLAYER.getPath()));
         primaryStage.setTitle("J-Wave");
         primaryStage.setScene(new Scene(root));
         //primaryStage.setResizable(false);
