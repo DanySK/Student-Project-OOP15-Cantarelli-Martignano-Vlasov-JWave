@@ -5,11 +5,8 @@ public class LoopOneNavigator extends PlaylistNavigatorImpl {
 
     private int repeatedSongIndex;
     
-    public LoopOneNavigator(final int initDimension, final int repeatedSongIndex) {
-        super(initDimension);
-        if (initDimension > 1) {
-            throw new IllegalArgumentException();
-        }
+    public LoopOneNavigator(final int repeatedSongIndex) {
+        super(0 , repeatedSongIndex);
         this.repeatedSongIndex = repeatedSongIndex;
     }
 

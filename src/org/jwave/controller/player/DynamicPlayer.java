@@ -1,12 +1,14 @@
 package org.jwave.controller.player;
 
+import java.util.Optional;
+
 import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Song;
 
 /**
  * This interface represents a dynamic player.
  */
-public interface DynamicPlayer {
+public interface DynamicPlayer extends ESource<Optional<PlayMode>, Optional<Song>> {
 
     /**
      * Starts reproducing audio.

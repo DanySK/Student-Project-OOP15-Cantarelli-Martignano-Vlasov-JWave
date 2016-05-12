@@ -2,7 +2,10 @@ package org.jwave.model.player;
 
 import java.util.Optional;
 
-public interface Playlist {
+import org.jwave.controller.player.EObserver;
+import org.jwave.controller.player.ESource;
+
+public interface Playlist extends ESource<Optional<Integer>, Optional<Integer>> {
     
     void addSong(Song newSong);
     

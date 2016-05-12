@@ -1,10 +1,14 @@
 package org.jwave.model.player;
 
+import java.util.Optional;
+
+import org.jwave.controller.player.EObserver;
+
 /**
  * A PlaylistSurfer contains a strategy for scrolling songs in a playlist, depending on a {@link}PlayMode.
  *
  */
-public interface PlaylistNavigator {
+public interface PlaylistNavigator extends EObserver<Optional<Integer>, Optional<Integer>> {
     
     /**
      * 

@@ -1,5 +1,9 @@
 package org.jwave.controller.player;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Song;
 
@@ -15,6 +19,8 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_RATE = 16;
+
+    private Set<EObserver<? super Optional<PlayMode>, ? super Optional<Song>>> set;
     
     private Minim minim; 
     private FilePlayer player;
@@ -33,6 +39,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.started = false;
         this.paused = false;
         this.agent = new ClockAgent("Playback");
+        this.set = new HashSet<>();
     }
     
     
@@ -93,6 +100,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public void setPlayMode(final PlayMode playMode) {
         this.currentPlayMode = playMode;
+        this.notifyEObservers(Optional.of(playMode), Optional.empty());
     }
 
     @Override
@@ -109,6 +117,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_RATE);
         this.player.patch(this.out);
         sampleRateRetriever.close();
+        this.notifyEObservers(Optional.empty(), Optional.of(song));
     }
     
     private void setPaused(final boolean value) {
@@ -147,7 +156,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         return this.player != null;
     }
     
-    private class ClockAgent implements Runnable {
+    private final class ClockAgent implements Runnable {
 
         private Thread t;
         private String name;
@@ -184,5 +193,16 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         private void setStopped(final boolean value) {
             this.stopped = value;
         }
+    }
+
+    @Override
+    public void addEObserver(EObserver<? super Optional<PlayMode>, ? super Optional<Song>> obs) {
+        this.set.add(obs);
+    }
+
+
+    @Override
+    public void notifyEObservers(Optional<PlayMode> arg1, Optional<Song> arg2) {
+        this.set.forEach(obs -> obs.update(this, arg1, arg2));
     }
 }

@@ -3,10 +3,14 @@ package org.jwave.controller.player;
 public final class AudioSystem {
 
 	private static final AudioSystem SINGLETON = new AudioSystem();
-	private DynamicPlayer player = new DynamicPlayerImpl();
-	private PlaylistManager playlistManager = new PlaylistManagerImpl();
+	private DynamicPlayer player; 
+	private PlaylistManager playlistManager; 
 	
-	private AudioSystem() { };
+	private AudioSystem() {
+	    this.player = new DynamicPlayerImpl();
+	    this.playlistManager = new PlaylistManagerImpl();
+	    this.getDynamicPlayer().addEObserver(this.getPlaylistManager());
+	};
 	
 	//inspired by prof.Viroli slides
 	public static synchronized AudioSystem getAudioSystem() {

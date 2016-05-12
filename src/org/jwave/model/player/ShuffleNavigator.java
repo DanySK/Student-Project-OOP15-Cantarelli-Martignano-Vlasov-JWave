@@ -2,7 +2,10 @@ package org.jwave.model.player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+
+import org.jwave.controller.player.ESource;
 
 /**
  * This is an implementation of PlaylistSurfer.
@@ -18,8 +21,8 @@ public final class ShuffleNavigator extends PlaylistNavigatorImpl {
      * 
      * @param playlistDimension
      */
-    public ShuffleNavigator(final int playlistDimension) {
-        super(playlistDimension);
+    public ShuffleNavigator(final int playlistDimension, final int currentIndex) {
+        super(playlistDimension, currentIndex);
         this.seed = new Random();
         this.shuffledList = new ArrayList<>();
     }

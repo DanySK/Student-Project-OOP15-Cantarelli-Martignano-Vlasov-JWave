@@ -1,9 +1,14 @@
 package org.jwave.model.player;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import org.jwave.controller.player.EObserver;
+import org.jwave.controller.player.ESource;
 
 public class PlaylistImpl implements Playlist, Serializable {
     
@@ -13,17 +18,21 @@ public class PlaylistImpl implements Playlist, Serializable {
     private static final long serialVersionUID = 4440054649095302226L;
     //to be checked if it is possible to avoid song duplication with a different implementation
 //    private Set<Song> s = new HashSet<>();
+    private Set<EObserver<? super Optional<Integer>, ? super Optional<Integer>>> set;
+    
     private List<Song> list;
     private transient Optional<Song> currentSelected;
     
     public PlaylistImpl() {
         this.list = new LinkedList<>();
         this.currentSelected = Optional.empty();
+        this.set = new HashSet<>();
     }
     
     @Override
     public void addSong(final Song newSong) {
         this.list.add(newSong);
+        this.notifyEObservers(Optional.of(this.getDimension()), Optional.empty());
     }
 
     @Override
@@ -44,6 +53,7 @@ public class PlaylistImpl implements Playlist, Serializable {
         for (Song s : songNames) {
             this.list.remove(s);
         }
+        this.notifyEObservers(Optional.of(this.getDimension()), Optional.empty());
     }
 
     @Override
@@ -52,7 +62,7 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
 
     @Override
-    public Song selectSong(final String name) throws IllegalArgumentException  {
+    public synchronized Song selectSong(final String name) throws IllegalArgumentException  {
         final Song out = this.list.stream()
                                 .filter(s -> s.getName().equals(name))
                                 .findFirst().get();
@@ -86,5 +96,15 @@ public class PlaylistImpl implements Playlist, Serializable {
     
     private void setCurrentSong(final Song newCurrentSong) {
         this.currentSelected = Optional.of(newCurrentSong);
+    }
+
+    @Override
+    public void addEObserver(final EObserver<? super Optional<Integer>, ? super Optional<Integer>> obs) {
+        this.set.add(obs);
+    }
+
+    @Override
+    public void notifyEObservers(final Optional<Integer> arg1, final Optional<Integer> arg2) {
+        this.set.forEach(obs -> obs.update(this, arg1, arg2));
     }
 }

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
+import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistNavigator;
 import org.jwave.model.player.Song;
@@ -11,7 +12,7 @@ import org.jwave.model.player.Song;
 /**
  * Interface PlaylistManager.
  */
-public interface PlaylistManager {
+public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<Song>> {
 
     void savePlaylistToFile(String name, String path) throws FileNotFoundException, IOException;
 
@@ -25,9 +26,9 @@ public interface PlaylistManager {
 
     Optional<Song> getCurrentLoaded();
     
+    Optional<Integer> getCurrentLoadedIndex();
+    
     Playlist getPlayingQueue();
     
     PlaylistNavigator getPlaylistNavigator();
-
-    void setNavigator(PlaylistNavigator newNavigator);
 }

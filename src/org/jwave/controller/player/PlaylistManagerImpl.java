@@ -14,10 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.jwave.model.player.LoopAllNavigator;
+import org.jwave.model.player.LoopOneNavigator;
 import org.jwave.model.player.NoLoopNavigator;
+import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistNavigator;
+import org.jwave.model.player.ShuffleNavigator;
 import org.jwave.model.player.Song;
 import org.jwave.model.player.SongImpl;
 
@@ -25,13 +29,15 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     private Playlist loadedPlaylist;
     private PlaylistNavigator navigator;
+    private Optional<Song> currentLoaded;
+    private Optional<Integer> currentIndexLoaded;
     
     /**
      * Creates a new PlaylistManagerImpl.
      */
     public PlaylistManagerImpl() {
         this.loadedPlaylist = new PlaylistImpl();
-        this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension());
+        this.setNavigator(PlayMode.NO_LOOP);
     }
     
     @Override
@@ -78,11 +84,17 @@ public class PlaylistManagerImpl implements PlaylistManager {
     public void reset() {
         //add isEmpty() method in Playlist so this method can check it and optimize operations.
         this.loadedPlaylist = new PlaylistImpl();
+        this.loadedPlaylist.addEObserver(this.getPlaylistNavigator());
     }
 
     @Override
     public Optional<Song> getCurrentLoaded() {
         return this.getPlayingQueue().getCurrentSelected();
+    }
+    
+    @Override
+    public Optional<Integer> getCurrentLoadedIndex() {
+        return this.currentIndexLoaded;
     }
 
     @Override
@@ -101,8 +113,36 @@ public class PlaylistManagerImpl implements PlaylistManager {
        return this.navigator;
     }
     
+    private void setNavigator(final PlayMode mode) {
+        final int dimension = this.getPlayingQueue().getDimension();
+        int index; 
+        if (this.currentIndexLoaded.isPresent()) {
+            index = this.getCurrentLoadedIndex().get();
+        }
+        index = 0;
+        
+       switch (mode) {
+           case NO_LOOP:        this.navigator = new NoLoopNavigator(dimension, index);
+                               break;
+           case LOOP_ONE:       this.navigator = new LoopOneNavigator(index);
+                               break;
+           case LOOP_ALL:       this.navigator = new LoopAllNavigator(dimension, index);
+                               break;
+           case SHUFFLE:        this.navigator = new ShuffleNavigator(dimension, index);
+                               break;
+           default:             this.navigator = new NoLoopNavigator(dimension, index);
+                               break;
+       }
+    }
+
     @Override
-    public void setNavigator(final PlaylistNavigator newNavigator) {
-        this.navigator = newNavigator;
+    public void update(final ESource<? extends Optional<PlayMode>, ? extends Optional<Song>> s, 
+            final Optional<PlayMode> arg1, final Optional<Song> arg2) {
+        if (arg1.isPresent()) {
+            this.setNavigator(arg1.get());
+        }
+        if (arg2.isPresent()) {
+            this.currentLoaded = arg2;
+        }
     }
 }

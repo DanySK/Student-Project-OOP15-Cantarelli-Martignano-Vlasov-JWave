@@ -2,8 +2,8 @@ package org.jwave.model.player;
 
 public class NoLoopNavigator extends PlaylistNavigatorImpl {
 
-    public NoLoopNavigator(int initDimension) {
-        super(initDimension);
+    public NoLoopNavigator(final int initDimension, final int currentIndex) {
+        super(initDimension, currentIndex);
     }
 
     @Override

@@ -2,8 +2,8 @@ package org.jwave.model.player;
 
 public class LoopAllNavigator extends PlaylistNavigatorImpl {
 
-    public LoopAllNavigator(int initDimension) {
-        super(initDimension);
+    public LoopAllNavigator(final int initDimension, final int currentIndex) {
+        super(initDimension, currentIndex);
     }
 
     @Override
