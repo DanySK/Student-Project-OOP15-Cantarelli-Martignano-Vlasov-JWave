@@ -63,6 +63,9 @@ public class PlaylistImpl implements Playlist, Serializable {
 
     @Override
     public synchronized Song selectSong(final String name) throws IllegalArgumentException  {
+        if (!this.list.contains(name)) {
+            throw new IllegalArgumentException("Song not found");
+        }
         final Song out = this.list.stream()
                                 .filter(s -> s.getName().equals(name))
                                 .findFirst().get();
@@ -72,6 +75,9 @@ public class PlaylistImpl implements Playlist, Serializable {
 
     @Override
     public synchronized Song selectSong(final int index) throws IllegalArgumentException {
+        if (index > (this.getDimension() - 1)) {
+            throw new IllegalArgumentException("Out of playlist borders.");
+        }
         final Song out = this.list.get(index);
         this.setCurrentSong(out);
         return out;        
