@@ -66,7 +66,7 @@ public final class ScreenSwitcher {
             return CACHE.get(screen);
         } else {
             System.out.println(screen + " screen caching");
-            Node loadedNode = FXMLLoader.load(ScreenSwitcher.class.getResource(screen.getPath()));
+            Node loadedNode = getReloadedScreen(screen);
             CACHE.put(screen, loadedNode);
             return loadedNode;
         }

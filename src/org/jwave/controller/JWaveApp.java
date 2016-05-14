@@ -7,6 +7,9 @@ import org.jwave.view.UI;
  * Core of the controller
  * handles the behavior of the application.
  * 
+ * TODO
+ * can this class have more instances? (singleton?)
+ * 
  * @author Alessandro Martignano
  */
 public class JWaveApp {
