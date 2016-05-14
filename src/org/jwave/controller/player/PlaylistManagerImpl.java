@@ -25,6 +25,9 @@ import org.jwave.model.player.ShuffleNavigator;
 import org.jwave.model.player.Song;
 import org.jwave.model.player.SongImpl;
 
+/**
+ * This is an implmementation of {@link}Playlist.
+ */
 public class PlaylistManagerImpl implements PlaylistManager {
 
     private Playlist loadedPlaylist;
@@ -63,6 +66,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     @Override
     public void openFile(final String path, final boolean enqueue) {
+        if (!path.contains(".mp3") || !path.contains(".wav")) {
+            throw new IllegalArgumentException("Trying to open a wrong type of file");
+        }
         this.checkEnqueue(enqueue);
         this.loadedPlaylist.addSong(new SongImpl(path));
     }
