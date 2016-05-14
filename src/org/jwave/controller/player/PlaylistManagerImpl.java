@@ -28,17 +28,16 @@ import org.jwave.model.player.SongImpl;
 /**
  * This is an implmementation of {@link}Playlist.
  */
-public class PlaylistManagerImpl implements PlaylistManager {
+public final class PlaylistManagerImpl implements PlaylistManager {
 
+    private static final PlaylistManager SINGLETON = new PlaylistManagerImpl();
+    
     private Playlist loadedPlaylist;
     private PlaylistNavigator navigator;
     private Optional<Song> currentLoaded;
     private Optional<Integer> currentIndexLoaded;
     
-    /**
-     * Creates a new PlaylistManagerImpl.
-     */
-    public PlaylistManagerImpl() {
+    private PlaylistManagerImpl() {
         this.loadedPlaylist = new PlaylistImpl();
         this.navigator = new NoLoopNavigator(this.getPlayingQueue().getDimension(), 0);
         this.currentLoaded = Optional.empty();
@@ -109,16 +108,25 @@ public class PlaylistManagerImpl implements PlaylistManager {
     public Playlist getPlayingQueue() {
         return this.loadedPlaylist;
     }
+
+    @Override
+    public PlaylistNavigator getPlaylistNavigator() {
+       return this.navigator;
+    }
+    
+    /**
+     * 
+     * @return
+     *          the singleton instance of PlaylistManagerImpl.
+     */
+    public static PlaylistManager getPlaylistManager() {
+        return SINGLETON;
+    }
     
     private void checkEnqueue(final boolean enqueueValue) {
         if (!enqueueValue) {
             this.reset();
         }
-    }
-
-    @Override
-    public PlaylistNavigator getPlaylistNavigator() {
-       return this.navigator;
     }
     
     private void setNavigator(final PlayMode mode) {

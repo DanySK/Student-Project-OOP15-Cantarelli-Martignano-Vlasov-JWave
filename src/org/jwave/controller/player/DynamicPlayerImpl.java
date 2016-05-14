@@ -15,11 +15,13 @@ import ddf.minim.ugens.FilePlayer;
 /**
  * This class is an implementation of {@link}DynamicPlayer.
  */
-public class DynamicPlayerImpl implements DynamicPlayer {
+public final class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_RATE = 16;
 
+    private static final DynamicPlayer SINGLETON = new DynamicPlayerImpl();
+    
     private Set<EObserver<? super Optional<PlayMode>, ? super Optional<Song>>> set;
     
     private Minim minim; 
@@ -33,7 +35,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     /**
      * Creates a new DynamicPlayerImpl.
      */
-    public DynamicPlayerImpl() { 
+    private DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
         this.currentPlayMode = PlayMode.NO_LOOP;
         this.started = false;
@@ -89,6 +91,15 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public PlayMode getPlayMode() {
         return this.currentPlayMode;
+    }
+    
+    /**
+     * 
+     * @return
+     *          the SINGLETON instance of DynamicPlayerImpl.
+     */
+    public static DynamicPlayer getDynamicPlayer() {
+        return SINGLETON;
     }
 
     @Override
