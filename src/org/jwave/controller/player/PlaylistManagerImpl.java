@@ -28,7 +28,7 @@ import org.jwave.model.player.SongImpl;
 /**
  * This is an implmementation of {@link}Playlist.
  */
-public final class PlaylistManagerImpl implements PlaylistManager {
+final class PlaylistManagerImpl implements PlaylistManager {
 
     private static final PlaylistManager SINGLETON = new PlaylistManagerImpl();
     

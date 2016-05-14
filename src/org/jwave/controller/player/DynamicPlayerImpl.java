@@ -15,7 +15,7 @@ import ddf.minim.ugens.FilePlayer;
 /**
  * This class is an implementation of {@link}DynamicPlayer.
  */
-public final class DynamicPlayerImpl implements DynamicPlayer {
+final class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_RATE = 16;
