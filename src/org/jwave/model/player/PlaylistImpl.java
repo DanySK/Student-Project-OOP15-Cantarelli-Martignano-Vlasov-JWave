@@ -38,7 +38,7 @@ public class PlaylistImpl implements Playlist, Serializable {
     @Override
     public void addSong(final Song newSong) {
         this.list.add(newSong);
-        this.notifyEObservers(Optional.of(this.getDimension()), Optional.empty());
+        this.notifyEObservers(Optional.of(this.getDimension()));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class PlaylistImpl implements Playlist, Serializable {
         for (Song s : songNames) {
             this.list.remove(s);
         }
-        this.notifyEObservers(Optional.of(this.getDimension()), Optional.empty());
+        this.notifyEObservers(Optional.of(this.getDimension()));
     }
 
     @Override
