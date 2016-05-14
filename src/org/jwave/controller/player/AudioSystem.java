@@ -17,14 +17,30 @@ public final class AudioSystem {
 	};
 	
 	//inspired by prof.Viroli slides
+	/**
+	 * 
+	 * @return
+	 *     the singleton instance of AudioSystem.
+	 */
 	public static synchronized AudioSystem getAudioSystem() {
 	    return SINGLETON;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 *     the {@link}DynamicPlayer connected to this AudioSystem.
+	 *             
+	 */
 	public synchronized DynamicPlayer getDynamicPlayer() {
 	    return this.player;
 	}
-	
+
+	/**
+	 * 
+	 * @return
+	 *             the {@link}PlaylistManager connected to this AudioSystem.
+	 */
 	public synchronized PlaylistManager getPlaylistManager() {
 	    return this.playlistManager;
 	}
