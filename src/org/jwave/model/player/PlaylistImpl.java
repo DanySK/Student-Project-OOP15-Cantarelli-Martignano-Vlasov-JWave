@@ -124,4 +124,9 @@ public class PlaylistImpl implements Playlist, Serializable {
     public int indexOf(final Song song) {
        return this.list.indexOf(song);
     }
+
+    @Override
+    public void notifyEObservers(final Optional<Integer> arg) {
+        this.set.forEach(obs -> obs.update(this, arg));
+    }
 }

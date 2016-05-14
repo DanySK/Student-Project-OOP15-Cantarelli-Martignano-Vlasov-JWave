@@ -89,6 +89,14 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
     }
     
     @Override
+    public void update(final ESource<? extends Optional<Integer>, ? extends Optional<Integer>> s, 
+            final Optional<Integer> arg) {
+        if (arg.isPresent()) {
+            this.setPlaylistDimension(arg.get());
+        }
+    }
+    
+    @Override
     public void setCurrentIndex(final int index) {
         this.currentIndex = index;
     }

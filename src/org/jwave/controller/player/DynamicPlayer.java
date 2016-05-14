@@ -32,6 +32,7 @@ public interface DynamicPlayer extends ESource<Optional<PlayMode>, Optional<Song
      *          the point of the file where the cursor has to be moved.
      *          
      * @throws IllegalArgumentException
+     *          when passing an index outside length borders.
      *                   
      */
     void cue(int millis) throws IllegalArgumentException;

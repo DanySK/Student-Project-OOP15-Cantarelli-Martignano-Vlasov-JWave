@@ -94,7 +94,6 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public void setVolume(final int amount) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -137,13 +136,6 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
     
     private void checkInReproduction() {
-//        try {
-//            System.out.println("Player present: " + this.isPlayerPresent() + 
-//                    "isPlaying: " + this.isPlaying() + "Started: " + this.hasStarted() + 
-//                    "paused:" + this.isPaused());
-//        } catch (NullPointerException ex) {
-//            System.out.println("null catched in checkInReproduction");
-//        }
         if (this.isPlayerPresent() && !this.isPlaying() && this.hasStarted() && !this.isPaused()) {
             this.setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue()
                     .selectSong(AudioSystem.getAudioSystem().getPlaylistManager().getPlaylistNavigator().next()));
@@ -159,7 +151,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
         private Thread t;
         private String name;
-        private boolean stopped;
+        private volatile boolean stopped;
         
         public ClockAgent(final String threadName) {
             this.stopped = false;
@@ -171,7 +163,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         @Override
         public void run() {
             System.out.println("Running thread" + this.name);
-            while(!this.isStopped()) {
+            while (!this.isStopped()) {
                 try {
                     DynamicPlayerImpl.this.checkInReproduction();
                     Thread.sleep(10L);
@@ -203,5 +195,11 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public void notifyEObservers(final Optional<PlayMode> arg1, final Optional<Song> arg2) {
         this.set.forEach(obs -> obs.update(this, arg1, arg2));
+    }
+
+
+    @Override
+    public void notifyEObservers(final Optional<PlayMode> arg) {
+        this.set.forEach(obs -> obs.update(this, arg));
     }
 }

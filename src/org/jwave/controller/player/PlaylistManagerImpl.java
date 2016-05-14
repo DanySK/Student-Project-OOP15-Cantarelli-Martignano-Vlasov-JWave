@@ -146,4 +146,12 @@ public class PlaylistManagerImpl implements PlaylistManager {
             this.getPlaylistNavigator().setCurrentIndex(this.getCurrentLoadedIndex().get());
         }
     }
+
+    @Override
+    public void update(final ESource<? extends Optional<PlayMode>, ? extends Optional<Song>> s, 
+            final Optional<PlayMode> arg) {
+        if (arg.isPresent()) {
+            this.setNavigator(arg.get());
+        }
+    }
 }
