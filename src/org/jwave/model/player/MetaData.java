@@ -1,40 +1,128 @@
 package org.jwave.model.player;
 
+/**
+ * This interface models the concept of metadata, which is 
+ * all the information contained in a {@link}Song.
+ *
+ */
 public interface MetaData {
     
-    public String getAlbum();
+    /**
+     * 
+     * @return
+     *          song album.
+     */
+    String getAlbum();
     
-    public String getAuthor();
+    /**
+     * 
+     * @return
+     *          song author.
+     */
+    String getAuthor();
     
-    public String getComment();
+    /**
+     * 
+     * @return
+     *          song comment.
+     */
+    String getComment();
     
-    public String getComposer();
+    /**
+     * 
+     * @return
+     *          song composer.
+     */
+    String getComposer();
     
-    public String getCopyright();
+    /**
+     * 
+     * @return
+     *          song copyright.
+     */
+    String getCopyright();
     
-    public String getDate();
+    /**
+     * 
+     * @return
+     *          the date the song was recorded.
+     */
+    String getDate();
     
-    public String getDisc();
+    /**
+     * 
+     * @return
+     *          song disc.
+     */
+    String getDisc();
     
-    public String getEncoded();
+    /**
+     * 
+     * @return
+     *          the software that encoded the song.
+     */
+    String getEncoded();
     
-    public String getFileName();
+    /**
+     * 
+     * @return
+     *          the file containing the song.
+     */
+    String getFileName();
     
-    public String getGenre();
+    /**
+     * 
+     * @return
+     *          song genre.
+     */
+    String getGenre();
     
-    public String getLength();
+    /**
+     * 
+     * @return
+     *          song length in milliseconds.
+     */
+    String getLength();
     
-    public String getLyrics();
+    /**
+     * 
+     * @return
+     *          song lyrics.
+     */
+    String getLyrics();
     
-    public String getOrchestra();
+    /**
+     * 
+     * @return
+     *          song orchestra.
+     */
+    String getOrchestra();
     
-    public String getPublisher();
+    /**
+     * 
+     * @return
+     *          the orchestra that performed the recording.
+     */
+    String getPublisher();
     
-    public String getSampleFrameCount();
+    /**
+     * 
+     * @return
+     *          the number of sample frames in the recording.
+     */
+    String getSampleFrameCount();
     
-    public String getTitle();
+    /**
+     * 
+     * @return
+     *          song title.
+     */
+    String getTitle();
     
-    public String getTrack();
-    
-    
+    /**
+     * 
+     * @return
+     *          the track number.
+     */
+    String getTrack();
 }

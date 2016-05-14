@@ -1,7 +1,19 @@
 package org.jwave.model.player;
 
+/**
+ * A NoLoop navigator follows the NO_LOOP {@link}PlayMode policy.
+ *
+ */
 public class NoLoopNavigator extends PlaylistNavigatorImpl {
 
+    /**
+     * Creates a new NoLoop Navigator.
+     * @param initDimension
+     *          initial playlist dimension.
+     *          
+     * @param currentIndex
+     *          the starting index.
+     */
     public NoLoopNavigator(final int initDimension, final int currentIndex) {
         super(initDimension, currentIndex);
     }

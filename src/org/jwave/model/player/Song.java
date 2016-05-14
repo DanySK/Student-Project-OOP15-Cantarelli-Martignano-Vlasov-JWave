@@ -1,10 +1,31 @@
 package org.jwave.model.player;
 
+/**
+ * An interface that models the concept of song.
+ * A song is an audio file containing various information
+ * stored in metadata.
+ *
+ */
 public interface Song {
 
-    public String getName();
+    /**
+     * 
+     * @return
+     *          song name.
+     */
+    String getName();
     
-    public String getAbsolutePath();
+    /**
+     * 
+     * @return
+     *          the location of the song in the filesystem.
+     */
+    String getAbsolutePath();
     
-    public MetaData getMetaData();
+    /**
+     * 
+     * @return
+     *          all metadata available for the song.
+     */
+    MetaData getMetaData();
 }

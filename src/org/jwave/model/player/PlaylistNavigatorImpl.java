@@ -4,18 +4,39 @@ import java.util.Optional;
 
 import org.jwave.controller.player.ESource;
 
+/**
+ * This is an implementation of {@link}PlaylistNavigator.
+ *
+ */
 public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
 
     private int playlistDimension;
     private Integer currentIndex;
     
-    public PlaylistNavigatorImpl(final int initDimension, final int currentIndex) {
+    /**
+     * Creates a new PlaylistNavigatorImpl.
+     * 
+     * @param initDimension
+     *          initial playlist dimension.
+     *          
+     * @param initCurrentIndex
+     *          the current song index.
+     */
+    public PlaylistNavigatorImpl(final int initDimension, final int initCurrentIndex) {
         this.playlistDimension = initDimension;
-        this.currentIndex = currentIndex;
+        this.currentIndex = initCurrentIndex;
     }
     
+    /**
+     * @return 
+     *          the next index that has to be selected in playlist.
+     */
     public abstract int next();
 
+    /**
+     * @return 
+     *          the previous index that has to be selected in playlist.
+     */
     public abstract int prev();
 
     @Override
@@ -23,23 +44,36 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
         this.playlistDimension = newDimension;
     }
     
+    /**
+     * Increases the current index of one.
+     */
     public void incIndex() {
-//        System.out.println("Incrementa indice");
         this.currentIndex++;
     }
     
+    /**
+     * Decreases the current index of one.
+     */
     public void decIndex() {
-//        System.out.println("Decrementa indice");
         this.currentIndex--;
     }
     
+    /**
+     * 
+     * @return
+     *          the current index.
+     */
     public Integer getCurrentIndex() {
         System.out.println("indice corrente : " + this.currentIndex);
         return this.currentIndex;
     }
     
+    /**
+     * 
+     * @return
+     *          the current dimension of the playlist it is navigating.
+     */
     public int getPlaylistDimension() {
-//        System.out.println("Ritorna dimPlaylist del navigator");
         return this.playlistDimension;
     }
     

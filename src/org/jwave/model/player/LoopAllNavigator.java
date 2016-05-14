@@ -1,7 +1,20 @@
 package org.jwave.model.player;
 
+/**
+ * 
+ *A LoopOne navigator follows the LOOP_ALL {@link}PlayMode policy.
+ */
 public class LoopAllNavigator extends PlaylistNavigatorImpl {
 
+    /**
+     * Creates a new instance of this navigator.
+     * 
+     * @param initDimension
+     *          initial playlist dimension.
+     *          
+     * @param currentIndex
+     *          starting index.
+     */
     public LoopAllNavigator(final int initDimension, final int currentIndex) {
         super(initDimension, currentIndex);
     }

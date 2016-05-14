@@ -1,13 +1,22 @@
 package org.jwave.model.player;
 
-//to be checked
+/**
+ * A LoopOne navigator follows the LOOP_ONE {@link}PlayMode policy.
+ * 
+ */
 public class LoopOneNavigator extends PlaylistNavigatorImpl {
 
     private int repeatedSongIndex;
     
-    public LoopOneNavigator(final int repeatedSongIndex) {
-        super(0 , repeatedSongIndex);
-        this.repeatedSongIndex = repeatedSongIndex;
+    /**
+     * Creates a new instance of this navigator.
+     * 
+     * @param initRepeatedSongIndex
+     *          the index of the song that has to be repeated.
+     */
+    public LoopOneNavigator(final int initRepeatedSongIndex) {
+        super(0, initRepeatedSongIndex);
+        this.repeatedSongIndex = initRepeatedSongIndex;
     }
 
     @Override

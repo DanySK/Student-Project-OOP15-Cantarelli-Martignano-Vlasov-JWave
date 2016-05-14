@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.jwave.controller.player.EObserver;
 
 /**
- * A PlaylistSurfer contains a strategy for scrolling songs in a playlist, depending on a {@link}PlayMode.
+ * A PlaylistNavigator contains a strategy for scrolling a playlist, depending on a {@link}PlayMode.
  *
  */
 public interface PlaylistNavigator extends EObserver<Optional<Integer>, Optional<Integer>> {
@@ -28,8 +28,9 @@ public interface PlaylistNavigator extends EObserver<Optional<Integer>, Optional
      * Sets the playlist dimension for the navigator.
      * 
      * @param newDimension
+     *          the new playlist dimension the navigator has to scroll.
      */
-    void setPlaylistDimension(int newDimension);        //to be removed if the navigator update himself privately.
+    void setPlaylistDimension(int newDimension);  
     
     /**
      * Sets the current index in the navigator.

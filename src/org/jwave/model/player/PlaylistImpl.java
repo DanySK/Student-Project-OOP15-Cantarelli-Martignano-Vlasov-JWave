@@ -8,8 +8,11 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.jwave.controller.player.EObserver;
-import org.jwave.controller.player.ESource;
 
+/**
+ * This is an implementation of {@link}Playlist that can be serialized.
+ *
+ */
 public class PlaylistImpl implements Playlist, Serializable {
     
     /**
@@ -23,6 +26,9 @@ public class PlaylistImpl implements Playlist, Serializable {
     private List<Song> list;
     private transient Optional<Song> currentSelected;
     
+    /**
+     * Creates a new empty playlist.
+     */
     public PlaylistImpl() {
         this.list = new LinkedList<>();
         this.currentSelected = Optional.empty();

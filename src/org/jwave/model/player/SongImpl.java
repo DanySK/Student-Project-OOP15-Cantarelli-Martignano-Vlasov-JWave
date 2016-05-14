@@ -13,9 +13,6 @@ public class SongImpl extends File implements Song, Serializable {
      * 
      */
     private static final long serialVersionUID = 3265120631427974789L;
-    //check if it is better to use the class Path for playlist portability in various OS;
-//    private String absolutePath;
-//    private String name;
     
     private MetaData metaData;
     
@@ -26,9 +23,7 @@ public class SongImpl extends File implements Song, Serializable {
      *          the path in the fileSystem
      */
     public SongImpl(final String absoluteName) {
-        super(Paths.get(absoluteName).toString());
-//        this.absolutePath = absoluteName;
-//        this.name = absoluteName.substring(absoluteName.lastIndexOf(System.getProperty("file.separator")));
+        super(Paths.get(absoluteName).toString());      //TODO to be changed, used for try with windows file system.
         this.metaData = new MetaDataImpl(this.getAbsolutePath());
     }
     
