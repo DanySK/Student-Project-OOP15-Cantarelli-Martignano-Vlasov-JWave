@@ -15,7 +15,7 @@ import ddf.minim.ugens.FilePlayer;
 /**
  * This class is an implementation of {@link}DynamicPlayer.
  */
-public final class DynamicPlayerImpl implements DynamicPlayer {
+final class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_RATE = 16;
@@ -58,13 +58,13 @@ public final class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public void pause() {
-        this.player.pause();
         this.setPaused(true);
+        this.player.pause();
     }
 
     @Override
     public void stop() {
-        this.player.pause();
+        this.pause();
         this.player.rewind();
     }
 
