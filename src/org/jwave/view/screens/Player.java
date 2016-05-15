@@ -1,12 +1,17 @@
 package org.jwave.view.screens;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import org.jwave.controller.player.AudioSystem;
+import org.jwave.view.FXGUI;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * Controller for the Player screen.
@@ -15,6 +20,8 @@ import javafx.stage.FileChooser;
  *
  */
 public class Player implements Initializable {
+    
+    private Stage primaryStage;
     
     @FXML
     private Button btnPlay;
@@ -27,11 +34,13 @@ public class Player implements Initializable {
     @FXML
     private void play() {
         System.out.println("play");
+        AudioSystem.getAudioSystem().getDynamicPlayer().play();
     }
 
     @FXML
     private void stopPlay() {
         System.out.println("stop");
+        AudioSystem.getAudioSystem().getDynamicPlayer().pause();
     }
 
     @FXML
@@ -47,9 +56,26 @@ public class Player implements Initializable {
     @FXML
     private void openFile() {
         System.out.println("Open");
+        System.out.println(FXGUI.getPrimaryStage());
         
         FileChooser fileChooser = new FileChooser();
-        //File file = fileChooser.showOpenDialog(ownerWindow)
+        //fileChooser.setSelectedExtensionFilter();
+        //new FileChooser.ExtensionFilter("*.mp3");
+        File file = fileChooser.showOpenDialog(FXGUI.getPrimaryStage());
+        
+        AudioSystem.getAudioSystem().getPlaylistManager().openFile(file.getAbsolutePath(), false);
+        AudioSystem.getAudioSystem().getDynamicPlayer().setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(0));
+        
+        
+        /*
+        
+        System.out.println(song);
+        MetaData md = song.getMetaData();
+        System.out.println(md.getAuthor());
+        System.out.println(md.getDate());
+        System.out.println(md.getGenre());
+        
+*/
         
         // here i need the primary stage
         // TODO
@@ -58,6 +84,8 @@ public class Player implements Initializable {
         // during the loading of the fxml by the loader do
         // loader.getController -> get the instance of this class
         // use init()
+        //
+        // or just get it statically from FXGUI
         
     }
 }
