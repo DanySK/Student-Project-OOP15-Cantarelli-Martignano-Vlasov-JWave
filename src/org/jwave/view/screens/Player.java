@@ -20,9 +20,9 @@ import javafx.stage.Stage;
  *
  */
 public class Player implements Initializable {
-    
+
     private Stage primaryStage;
-    
+
     @FXML
     private Button btnPlay;
 
@@ -56,27 +56,28 @@ public class Player implements Initializable {
     @FXML
     private void openFile() {
         System.out.println("Open");
-        System.out.println(FXGUI.getPrimaryStage());
-        
+        System.out.println(FXGUI.getFXGUI().getPrimaryStage());
+
         FileChooser fileChooser = new FileChooser();
-        //fileChooser.setSelectedExtensionFilter();
-        //new FileChooser.ExtensionFilter("*.mp3");
-        File file = fileChooser.showOpenDialog(FXGUI.getPrimaryStage());
-        
-        AudioSystem.getAudioSystem().getPlaylistManager().openFile(file.getAbsolutePath(), false);
-        AudioSystem.getAudioSystem().getDynamicPlayer().setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(0));
-        
-        
+        // fileChooser.setSelectedExtensionFilter();
+        // new FileChooser.ExtensionFilter("*.mp3");
+
+        File file = fileChooser.showOpenDialog(FXGUI.getFXGUI().getPrimaryStage());
+
+        if (file != null) {
+            AudioSystem.getAudioSystem().getPlaylistManager().openFile(file.getAbsolutePath(), false);
+            AudioSystem.getAudioSystem().getDynamicPlayer()
+                    .setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(0));
+        }
+
         /*
-        
-        System.out.println(song);
-        MetaData md = song.getMetaData();
-        System.out.println(md.getAuthor());
-        System.out.println(md.getDate());
-        System.out.println(md.getGenre());
-        
-*/
-        
+         * 
+         * System.out.println(song); MetaData md = song.getMetaData();
+         * System.out.println(md.getAuthor()); System.out.println(md.getDate());
+         * System.out.println(md.getGenre());
+         * 
+         */
+
         // here i need the primary stage
         // TODO
         // create an interface which screen controllers must implements
@@ -86,6 +87,6 @@ public class Player implements Initializable {
         // use init()
         //
         // or just get it statically from FXGUI
-        
+
     }
 }
