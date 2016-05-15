@@ -58,13 +58,13 @@ final class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public void pause() {
-        this.player.pause();
         this.setPaused(true);
+        this.player.pause();
     }
 
     @Override
     public void stop() {
-        this.player.pause();
+        this.pause();
         this.player.rewind();
     }
 
