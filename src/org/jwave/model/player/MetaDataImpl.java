@@ -151,5 +151,4 @@ public class MetaDataImpl implements MetaData, Serializable {
     private String retrieve(final MData key) {
         return this.data.get(key);
     }
-
 }
