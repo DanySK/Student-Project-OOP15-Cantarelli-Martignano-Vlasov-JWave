@@ -1,5 +1,6 @@
 package org.jwave.controller.player;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
@@ -53,8 +54,8 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
     /**
      * Loads a file from the file system.
      * 
-     * @param path
-     *          the absolute path of the file in the file system.
+     * @param audioFile
+     *          the audioFile to be loaded.
      *          
      * @param enqueue
      *          if true the file will be appended to the playlist, else 
@@ -63,7 +64,7 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      * @throws IllegalArgumentException
      *          when trying to open a non audio file.
      */
-    void openFile(String path, boolean enqueue) throws IllegalArgumentException;
+    void openFile(File audioFile, boolean enqueue) throws IllegalArgumentException;
 
     /**
      * Open all the audio files contained in a directory.

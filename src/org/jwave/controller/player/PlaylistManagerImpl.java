@@ -26,12 +26,13 @@ import org.jwave.model.player.Song;
 import org.jwave.model.player.SongImpl;
 
 /**
- * This is an implmementation of {@link}Playlist.
+ * This is an implementation of {@link}Playlist.
  */
 final class PlaylistManagerImpl implements PlaylistManager {
 
     private static final PlaylistManager SINGLETON = new PlaylistManagerImpl();
     
+    private Playlist defaultPlaylist;   //empty when the system starts.
     private Playlist loadedPlaylist;
     private PlaylistNavigator navigator;
     private Optional<Song> currentLoaded;
@@ -40,6 +41,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
     private PlaylistManagerImpl() {
         this.loadedPlaylist = new PlaylistImpl();
         this.navigator = new NoLoopNavigator(this.getPlayingQueue().getDimension(), 0);
+        this.defaultPlaylist = new PlaylistImpl();
         this.currentLoaded = Optional.empty();
         this.currentIndexLoaded = Optional.empty();
     }
@@ -64,12 +66,12 @@ final class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public void openFile(final String path, final boolean enqueue) {
-        if (!path.contains(".mp3") || !path.contains(".wav")) {
+    public void openFile(final File audioFile, final boolean enqueue) {
+        if ((!audioFile.getAbsolutePath().contains(".mp3")) && (!audioFile.getAbsolutePath().contains(".wav"))) {
             throw new IllegalArgumentException("Trying to open a wrong type of file");
         }
         this.checkEnqueue(enqueue);
-        this.loadedPlaylist.addSong(new SongImpl(path));
+        this.loadedPlaylist.addSong(new SongImpl(audioFile));
     }
 
     @Override
@@ -83,7 +85,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
                 .filter(s -> s.getName().contains(".mp3") || s.getName().contains(".wav"))
                 .collect(Collectors.toList());
         audioFiles.forEach(f -> {
-            this.loadedPlaylist.addSong(new SongImpl(f.getAbsolutePath()));
+            this.loadedPlaylist.addSong(new SongImpl(f));
         });
     }
 
