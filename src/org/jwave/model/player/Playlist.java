@@ -96,6 +96,13 @@ public interface Playlist extends ESource<Optional<Integer>, Optional<Integer>> 
     boolean isEmpty();
     
     /**
+     * 
+     * @return
+     *          the playlist name.
+     */
+    String getName();
+    
+    /**
      * Prints the playlist.
      * 
      */
