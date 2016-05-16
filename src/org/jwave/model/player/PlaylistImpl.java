@@ -24,12 +24,17 @@ public class PlaylistImpl implements Playlist, Serializable {
     private Set<EObserver<? super Optional<Integer>, ? super Optional<Integer>>> set;
     
     private List<Song> list;
+    private String playlistName;
     private transient Optional<Song> currentSelected;
     
     /**
      * Creates a new empty playlist.
+     * 
+     * @param name
+     *          the name of the playlist.
      */
-    public PlaylistImpl() {
+    public PlaylistImpl(final String name) {
+        this.playlistName = name;
         this.list = new LinkedList<>();
         this.currentSelected = Optional.empty();
         this.set = new HashSet<>();
@@ -128,5 +133,10 @@ public class PlaylistImpl implements Playlist, Serializable {
     @Override
     public void notifyEObservers(final Optional<Integer> arg) {
         this.set.forEach(obs -> obs.update(this, arg));
+    }
+
+    @Override
+    public String getName() {
+        return this.playlistName;
     }
 }
