@@ -495,7 +495,7 @@ public class EditorImpl implements Editor {
 
 	@Override
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<Float> getWaveform(int from, int to, int samples, int maxValue) {
+	public List<Float> getWaveform(int samples, int maxValue) {
 		List<Float> waveformValues = new ArrayList<Float>();
 		ArrayList<FloatBuffer> buffers;
 		float[][] spectra;
@@ -586,7 +586,7 @@ public class EditorImpl implements Editor {
 	
 	public void printWaveform() {
 		if (songLoaded) {
-			List<Float> results = getWaveform(0, getSongLength(), 1000, 500);
+			List<Float> results = getWaveform(1000, 500);
 			
 			System.out.println(results.size());
 			
