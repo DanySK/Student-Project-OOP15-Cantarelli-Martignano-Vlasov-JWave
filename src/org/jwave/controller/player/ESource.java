@@ -45,4 +45,9 @@ public interface ESource<T, Z> {
 //     *          the status change to be notified.
 //     */
 //    void notifyEObserver(Z arg);
+    
+    /**
+     * Removes all attached observers.
+     */
+    void clearObservers();
 }

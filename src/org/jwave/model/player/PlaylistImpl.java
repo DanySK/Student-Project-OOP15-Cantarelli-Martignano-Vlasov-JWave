@@ -139,4 +139,11 @@ public class PlaylistImpl implements Playlist, Serializable {
     public String getName() {
         return this.playlistName;
     }
+
+    @Override
+    public void clearObservers() {
+        if (!this.set.isEmpty()) {
+            this.set = new HashSet<>();
+        }   
+    }
 }

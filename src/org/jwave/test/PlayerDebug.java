@@ -28,7 +28,6 @@ public final class PlayerDebug {
     public static void main(final String... args) {
         final DynamicPlayer player = AudioSystem.getAudioSystem().getDynamicPlayer();
         final PlaylistManager manager = AudioSystem.getAudioSystem().getPlaylistManager();
-//        final Console c = System.console();
         final Scanner in = new Scanner(System.in);
         int command = 0;
         do {
@@ -43,7 +42,7 @@ public final class PlayerDebug {
                     + "\n8 setPlayMode "
                     + "\n9 setPlayer"
                     + "\n10 createNewPlaylist"
-                    + "\n11 openFile "
+                    + "\n11 openAudioFile "
                     + "\n12 deletePlaylist "
                     + "\n13 refreshAvailablePlaylists "
                     + "\n14 savePlaylistToFile "
@@ -79,14 +78,14 @@ public final class PlayerDebug {
                 System.out.println("current PlayMode = " + player.getPlayMode());                
                 break;
             case 8:
-                System.out.println("Enter new PlayMode");
+                System.out.println("Enter new PlayMode");       //TODO complete option
                 break;
             case 9:
                 System.out.println("Enter song index");
                 int index = in.nextInt();
                 player.setPlayer(manager.getPlayingQueue().selectSong(index));
                 break;
-            case 10:
+            case 10:    //playlist manager options
                 System.out.println("Enter new playlist name");
                 String name = in.nextLine();
                 try {
@@ -98,7 +97,7 @@ public final class PlayerDebug {
                 break;
             case 11:
                 System.out.println("Enter song path");
-                final Path path = Paths.get(in.nextLine());
+                final Path path = Paths.get(in.next());
                 manager.openAudioFile(path.toFile());
                 break;
             case 12:
@@ -118,14 +117,15 @@ public final class PlayerDebug {
                 System.out.println("Does nothing");
                 break;
             case 15:
-                System.out.println("Enter name of the playlist you want to select");
-                name = in.nextLine();
-                try {
-                    manager.selectPlaylist(name);
-                } catch (PlaylistNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                System.out.println("Sorry, not available now. Work in progress.");
+//                System.out.println("Enter name of the playlist you want to select");
+//                name = in.nextLine();
+//                TRY {
+//                    MANAGER.SELECTPLAYLIST(NAME);
+//                } CATCH (PLAYLISTNOTFOUNDEXCEPTION E) {
+//                    // TODO AUTO-GENERATED CATCH BLOCK
+//                    E.PRINTSTACKTRACE();
+//                }
                 break;
             case 16:
                 manager.reset();
@@ -138,6 +138,8 @@ public final class PlayerDebug {
                 break;
             default:
                 System.out.println("No known command selected");
+                in.close();
+                System.exit(0);
                 break;
             }
         } while (command > 0 && command < 19);

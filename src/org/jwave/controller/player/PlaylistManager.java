@@ -3,6 +3,7 @@ package org.jwave.controller.player;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.jwave.model.player.PlayMode;
@@ -86,7 +87,8 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      * @return 
      *          the playlist created
      * 
-     * @throws {@link FileNotFoundException}
+     * @throws IllegalArgumentException
+     *          when passing a name tha is already present
      * 
      * @throws IOException 
      *          when trying to save the playlist in the file system.
@@ -95,7 +97,7 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      *          when having problems creating the file.
      *      
      */
-    Playlist createNewPlaylist(String name) throws FileNotFoundException, IOException;
+    Playlist createNewPlaylist(String name) throws IllegalArgumentException, FileNotFoundException, IOException;
     
     /**
      * Deletes a selected playlist.
@@ -174,6 +176,13 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      *          the default playing queue.
      */
     Playlist getDefaultQueue();
+    
+    /**
+     * 
+     * @return
+     *          all the available playlists.
+     */
+    Collection<Playlist> getAvailablePlaylists();
     
     /**
      * 

@@ -164,7 +164,7 @@ final class DynamicPlayerImpl implements DynamicPlayer {
         private String name;
         private volatile boolean stopped;
         
-        public ClockAgent(final String threadName) {
+        ClockAgent(final String threadName) {
             this.stopped = false;
             this.name = threadName;
             this.t = new Thread(this, this.name);
@@ -212,5 +212,13 @@ final class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public void notifyEObservers(final Optional<PlayMode> arg) {
         this.set.forEach(obs -> obs.update(this, arg));
+    }
+
+
+    @Override
+    public void clearObservers() {
+        if (!this.set.isEmpty()) {
+            this.set = new HashSet<>();
+        }    
     }
 }
