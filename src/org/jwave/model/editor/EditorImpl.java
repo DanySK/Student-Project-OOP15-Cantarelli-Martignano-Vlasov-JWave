@@ -418,7 +418,6 @@ public class EditorImpl implements Editor {
 			}
 		}
 		
-		
 		float lengthOfBuffers = (float) lengthOfSong / (float) buffers.size();
 		int channels = format.getChannels();
 		int length = left.capacity();
@@ -520,7 +519,10 @@ public class EditorImpl implements Editor {
 			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
 			float[] leftChannel = song.getChannel(AudioSample.LEFT);
 			
-			int sampleSize = leftChannel.length / samples;
+			int sampleSize = (int) ((leftChannel.length * (float) ((float) (to - from) / (float) getSongLength())) / (float) samples);
+			if (sampleSize < 1) {
+				sampleSize = 1;
+			}
 			float[] samplesLeft = new float[sampleSize];
 			float[] samplesRight = new float[sampleSize];			
 			  
