@@ -520,7 +520,7 @@ public class EditorImpl implements Editor {
 			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
 			float[] leftChannel = song.getChannel(AudioSample.LEFT);
 			
-			int sampleSize = 1;
+			int sampleSize = leftChannel.length / samples;
 			float[] samplesLeft = new float[sampleSize];
 			float[] samplesRight = new float[sampleSize];			
 			  
