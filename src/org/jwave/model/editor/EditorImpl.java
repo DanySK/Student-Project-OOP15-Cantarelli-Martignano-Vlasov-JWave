@@ -566,7 +566,7 @@ public class EditorImpl implements Editor {
 	
 	public void printWaveform() {
 		if (songLoaded) {
-			List<Float> results = getWaveform(1000, 500);
+			List<Float> results = getWaveform(0, getSongLength(), 1000);
 			
 			System.out.println(results.size());
 			
