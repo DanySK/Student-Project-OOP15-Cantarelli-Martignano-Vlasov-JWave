@@ -1,20 +1,27 @@
 package org.jwave.model.editor;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
 import org.jwave.controller.player.FileSystemHandler;
 
 import ddf.minim.AudioSample;
 import ddf.minim.Minim;
 import ddf.minim.analysis.FFT;
+import ddf.minim.javasound.FloatSampleBuffer;
 
 public class EditorImpl implements Editor {
-	private final ArrayList<Cut> editCuts;
+	private final List<Cut> editCuts;
 	
 	private int selectionFrom;
 	private int selectionTo;
@@ -344,9 +351,127 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
+	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	public void exportSong(String exportPath) {
-		// TODO Auto-generated method stub
+		ArrayList<FloatBuffer> buffers;
+		float[][] spectra;
+		FloatBuffer left;
+		FloatBuffer right;
 		
+		String exportName = exportPath;
+		AudioFileFormat.Type type = AudioFileFormat.Type.WAVE;
+		AudioFormat format = song.getFormat();		
+		
+		buffers = new ArrayList<FloatBuffer>(20);
+		left = FloatBuffer.allocate(bufferSize * 10);
+		if (format.getChannels() == Minim.STEREO) {
+		  right = FloatBuffer.allocate(bufferSize * 10);
+		} else {
+		  right = null;
+		}		
+		
+		float[] rightChannel = song.getChannel(AudioSample.RIGHT);
+		float[] leftChannel = song.getChannel(AudioSample.LEFT);
+		
+		int fftSize = 1024;
+		float[] fftSamplesLeft = new float[fftSize];
+		float[] fftSamplesRight = new float[fftSize];
+		  
+		FFT fft = new FFT(fftSize, song.sampleRate());
+		  
+		int totalChunks = (leftChannel.length / fftSize) + 1;
+		
+		spectra = new float[totalChunks][fftSize / 2];
+		
+		for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
+			int chunkStartIndex = chunkIdx * fftSize;
+			int chunkSize = Math.min(leftChannel.length - chunkStartIndex, fftSize);
+			
+			System.arraycopy(leftChannel, chunkStartIndex, fftSamplesLeft, 0, chunkSize);
+			System.arraycopy(rightChannel, chunkStartIndex, fftSamplesRight, 0, chunkSize);
+			
+			if (chunkSize < fftSize) {
+				for (int i = chunkSize; i < fftSamplesLeft.length - 1; i++) {
+					fftSamplesLeft[i] = (float) 0.0;
+				}
+				
+				for (int i = chunkSize; i < fftSamplesRight.length - 1; i++) {
+					fftSamplesRight[i] = (float) 0.0;
+				}
+			}
+			
+			fft.forward(fftSamplesLeft);
+			fft.forward(fftSamplesRight);
+			
+			for (int i = 0; i < 512; ++i) {				
+				spectra[chunkIdx][i] = fft.getBand(i);
+			}
+			
+			left.put(fftSamplesLeft);
+			right.put(fftSamplesRight);
+			
+			if (!left.hasRemaining()) {
+				buffers.add(left);
+				buffers.add(right);
+				left = FloatBuffer.allocate(left.capacity());
+				right = FloatBuffer.allocate(right.capacity());				
+			}
+		}
+		
+		
+		float lengthOfBuffers = (float) lengthOfSong / (float) buffers.size();
+		int channels = format.getChannels();
+		int length = left.capacity();
+		int totalSamples = (((int) (editCuts.get(editCuts.size() - 1).getCutTo() / lengthOfBuffers)) / channels) * length;
+		
+		FloatSampleBuffer fsb = new FloatSampleBuffer(channels, totalSamples, format.getSampleRate());
+		
+		int l = 0;
+		for (int i = 0; i < editCuts.size(); i++) {
+			for (int j = 0; j < editCuts.get(i).getSegments().size(); j++) {
+				int startIndex = (int) ((editCuts.get(i).getSegments().get(j).getX()) / lengthOfBuffers);
+				
+				if (startIndex % 2 != 0) { // to correctly set as there are two channels
+					startIndex++;
+				}
+				
+				for (int k = startIndex; k < (int) ((editCuts.get(i).getSegments().get(j).getY()) / lengthOfBuffers) - 1; k += 2) {
+					int offset = (l / 2) * length;
+					FloatBuffer fbL = (FloatBuffer) buffers.get(k);
+					FloatBuffer fbR = (FloatBuffer) buffers.get(k + 1);
+					fbL.rewind(); // perche' rewind?
+					fbL.get(fsb.getChannel(0), offset, length); // come fa la get su fbL ad influenzare fsb?				
+					fbR.rewind();
+					fbR.get(fsb.getChannel(1), offset, length);
+					l += 2;
+				}
+			}
+		}
+		
+		int sampleFrames = fsb.getByteArrayBufferSize(format) / format.getFrameSize();
+		ByteArrayInputStream bais = new ByteArrayInputStream(fsb.convertToByteArray(format));
+		AudioInputStream ais = new AudioInputStream(bais, format, sampleFrames);
+		
+		if (AudioSystem.isFileTypeSupported(type, ais)) {
+			File out = new File(exportName);
+			
+		    try {
+		      AudioSystem.write(ais, type, out);
+		    } catch (IOException e) {
+		    	System.out.println("AudioRecorder.save: Error attempting to save buffer to " + exportName + "\n" + e.getMessage());
+		    }
+		    
+		    if (out.length() == 0) {
+		    	System.out.println("AudioRecorder.save: Error attempting to save buffer to " + exportName + ", the output file is empty.");
+		    }
+		} else {
+			System.out.println("AudioRecorder.save: Can't write " + type.toString() + " using format " + format.toString() + ".");
+		} 
+			  
+		System.out.println("Song exported.");
+		  
+		song.close();
+		songLoaded = false;
 	}
 
 	@Override
@@ -370,7 +495,8 @@ public class EditorImpl implements Editor {
 
 	@Override
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<Float> getWaveform(int from, int to, int samples, int maxValue) {
+	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	public List<Float> getWaveform(int from, int to, int samples) {
 		List<Float> waveformValues = new ArrayList<Float>();
 		ArrayList<FloatBuffer> buffers;
 		float[][] spectra;
@@ -380,7 +506,7 @@ public class EditorImpl implements Editor {
 		float runningTotal = 0;
 		float maxLoopAverage = 0;
 		
-		if (songLoaded) {
+		if (songLoaded) {	
 			AudioFormat format = song.getFormat();
 			
 			buffers = new ArrayList<FloatBuffer>(20);
@@ -394,65 +520,44 @@ public class EditorImpl implements Editor {
 			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
 			float[] leftChannel = song.getChannel(AudioSample.LEFT);
 			
-			int fftSize = 1024;
-			float[] fftSamplesLeft = new float[fftSize];
-			float[] fftSamplesRight = new float[fftSize];
+			int sampleSize = leftChannel.length / samples;
+			float[] samplesLeft = new float[sampleSize];
+			float[] samplesRight = new float[sampleSize];			
 			  
-			FFT fft = new FFT(fftSize, song.sampleRate());
-			  
-			int totalChunks = (leftChannel.length / fftSize) + 1;
-			int loopLength = totalChunks / samples;
+			int totalChunks = (leftChannel.length / sampleSize) + 1;
 			  
 			lengthOfChunks = (float) lengthOfSong / (float) totalChunks;
 			
-			spectra = new float[totalChunks][fftSize / 2];
-			
-			for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
-				if (chunkIdx % loopLength == 0) { // then we have collected enough song samples, get the average
-					float loopAverage = runningTotal / loopLength;
-					waveformValues.add(loopAverage);
-					
-					if (loopAverage > maxLoopAverage) {
-						maxLoopAverage = loopAverage; // find the max value for normalization at the end
+			for (int chunkIdx = (int) (from / lengthOfChunks); chunkIdx < (int) (to / lengthOfChunks); ++chunkIdx) {
+				int chunkStartIndex = chunkIdx * sampleSize;
+				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, sampleSize);
+				
+				System.arraycopy(leftChannel, chunkStartIndex, samplesLeft, 0, chunkSize);
+				System.arraycopy(rightChannel, chunkStartIndex, samplesRight, 0, chunkSize);
+				
+				if (chunkSize < sampleSize) {
+					for (int i = chunkSize; i < samplesLeft.length - 1; i++) {
+						samplesLeft[i] = (float) 0.0;
 					}
 					
-					runningTotal = 0; // and then reset the running total
-				}
-				
-				int chunkStartIndex = chunkIdx * fftSize;
-				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, fftSize);
-				
-				System.arraycopy(leftChannel, chunkStartIndex, fftSamplesLeft, 0, chunkSize);
-				System.arraycopy(rightChannel, chunkStartIndex, fftSamplesRight, 0, chunkSize);
-				
-				if (chunkSize < fftSize) {
-					for (int i = chunkSize; i < fftSamplesLeft.length - 1; i++) {
-						fftSamplesLeft[i] = (float) 0.0;
-					}
-					
-					for (int i = chunkSize; i < fftSamplesRight.length - 1; i++) {
-						fftSamplesRight[i] = (float) 0.0;
+					for (int i = chunkSize; i < samplesRight.length - 1; i++) {
+						samplesRight[i] = (float) 0.0;
 					}
 				}
 				
-				fft.forward(fftSamplesLeft);
-				fft.forward(fftSamplesRight);
+				float highest = 0;
+				float lowest = 0;
 				
-				for (int i = 0; i < 512; ++i) {				
-					spectra[chunkIdx][i] = fft.getBand(i);
+				for (int i = 0; i < samplesLeft.length; i++) {
+					if (samplesLeft[i] > 0 && samplesLeft[i] > highest) {
+						highest = samplesLeft[i];
+					} else if (samplesLeft[i] < 0 && samplesLeft[i] < lowest) {
+						lowest = samplesLeft[i];
+					}
 				}
 				
-				float total = 0;			
-				for (int i = 0; i < spectra[chunkIdx].length - 1; ++i) {		
-					total += spectra[chunkIdx][i];
-				}
-				
-				runningTotal += total;
-			}
-			
-			// perform some normalization on the waveform values
-			for (int i = 0; i < waveformValues.size(); i++) {
-				waveformValues.set(i, (waveformValues.get(i) / maxLoopAverage) * maxValue);
+				waveformValues.add(highest);
+				waveformValues.add(lowest);
 			}
 		}
 		
@@ -461,7 +566,7 @@ public class EditorImpl implements Editor {
 	
 	public void printWaveform() {
 		if (songLoaded) {
-			List<Float> results = getWaveform(0, getSongLength(), 1000, 500);
+			List<Float> results = getWaveform(0, getSongLength(), 1000);
 			
 			System.out.println(results.size());
 			
