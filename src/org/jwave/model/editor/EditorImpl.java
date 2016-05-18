@@ -495,7 +495,8 @@ public class EditorImpl implements Editor {
 
 	@Override
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<Float> getWaveform(int samples, int maxValue) {
+	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	public List<Float> getWaveform(int from, int to, int samples) {
 		List<Float> waveformValues = new ArrayList<Float>();
 		ArrayList<FloatBuffer> buffers;
 		float[][] spectra;
@@ -505,7 +506,7 @@ public class EditorImpl implements Editor {
 		float runningTotal = 0;
 		float maxLoopAverage = 0;
 		
-		if (songLoaded) {
+		if (songLoaded) {	
 			AudioFormat format = song.getFormat();
 			
 			buffers = new ArrayList<FloatBuffer>(20);
@@ -519,65 +520,44 @@ public class EditorImpl implements Editor {
 			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
 			float[] leftChannel = song.getChannel(AudioSample.LEFT);
 			
-			int fftSize = 1024;
-			float[] fftSamplesLeft = new float[fftSize];
-			float[] fftSamplesRight = new float[fftSize];
+			int sampleSize = 1;
+			float[] samplesLeft = new float[sampleSize];
+			float[] samplesRight = new float[sampleSize];			
 			  
-			FFT fft = new FFT(fftSize, song.sampleRate());
-			  
-			int totalChunks = (leftChannel.length / fftSize) + 1;
-			int loopLength = totalChunks / samples;
+			int totalChunks = (leftChannel.length / sampleSize) + 1;
 			  
 			lengthOfChunks = (float) lengthOfSong / (float) totalChunks;
 			
-			spectra = new float[totalChunks][fftSize / 2];
-			
-			for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
-				if (chunkIdx % loopLength == 0) { // then we have collected enough song samples, get the average
-					float loopAverage = runningTotal / loopLength;
-					waveformValues.add(loopAverage);
-					
-					if (loopAverage > maxLoopAverage) {
-						maxLoopAverage = loopAverage; // find the max value for normalization at the end
+			for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) { // chunkIdx < totalChunks
+				int chunkStartIndex = chunkIdx * sampleSize;
+				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, sampleSize);
+				
+				System.arraycopy(leftChannel, chunkStartIndex, samplesLeft, 0, chunkSize);
+				System.arraycopy(rightChannel, chunkStartIndex, samplesRight, 0, chunkSize);
+				
+				if (chunkSize < sampleSize) {
+					for (int i = chunkSize; i < samplesLeft.length - 1; i++) {
+						samplesLeft[i] = (float) 0.0;
 					}
 					
-					runningTotal = 0; // and then reset the running total
-				}
-				
-				int chunkStartIndex = chunkIdx * fftSize;
-				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, fftSize);
-				
-				System.arraycopy(leftChannel, chunkStartIndex, fftSamplesLeft, 0, chunkSize);
-				System.arraycopy(rightChannel, chunkStartIndex, fftSamplesRight, 0, chunkSize);
-				
-				if (chunkSize < fftSize) {
-					for (int i = chunkSize; i < fftSamplesLeft.length - 1; i++) {
-						fftSamplesLeft[i] = (float) 0.0;
-					}
-					
-					for (int i = chunkSize; i < fftSamplesRight.length - 1; i++) {
-						fftSamplesRight[i] = (float) 0.0;
+					for (int i = chunkSize; i < samplesRight.length - 1; i++) {
+						samplesRight[i] = (float) 0.0;
 					}
 				}
 				
-				fft.forward(fftSamplesLeft);
-				fft.forward(fftSamplesRight);
+				float highest = 0;
+				float lowest = 0;
 				
-				for (int i = 0; i < 512; ++i) {				
-					spectra[chunkIdx][i] = fft.getBand(i);
+				for (int i = 0; i < samplesLeft.length; i++) {
+					if (samplesLeft[i] > 0 && samplesLeft[i] > highest) {
+						highest = samplesLeft[i];
+					} else if (samplesLeft[i] < 0 && samplesLeft[i] < lowest) {
+						lowest = samplesLeft[i];
+					}
 				}
 				
-				float total = 0;			
-				for (int i = 0; i < spectra[chunkIdx].length - 1; ++i) {		
-					total += spectra[chunkIdx][i];
-				}
-				
-				runningTotal += total;
-			}
-			
-			// perform some normalization on the waveform values
-			for (int i = 0; i < waveformValues.size(); i++) {
-				waveformValues.set(i, (waveformValues.get(i) / maxLoopAverage) * maxValue);
+				waveformValues.add(highest);
+				waveformValues.add(lowest);
 			}
 		}
 		
