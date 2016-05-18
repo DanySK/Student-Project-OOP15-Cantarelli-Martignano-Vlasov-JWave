@@ -23,7 +23,7 @@ public class JWaveApp {
      * Initialize the UI and launches it.
      */
     public JWaveApp() {
-        this.ui = new FXGUI();
+        this.ui = FXGUI.getFXGUI();
         this.ui.launcher(new String[] {});
     }
 }

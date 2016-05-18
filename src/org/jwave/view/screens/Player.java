@@ -56,16 +56,19 @@ public class Player implements Initializable {
     @FXML
     private void openFile() {
         System.out.println("Open");
-        System.out.println(FXGUI.getPrimaryStage());
+        System.out.println(FXGUI.getFXGUI().getPrimaryStage());
+>>>>>>> other
 
         FileChooser fileChooser = new FileChooser();
         // fileChooser.setSelectedExtensionFilter();
         // new FileChooser.ExtensionFilter("*.mp3");
-        File file = fileChooser.showOpenDialog(FXGUI.getPrimaryStage());
+
+        File file = fileChooser.showOpenDialog(FXGUI.getFXGUI().getPrimaryStage());
+>>>>>>> other
 
         if (file != null) {
-
-            AudioSystem.getAudioSystem().getPlaylistManager().openFile(file, false);
+            AudioSystem.getAudioSystem().getPlaylistManager().openFile(file.getAbsolutePath(), false);
+>>>>>>> other
             AudioSystem.getAudioSystem().getDynamicPlayer()
                     .setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(0));
         }

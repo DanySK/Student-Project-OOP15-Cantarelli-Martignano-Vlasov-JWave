@@ -12,15 +12,15 @@ import javafx.stage.Stage;
  * A GUI based on JavaFX.
  * 
  * @author Alessandro Martignano
- * 
- * TODO
- * fix the class so that start() can't be run twice (singleton?)
- * what a about the default constructor?
  *
  */
-public class FXGUI extends Application implements UI { 
+public final class FXGUI extends Application implements UI { 
     
-    private static Stage stage;
+    private static final FXGUI SINGLETON = new FXGUI();
+    
+    private Stage stage;
+    
+    private FXGUI() { }
 
     /* (non-Javadoc)
      * @see javafx.application.Application#start(javafx.stage.Stage)
@@ -29,7 +29,7 @@ public class FXGUI extends Application implements UI {
     public void start(final Stage primaryStage) throws Exception {
         
         System.out.println(primaryStage);
-        FXGUI.stage = primaryStage;
+        this.stage = primaryStage;
 
         Pane mainPane = new StackPane();
         
@@ -49,11 +49,19 @@ public class FXGUI extends Application implements UI {
     public void launcher(final String[] args) {
         launch(args);
     }
+    
+    /**
+     * 
+     * @return the instance of the SINGLETON
+     */
+    public static FXGUI getFXGUI() {
+        return SINGLETON;
+    }
 
     /**
      * @return the primaryStage
      */
-    public static Stage getPrimaryStage() {
+    public Stage getPrimaryStage() {
         return stage;
     }  
     
