@@ -97,7 +97,7 @@ public final class PlayerDebug {
                 break;
             case 11:
                 System.out.println("Enter song path");
-                final Path path = Paths.get(in.next());
+                Path path = Paths.get(in.next());
                 manager.openAudioFile(path.toFile());
                 break;
             case 12:

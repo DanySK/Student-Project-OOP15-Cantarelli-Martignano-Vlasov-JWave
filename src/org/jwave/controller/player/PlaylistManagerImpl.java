@@ -51,15 +51,8 @@ final class PlaylistManagerImpl implements PlaylistManager {
     private PlaylistManagerImpl() {     
         this.checkDefaultDir();
         this.availablePlaylists = new HashSet<>();
-        this.refreshAvailablePlaylists();       //loads also default playlist.
-        if (this.defaultQueue == null) {        //if default playlist still not present it has to be created
-            try {
-                this.defaultQueue = this.createNewPlaylist("default");
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+        this.refreshAvailablePlaylists();
+        this.checkDefaultPlaylistLoading();
         this.loadedPlaylist = this.defaultQueue;
         this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension(), 0);
         this.loadedPlaylist.addEObserver(this.navigator);
@@ -331,6 +324,17 @@ final class PlaylistManagerImpl implements PlaylistManager {
     private void checkDefaultDir() {
         if (!this.isDefaultSaveDirectoryPresent()) {
             this.createSaveDir();
+        }
+    }
+    
+    private void checkDefaultPlaylistLoading() {
+        if (this.defaultQueue == null) {       
+            try {
+                this.defaultQueue = this.createNewPlaylist("default");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }
