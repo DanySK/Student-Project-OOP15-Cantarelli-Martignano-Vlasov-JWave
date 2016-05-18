@@ -528,7 +528,7 @@ public class EditorImpl implements Editor {
 			  
 			lengthOfChunks = (float) lengthOfSong / (float) totalChunks;
 			
-			for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) { // chunkIdx < totalChunks
+			for (int chunkIdx = (int) (from / lengthOfChunks); chunkIdx < (int) (to / lengthOfChunks); ++chunkIdx) {
 				int chunkStartIndex = chunkIdx * sampleSize;
 				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, sampleSize);
 				
