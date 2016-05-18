@@ -11,8 +11,8 @@ import org.jwave.controller.player.PlaylistManager;
 public final class UsePlayer {
 
 //    private static final String PATH = "/Users/alexvlasov/Music";
-    private static final String PATH = "/home/canta/Music";
-    
+//    private static final String PATH = "/home/canta/Music";
+    private static final String WIN_PATH = "C:\\03 Amaranth.mp3";
     private UsePlayer() { }
     
     /**
@@ -42,8 +42,9 @@ public final class UsePlayer {
 //        System.out.println(player.isPlaying());
         //retrieving a value from metadata
 //        System.out.println(manager.getPlayingQueue().getCurrentSelected().get().getMetaData().getAlbum());
-        //manager.openDir(PATH + "/Infected_Mushroom-Converting_Vegetarians_II-mp3", false);
-        player.setPlayer(manager.getPlayingQueue().selectSong(1));
+//        manager.openDir(PATH + "/Infected_Mushroom-Converting_Vegetarians_II-mp3", false);
+        manager.openFile(WIN_PATH, false);
+        player.setPlayer(manager.getPlayingQueue().selectSong(0));
         manager.getPlayingQueue().printPlaylist();
         player.play();
     }
