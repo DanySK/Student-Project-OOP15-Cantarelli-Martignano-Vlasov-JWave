@@ -1,20 +1,20 @@
 package org.jwave.test;
 
-import java.io.Console;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 import org.jwave.controller.player.AudioSystem;
 import org.jwave.controller.player.DynamicPlayer;
 import org.jwave.controller.player.PlaylistManager;
+import org.jwave.controller.player.PlaylistNotFoundException;
 
 /**
  * Class used for testing player functionalities from console. 
  * 
  */
 public final class PlayerDebug {
-
-    private static final String PATH = "/home/canta/Music";
     
     private PlayerDebug() { }
     
@@ -42,17 +42,17 @@ public final class PlayerDebug {
                     + "\n7 getPlayMode "
                     + "\n8 setPlayMode "
                     + "\n9 setPlayer"
-                    + "\n10 openFile(enqueue = false) "
-                    + "\n11 openFile(enqueue = true) "
-                    + "\n12 openDir (enqueue = false) "
-                    + "\n13 openDir (enqueue = true) "
+                    + "\n10 createNewPlaylist"
+                    + "\n11 openFile "
+                    + "\n12 deletePlaylist "
+                    + "\n13 refreshAvailablePlaylists "
                     + "\n14 savePlaylistToFile "
-                    + "\n15 loadPlaylist "
+                    + "\n15 selectPlaylist "
                     + "\n16 reset "
                     + "\n17 getCurrentLoaded "
                     + "\n18 getCurrentLoadedIndex "
                     + "\n19 getPlayingQueue "
-                    + "\n20 getPlaylistNavigator");
+                    + "\n20 renamePlaylist");
             command = in.nextInt();
             switch (command) {
             case 1:
@@ -65,8 +65,7 @@ public final class PlayerDebug {
                 player.stop();
                 break;
             case 4:
-                System.out.println("Enter milliseconds, remember that length = " 
-            + player.getLength());
+                System.out.println("Enter milliseconds, remember that length = " + player.getLength());
                 int ms = in.nextInt();
                 player.cue(ms);
                 break;
@@ -88,43 +87,42 @@ public final class PlayerDebug {
                 player.setPlayer(manager.getPlayingQueue().selectSong(index));
                 break;
             case 10:
-                System.out.println("Enter song path");
-                String path = in.nextLine();
-                manager.openFile(path, false);
+                System.out.println("Enter new playlist name");
+                String name = in.nextLine();
+                try {
+                    manager.createNewPlaylist(name);
+                } catch (IOException e2) {
+                    // TODO Auto-generated catch block
+                    e2.printStackTrace();
+                }
                 break;
             case 11:
                 System.out.println("Enter song path");
-                path = in.nextLine();
-                manager.openFile(path, true);
+                final Path path = Paths.get(in.nextLine());
+                manager.openAudioFile(path.toFile());
                 break;
             case 12:
-//                System.out.println("Enter directory path");
-//                path = in.next();
-                manager.openDir(PATH, false);
-                break;
+                System.out.println("Enter name of the playlist you want to delete");
+                name = in.next();
+                try {
+                    manager.deletePlaylist(manager.selectPlaylist(name));
+                } catch (IllegalArgumentException | PlaylistNotFoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             case 13:
-                System.out.println("Enter directory path");
-                path = in.next();
-                manager.openDir(path, true);
+                System.out.println("Refreshing available playlists");
+                manager.refreshAvailablePlaylists();
                 break;
             case 14:
-                System.out.println("Enter name of the playlist");
-                String name = in.nextLine();
-                System.out.println("Enter the path where you want to save the playlist");
-                path = in.nextLine();
-                try {
-                    manager.savePlaylistToFile(name, path);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                System.out.println("Does nothing");
                 break;
             case 15:
-                System.out.println("Enter path");
-                path = PATH + in.nextLine();
+                System.out.println("Enter name of the playlist you want to select");
+                name = in.nextLine();
                 try {
-                    manager.loadPlaylist(path);
-                } catch (IllegalArgumentException | ClassNotFoundException | IOException e) {
+                    manager.selectPlaylist(name);
+                } catch (PlaylistNotFoundException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
