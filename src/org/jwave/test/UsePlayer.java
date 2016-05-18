@@ -42,7 +42,7 @@ public final class UsePlayer {
 //        System.out.println(player.isPlaying());
         //retrieving a value from metadata
 //        System.out.println(manager.getPlayingQueue().getCurrentSelected().get().getMetaData().getAlbum());
-        manager.openDir(PATH + "/Infected_Mushroom-Converting_Vegetarians_II-mp3", false);
+        //manager.openDir(PATH + "/Infected_Mushroom-Converting_Vegetarians_II-mp3", false);
         player.setPlayer(manager.getPlayingQueue().selectSong(1));
         manager.getPlayingQueue().printPlaylist();
         player.play();

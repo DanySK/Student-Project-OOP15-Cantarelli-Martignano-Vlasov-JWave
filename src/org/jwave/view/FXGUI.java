@@ -20,7 +20,7 @@ public final class FXGUI extends Application implements UI {
     
     private Stage stage;
     
-    private FXGUI() { }
+    public FXGUI() { }
 
     /* (non-Javadoc)
      * @see javafx.application.Application#start(javafx.stage.Stage)

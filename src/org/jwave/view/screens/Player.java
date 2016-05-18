@@ -57,18 +57,15 @@ public class Player implements Initializable {
     private void openFile() {
         System.out.println("Open");
         System.out.println(FXGUI.getFXGUI().getPrimaryStage());
->>>>>>> other
 
         FileChooser fileChooser = new FileChooser();
         // fileChooser.setSelectedExtensionFilter();
         // new FileChooser.ExtensionFilter("*.mp3");
 
         File file = fileChooser.showOpenDialog(FXGUI.getFXGUI().getPrimaryStage());
->>>>>>> other
 
         if (file != null) {
-            AudioSystem.getAudioSystem().getPlaylistManager().openFile(file.getAbsolutePath(), false);
->>>>>>> other
+            AudioSystem.getAudioSystem().getPlaylistManager().openAudioFile(file);
             AudioSystem.getAudioSystem().getDynamicPlayer()
                     .setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(0));
         }
