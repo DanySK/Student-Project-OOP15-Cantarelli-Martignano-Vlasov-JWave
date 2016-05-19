@@ -9,6 +9,7 @@ import org.jwave.controller.player.AudioSystem;
 import org.jwave.controller.player.DynamicPlayer;
 import org.jwave.controller.player.PlaylistManager;
 import org.jwave.controller.player.PlaylistNotFoundException;
+import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Playlist;
 
 /**
@@ -81,6 +82,8 @@ public final class PlayerDebug {
                 break;
             case 8:
                 System.out.println("Enter new PlayMode");       //TODO complete option
+                PlayMode mode = PlayMode.valueOf(in.next());
+                player.setPlayMode(mode);
                 break;
             case 9:
                 System.out.println("Enter song index");
