@@ -146,8 +146,12 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      *          
      * @throws IllegalArgumentException
      *          when passing a wrong name or a name that is already present in another playlist.
+     *          
+     * @throws IOException 
+     * 
+     * @throws FileNotFoundException 
      */
-    void renamePlaylist(Playlist playlist, String newName) throws IllegalArgumentException;
+    void renamePlaylist(Playlist playlist, String newName) throws IllegalArgumentException, FileNotFoundException, IOException;
     
     /**
      *

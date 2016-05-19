@@ -191,7 +191,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public void refreshAvailablePlaylists() {
+    public void refreshAvailablePlaylists() {   //TODO check if it is better to throw exceptions
         final Path defaultDir = Paths.get(this.getDefaultSavePath());
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir)) {
             for (Path file : stream) {
@@ -226,19 +226,15 @@ final class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public void renamePlaylist(final Playlist playlist, final String newName) throws IllegalArgumentException {
+    public void renamePlaylist(final Playlist playlist, final String newName) throws IllegalArgumentException, FileNotFoundException, IOException {
         if (this.isNameAlreadyPresent(newName)) {
             throw new IllegalArgumentException("Cannot have two playlists with the same name.");
         }
         final String oldName = playlist.getName();
         playlist.setName(newName);
         final Path filePath = Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + oldName);
-        try {
-            this.savePlaylistToFile(playlist, playlist.getName(), this.getDefaultSavePath());
-            Files.delete(filePath);
-        } catch (IOException e) {            
-            e.printStackTrace();
-        }
+        this.savePlaylistToFile(playlist, playlist.getName(), this.getDefaultSavePath());
+        Files.delete(filePath);
     }    
     
     @Override
@@ -335,8 +331,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
             try {
                 this.defaultQueue = this.createNewPlaylist("default");
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                System.err.println("Cannot create default palylist.");
             }
         }
     }
