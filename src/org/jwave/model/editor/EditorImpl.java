@@ -65,13 +65,22 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public int getSongLength() {
+	public int getOriginalSongLength() {
 		if (isSongLoaded()) {
-			return lengthOfSong;
+			return this.lengthOfSong;
 		} else {
 			return -1;
 		}
 	}
+	
+	@Override
+	public int getModifiedSongLength() {
+		if (isSongLoaded()) {
+			return this.editCuts.get(this.editCuts.size() - 1).getCutTo();
+		} else {
+			return -1;
+		}
+	}	
 
 	@Override
 	public void setSelectionFrom(int ms) {
@@ -519,7 +528,7 @@ public class EditorImpl implements Editor {
 			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
 			float[] leftChannel = song.getChannel(AudioSample.LEFT);
 			
-			int sampleSize = (int) ((leftChannel.length * (float) ((float) (to - from) / (float) getSongLength())) / (float) samples);
+			int sampleSize = (int) ((leftChannel.length * (float) ((float) (to - from) / (float) getModifiedSongLength())) / (float) samples);
 			if (sampleSize < 1) {
 				sampleSize = 1;
 			}
@@ -530,36 +539,104 @@ public class EditorImpl implements Editor {
 			  
 			lengthOfChunks = (float) lengthOfSong / (float) totalChunks;
 			
-			for (int chunkIdx = (int) (from / lengthOfChunks); chunkIdx < (int) (to / lengthOfChunks); ++chunkIdx) {
-				int chunkStartIndex = chunkIdx * sampleSize;
-				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, sampleSize);
+			int startCutIndex = 0;
+			int endCutIndex = 0;
+			int startSegmentIndex = -1;
+			int startSegmentOffset = 0;
+			int endSegmentIndex = -1;
+			int endSegmentLength = 0;
+			int currentOffset; // used to track at which point in cut we are
+			
+			for (int i = 0; i < editCuts.size(); i++) {
+				if (editCuts.get(i).getCutFrom() <= from && editCuts.get(i).getCutTo() >= from) {
+					startCutIndex = i;
+				}
+			}
+			
+			int startCutOffset = from - editCuts.get(startCutIndex).getCutFrom();
+			currentOffset = 0;
+			for (int i = 0; startSegmentIndex == -1; i++) {
+				if (currentOffset + (editCuts.get(startCutIndex).getSegments().get(i).getY() - editCuts.get(startCutIndex).getSegments().get(i).getX()) > startCutOffset) {
+					startSegmentIndex = i;
+					startSegmentOffset = startCutOffset - currentOffset;
+				}
 				
-				System.arraycopy(leftChannel, chunkStartIndex, samplesLeft, 0, chunkSize);
-				System.arraycopy(rightChannel, chunkStartIndex, samplesRight, 0, chunkSize);
+				currentOffset += editCuts.get(startCutIndex).getSegments().get(i).getY() - editCuts.get(startCutIndex).getSegments().get(i).getX();
+			}
+			
+			for (int i = 0; i < editCuts.size(); i++) {
+				if (editCuts.get(i).getCutFrom() <= to && editCuts.get(i).getCutTo() >= to) {
+					endCutIndex = i;
+				}
+			}
+			
+			int endCutOffset = to - editCuts.get(endCutIndex).getCutFrom();
+			currentOffset = 0;
+			for (int i = 0; endSegmentIndex == -1; i++) {
+				if (currentOffset + (editCuts.get(endCutIndex).getSegments().get(i).getY() - editCuts.get(endCutIndex).getSegments().get(i).getX()) > startCutOffset) {
+					endSegmentIndex = i;
+					endSegmentLength = endCutOffset - currentOffset;
+				}
 				
-				if (chunkSize < sampleSize) {
-					for (int i = chunkSize; i < samplesLeft.length - 1; i++) {
-						samplesLeft[i] = (float) 0.0;
+				currentOffset += editCuts.get(endCutIndex).getSegments().get(i).getY() - editCuts.get(endCutIndex).getSegments().get(i).getX();
+			}			
+			
+			System.out.println(startCutIndex);
+			System.out.println(startSegmentIndex);
+			System.out.println(startSegmentOffset);
+			System.out.println(endCutIndex);
+			System.out.println(endSegmentIndex);
+			System.out.println(endSegmentLength);
+			
+			int i = startCutIndex;
+			int j = startSegmentIndex;
+
+			while (i < endCutIndex || (i == endCutIndex && j <= endSegmentIndex)) {
+				System.out.println(i + " " + j);
+				
+				int segmentFrom = (i == startCutIndex && j == startSegmentIndex) ? startSegmentOffset : this.editCuts.get(i).getSegments().get(j).getX();
+				int segmentTo = (i == endCutIndex && j == endSegmentIndex) ? this.editCuts.get(i).getSegments().get(j).getX() + endSegmentLength : this.editCuts.get(i).getSegments().get(j).getY();
+				
+				System.out.println(segmentFrom + " " + segmentTo);
+				
+				for (int chunkIdx = (int) (segmentFrom / lengthOfChunks); chunkIdx < (int) (segmentTo / lengthOfChunks) - 1; ++chunkIdx) {
+					int chunkStartIndex = chunkIdx * sampleSize;
+					int chunkSize = Math.min(leftChannel.length - chunkStartIndex, sampleSize);
+					
+					System.arraycopy(leftChannel, chunkStartIndex, samplesLeft, 0, chunkSize);
+					System.arraycopy(rightChannel, chunkStartIndex, samplesRight, 0, chunkSize);
+					
+					if (chunkSize < sampleSize) {
+						for (int k = chunkSize; k < samplesLeft.length - 1; k++) {
+							samplesLeft[k] = (float) 0.0;
+						}
+						
+						for (int k = chunkSize; k < samplesRight.length - 1; k++) {
+							samplesRight[k] = (float) 0.0;
+						}
 					}
 					
-					for (int i = chunkSize; i < samplesRight.length - 1; i++) {
-						samplesRight[i] = (float) 0.0;
+					float highest = 0;
+					float lowest = 0;
+					
+					for (int k = 0; k < samplesLeft.length; k++) {
+						if (samplesLeft[k] > 0 && samplesLeft[k] > highest) {
+							highest = samplesLeft[k];
+						} else if (samplesLeft[k] < 0 && samplesLeft[k] < lowest) {
+							lowest = samplesLeft[k];
+						}
 					}
+					
+					waveformValues.add(highest);
+					waveformValues.add(lowest);
 				}
 				
-				float highest = 0;
-				float lowest = 0;
-				
-				for (int i = 0; i < samplesLeft.length; i++) {
-					if (samplesLeft[i] > 0 && samplesLeft[i] > highest) {
-						highest = samplesLeft[i];
-					} else if (samplesLeft[i] < 0 && samplesLeft[i] < lowest) {
-						lowest = samplesLeft[i];
-					}
+				if (j + 1 >= this.editCuts.get(i).getSegments().size()) {
+					j = 0;
+					i++;
+				} else {
+					j++;
 				}
-				
-				waveformValues.add(highest);
-				waveformValues.add(lowest);
 			}
 		}
 		
@@ -568,7 +645,7 @@ public class EditorImpl implements Editor {
 	
 	public void printWaveform() {
 		if (songLoaded) {
-			List<Float> results = getWaveform(0, getSongLength(), 1000);
+			List<Float> results = getWaveform(0, getOriginalSongLength(), 1000);
 			
 			System.out.println(results.size());
 			
