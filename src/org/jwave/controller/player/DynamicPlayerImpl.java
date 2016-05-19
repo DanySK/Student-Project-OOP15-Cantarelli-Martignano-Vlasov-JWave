@@ -11,6 +11,7 @@ import ddf.minim.AudioOutput;
 import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 import ddf.minim.ugens.FilePlayer;
+import ddf.minim.ugens.Gain;
 
 /**
  * This class is an implementation of {@link}DynamicPlayer.
@@ -18,7 +19,7 @@ import ddf.minim.ugens.FilePlayer;
 final class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
-    private static final int OUT_BIT_RATE = 16;
+    private static final int OUT_BIT_DEPTH = 16;
 
     private static final DynamicPlayer SINGLETON = new DynamicPlayerImpl();
     
@@ -26,6 +27,7 @@ final class DynamicPlayerImpl implements DynamicPlayer {
     
     private Minim minim; 
     private FilePlayer player;
+    private Gain volumeControl;
     private AudioOutput out;
     private PlayMode currentPlayMode;
     private boolean started;
@@ -38,6 +40,7 @@ final class DynamicPlayerImpl implements DynamicPlayer {
     private DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
         this.currentPlayMode = PlayMode.NO_LOOP;
+        this.volumeControl = new Gain();
         this.started = false;
         this.paused = false;
         this.agent = new ClockAgent("Playback");
@@ -104,7 +107,8 @@ final class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public void setVolume(final int amount) {
-        //TODO
+        //TODO add limit to the amount value
+        this.volumeControl.setValue(amount);
     }
 
     @Override
@@ -118,14 +122,17 @@ final class DynamicPlayerImpl implements DynamicPlayer {
         AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
         if (this.player != null) {
             this.stop();
+            this.player.unpatch(this.volumeControl);
+            this.volumeControl.unpatch(this.out);
             this.out.close();
         }
         this.started = false;
         this.player = new FilePlayer(this.minim.loadFileStream(song.getAbsolutePath(), BUFFER_SIZE, false));
-        this.stop();
+        this.player.pause();
         
-        this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_RATE);
-        this.player.patch(this.out);
+        this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_DEPTH);
+        this.player.patch(this.volumeControl);
+        this.volumeControl.patch(this.out);
         sampleRateRetriever.close();
         this.notifyEObservers(Optional.empty(), Optional.of(song));
     }

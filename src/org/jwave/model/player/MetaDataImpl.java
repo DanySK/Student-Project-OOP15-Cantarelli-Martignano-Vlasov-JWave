@@ -149,7 +149,8 @@ public class MetaDataImpl implements MetaData, Serializable {
         return this.retrieve("track");
     }
     
-    private String retrieve(final String key) {
+    @Override
+    public String retrieve(final String key) {
         return this.data.get(key);
     }
 }

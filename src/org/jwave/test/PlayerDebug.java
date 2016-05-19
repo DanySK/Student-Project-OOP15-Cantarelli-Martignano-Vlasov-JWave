@@ -43,19 +43,20 @@ public final class PlayerDebug {
                     + "\n6 getPosition "
                     + "\n7 getPlayMode "
                     + "\n8 setPlayMode "
-                    + "\n9 setPlayer"
-                    + "\n10 createNewPlaylist"
-                    + "\n11 openAudioFile "
-                    + "\n12 deletePlaylist "
-                    + "\n13 refreshAvailablePlaylists "
-                    + "\n14 savePlaylistToFile "
-                    + "\n15 selectPlaylist "
-                    + "\n16 reset "
-                    + "\n17 getCurrentLoaded "
-                    + "\n18 getCurrentLoadedIndex "
-                    + "\n19 getPlayingQueue "
-                    + "\n20 renamePlaylist"
-                    + "\n21 get album from metadata");
+                    + "\n9 setVolume"
+                    + "\n10 setPlayer"
+                    + "\n11 createNewPlaylist"
+                    + "\n12 openAudioFile "
+                    + "\n13 deletePlaylist "
+                    + "\n14 refreshAvailablePlaylists "
+                    + "\n15 savePlaylistToFile "
+                    + "\n16 selectPlaylist "
+                    + "\n17 reset "
+                    + "\n18 getCurrentLoaded "
+                    + "\n19 getCurrentLoadedIndex "
+                    + "\n20 getPlayingQueue "
+                    + "\n21 renamePlaylist"
+                    + "\n22 get metadata");
             command = in.nextInt();
             switch (command) {
             case 1:
@@ -87,11 +88,15 @@ public final class PlayerDebug {
                 player.setPlayMode(mode);
                 break;
             case 9:
+                System.out.println("Enter the amount of volume to be set");
+                int amount = in.nextInt();
+                player.setVolume(amount);
+            case 10:
                 System.out.println("Enter song index");
                 int index = in.nextInt();
                 player.setPlayer(manager.getPlayingQueue().selectSong(index));
                 break;
-            case 10:    //playlist manager options
+            case 11:    //playlist manager options
                 System.out.println("Enter new playlist name");
                 String name = in.next();
                 try {
@@ -101,12 +106,12 @@ public final class PlayerDebug {
                     e2.printStackTrace();
                 }
                 break;
-            case 11:
+            case 12:
                 System.out.println("Enter song path");
                 Path path = Paths.get(in.next());
                 manager.openAudioFile(path.toFile());
                 break;
-            case 12:
+            case 13:
                 System.out.println("Enter name of the playlist you want to delete");
                 name = in.next();
                 try {
@@ -115,14 +120,14 @@ public final class PlayerDebug {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-            case 13:
+            case 14:
                 System.out.println("Refreshing available playlists");
                 manager.refreshAvailablePlaylists();
                 break;
-            case 14:
+            case 15:
                 System.out.println("Does nothing");
                 break;
-            case 15:
+            case 16:
                 System.out.println("Sorry, not available now. Work in progress.");
 //                System.out.println("Enter name of the playlist you want to select");
 //                name = in.nextLine();
@@ -133,19 +138,19 @@ public final class PlayerDebug {
 //                    E.PRINTSTACKTRACE();
 //                }
                 break;
-            case 16:
+            case 17:
                 manager.reset();
                 break;
-            case 17:
+            case 18:
                 System.out.println("Current loaded :" + manager.getCurrentLoaded().get().getName());
                 break;
-            case 18:
+            case 19:
                 System.out.println("Current loaded index = " + manager.getCurrentLoadedIndex().get());
                 break;
-            case 19:
+            case 20:
                 manager.getPlayingQueue().printPlaylist();
                 break;
-            case 20:
+            case 21:
                 System.out.println("Enter a name to select a playlist from the available ");
                 manager.getDefaultQueue().printPlaylist();
                 name = in.next();
@@ -160,8 +165,10 @@ public final class PlayerDebug {
                     e.printStackTrace();
                 }
                 break;
-            case 21:
-                System.out.println(manager.getCurrentLoaded().get().getMetaData().getAlbum());
+            case 22:
+                System.out.println("Enter the value of mnetadata you want to retrieve");
+                name = in.next();
+                System.out.println(manager.getCurrentLoaded().get().getMetaData().retrieve(name));
                 break;
             default:
                 System.out.println("No known command selected");

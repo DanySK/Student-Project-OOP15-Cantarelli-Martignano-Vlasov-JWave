@@ -125,4 +125,11 @@ public interface MetaData {
      *          the track number.
      */
     String getTrack();
+    
+    /**
+     * 
+     *  @param metaDataValue
+     * @return
+     */
+    String retrieve(String metaDataValue);
 }
