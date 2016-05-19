@@ -107,4 +107,6 @@ public interface Playlist extends ESource<Optional<Integer>, Optional<Integer>> 
      * 
      */
     void printPlaylist();
+    
+    void setName(final String newName);
 }

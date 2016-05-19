@@ -146,4 +146,9 @@ public class PlaylistImpl implements Playlist, Serializable {
             this.set = new HashSet<>();
         }   
     }
+
+    @Override
+    public void setName(final String newName) {
+        this.playlistName = newName;
+    }
 }
