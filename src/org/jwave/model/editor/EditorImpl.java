@@ -209,7 +209,7 @@ public class EditorImpl implements Editor {
 			}
 		}
 		
-		return new Cut(getSelectionFrom(), getSelectionFrom() + copiedCutLength, copiedSegments);
+		return new Cut(getSelectionFrom() + 1, getSelectionFrom() + copiedCutLength, copiedSegments);
 	}	
 
 	@Override
@@ -249,13 +249,14 @@ public class EditorImpl implements Editor {
 			}
 			
 			Cut leftCut = new Cut(cutToDivide.getCutFrom(), halfPoint, leftSegments);
-			Cut rightCut = new Cut(cutToInsert.getCutTo(), cutToInsert.getCutTo() + rightHalfLength, rightSegments);			
+			Cut rightCut = new Cut(cutToInsert.getCutTo() + 1, cutToInsert.getCutTo() + rightHalfLength, rightSegments);			
 			
 			// shift all cuts after cut that was divided
 			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
 			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
 			for (i = editCuts.size() - 1; i > cutToDivideIndex + 1; i--) {
 				editCuts.set(i, editCuts.get(i - 2));
+				editCuts.get(i).setCutFrom(editCuts.get(i).getCutFrom() + 1);
 			}
 			
 			// finally set all three cuts to the new ones
