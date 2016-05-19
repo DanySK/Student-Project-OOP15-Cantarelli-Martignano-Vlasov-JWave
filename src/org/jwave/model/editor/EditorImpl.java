@@ -641,7 +641,7 @@ public class EditorImpl implements Editor {
 					waveformValues.add(highest);
 					waveformValues.add(lowest);
 					waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesLeft.length)));
-					waveformValues.add((float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)));
+					waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)));
 				}
 				
 				if (j + 1 >= this.editCuts.get(i).getSegments().size()) {
