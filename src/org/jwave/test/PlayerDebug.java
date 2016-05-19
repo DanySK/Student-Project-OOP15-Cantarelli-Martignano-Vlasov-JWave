@@ -9,6 +9,7 @@ import org.jwave.controller.player.AudioSystem;
 import org.jwave.controller.player.DynamicPlayer;
 import org.jwave.controller.player.PlaylistManager;
 import org.jwave.controller.player.PlaylistNotFoundException;
+import org.jwave.model.player.Playlist;
 
 /**
  * Class used for testing player functionalities from console. 
@@ -29,6 +30,7 @@ public final class PlayerDebug {
         final DynamicPlayer player = AudioSystem.getAudioSystem().getDynamicPlayer();
         final PlaylistManager manager = AudioSystem.getAudioSystem().getPlaylistManager();
         final Scanner in = new Scanner(System.in);
+        in.useDelimiter("\n");
         int command = 0;
         do {
             System.out.println("Press: "
@@ -87,7 +89,7 @@ public final class PlayerDebug {
                 break;
             case 10:    //playlist manager options
                 System.out.println("Enter new playlist name");
-                String name = in.nextLine();
+                String name = in.next();
                 try {
                     manager.createNewPlaylist(name);
                 } catch (IOException e2) {
@@ -131,10 +133,28 @@ public final class PlayerDebug {
                 manager.reset();
                 break;
             case 17:
-                System.out.println("Current loaded :" + manager.getCurrentLoaded().get().toString());
+                System.out.println("Current loaded :" + manager.getCurrentLoaded().get().getName());
                 break;
             case 18:
                 System.out.println("Current loaded index = " + manager.getCurrentLoadedIndex().get());
+                break;
+            case 19:
+                manager.getPlayingQueue().printPlaylist();
+                break;
+            case 20:
+                System.out.println("Enter a name to select a playlist from the available ");
+                manager.getDefaultQueue().printPlaylist();
+                name = in.next();
+                Playlist p;
+                try {
+                    p = manager.selectPlaylist(name);
+                    System.out.println("Enter new playlist name");
+                    name = in.next();
+                    manager.renamePlaylist(p, name);
+                } catch (PlaylistNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 break;
             default:
                 System.out.println("No known command selected");

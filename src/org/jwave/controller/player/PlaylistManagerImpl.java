@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -307,8 +308,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
         try {
             Files.createDirectory(saveDirPath);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println("Cannot create default save directory.");
         }
     }
     
