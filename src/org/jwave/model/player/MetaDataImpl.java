@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.jwave.controller.player.FileSystemHandler;
@@ -24,18 +23,11 @@ public class MetaDataImpl implements MetaData, Serializable {
      * 
      */
     private static final long serialVersionUID = -854965524145699984L;
-
-    private enum MData {
-        ALBUM, AUTHOR, COMMENT, COMPOSER, COPYRIGHT, DATE, DISC, ENCODED, FILENAME, GENRE, LENGTH, LYRICS, 
-        ORCHESTRA, PUBLISHER, SAMPLE_FRAME_COUNT, TITLE, TRACK;
-    }
     
     private transient Minim minim;
     private transient AudioPlayer metaDataLoader;
     
     private Map<String, String> data;
-    
-    //TODO check if deleting AudioPlayer after loading metadata is possible then enumType ecc.. is useless.
     
     /**
      * Creates a new MetaDataImpl.
@@ -49,7 +41,6 @@ public class MetaDataImpl implements MetaData, Serializable {
         final AudioMetaData tmpData = this.metaDataLoader.getMetaData();
         this.data = new HashMap<>();
         final List<Method> methods = Arrays.asList(AudioMetaData.class.getMethods()); 
-        //loading metadata
         methods.forEach(m -> {
             String name = m.getName();
             String value;
