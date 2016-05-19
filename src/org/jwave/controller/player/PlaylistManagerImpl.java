@@ -75,7 +75,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
             throw new IllegalArgumentException("Trying to open a wrong type of file");
         }
         this.defaultQueue.addSong(new SongImpl(audioFile));
-    }   //TODO check if to add a control for NON audio files with the extension ".mp3" or ".wav"
+    }  
 
 //    @Override
 //    public void openDir(final String path, final boolean enqueue) {
@@ -95,15 +95,10 @@ final class PlaylistManagerImpl implements PlaylistManager {
     @Override
     public void reset() {
         if (!this.defaultQueue.isEmpty()) {
-            try {
-                this.defaultQueue = this.createNewPlaylist("default");
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } //TODO check if it is better to add a method in Playlist named "clean" or similar.
+            this.defaultQueue.clear();
         }   
-        this.loadedPlaylist = this.getDefaultQueue();
-        this.loadedPlaylist.addEObserver(this.getPlaylistNavigator());
+        this.loadedPlaylist = this.defaultQueue;
+        this.loadedPlaylist.addEObserver(this.navigator);
     }
 
     @Override

@@ -104,7 +104,7 @@ final class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public void setVolume(final int amount) {
-        // TODO Auto-generated method stub
+        //TODO
     }
 
     @Override

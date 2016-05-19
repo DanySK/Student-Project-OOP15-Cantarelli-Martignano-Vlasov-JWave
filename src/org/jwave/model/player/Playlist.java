@@ -108,5 +108,16 @@ public interface Playlist extends ESource<Optional<Integer>, Optional<Integer>> 
      */
     void printPlaylist();
     
+    /**
+     * Clears the playlist.
+     */
+    void clear();
+    
+    /**
+     * Sets the playlist name.
+     * 
+     * @param newName
+     *          the new playlist name.
+     */
     void setName(final String newName);
 }

@@ -19,7 +19,7 @@ import org.jwave.model.player.Song;
 public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<Song>> {
 
     /**
-     * Saves the current loaded playlist in the file system.
+     * Saves a playlist in the file system.
      * 
      * @param playlist
      *          the playlist to be saved.
@@ -56,7 +56,7 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
 //    void loadPlaylist(File playlist) throws IllegalArgumentException, ClassNotFoundException, IOException;
     
     /**
-     * Loads a file from the file system and adds it to the default playlist.
+     * Loads a .wav or .mp3 file from the file system and adds it to the default playlist.
      * 
      * @param audioFile
      *          the audioFile to be loaded.
@@ -100,7 +100,7 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
     Playlist createNewPlaylist(String name) throws IllegalArgumentException, FileNotFoundException, IOException;
     
     /**
-     * Deletes a selected playlist.
+     * Deletes a playlist.
      * 
      * @param playlist
      *          the playlist to be deleted.
