@@ -9,8 +9,11 @@ public interface Editor {
 	// Restituisce vero se una canzone e' stata caricata, falso altrimenti
 	boolean isSongLoaded();
 	
-	// Restituisce la lunghezza della canzone in ms, -1 se non e' stata caricata nessuna canzone
-	int getSongLength();
+	// Restituisce la lunghezza della canzone originale in ms, -1 se non e' stata caricata nessuna canzone
+	int getOriginalSongLength();
+	
+	// Restituisce la lunghezza della canzone modificata in ms, -1 se non e' stata caricata nessuna canzone
+	int getModifiedSongLength();
 	
 	// Posizione il cursore principale (in ms)
 	void setSelectionFrom(int ms);
