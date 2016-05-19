@@ -91,6 +91,7 @@ public final class PlayerDebug {
                 System.out.println("Enter the amount of volume to be set");
                 int amount = in.nextInt();
                 player.setVolume(amount);
+                break;
             case 10:
                 System.out.println("Enter song index");
                 int index = in.nextInt();
