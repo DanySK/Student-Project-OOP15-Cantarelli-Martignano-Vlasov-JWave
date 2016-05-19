@@ -234,7 +234,16 @@ final class PlaylistManagerImpl implements PlaylistManager {
         if (this.isNameAlreadyPresent(newName)) {
             throw new IllegalArgumentException("Cannot have two playlists with the same name.");
         }
-        //TODO to be completed
+        final String oldName = playlist.getName();
+        playlist.setName(newName);
+        final Path filePath = Paths.get(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME 
+                + System.getProperty(SEPARATOR) + oldName);
+        try {
+            this.savePlaylistToFile(playlist, playlist.getName(), System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME);
+            Files.delete(filePath);
+        } catch (IOException e) {            
+            e.printStackTrace();
+        }
     }    
     
     @Override
