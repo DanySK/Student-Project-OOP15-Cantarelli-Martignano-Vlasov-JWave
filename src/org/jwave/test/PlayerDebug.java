@@ -54,7 +54,8 @@ public final class PlayerDebug {
                     + "\n17 getCurrentLoaded "
                     + "\n18 getCurrentLoadedIndex "
                     + "\n19 getPlayingQueue "
-                    + "\n20 renamePlaylist");
+                    + "\n20 renamePlaylist"
+                    + "\n21 get album from metadata");
             command = in.nextInt();
             switch (command) {
             case 1:
@@ -158,6 +159,9 @@ public final class PlayerDebug {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                break;
+            case 21:
+                System.out.println(manager.getCurrentLoaded().get().getMetaData().getAlbum());
                 break;
             default:
                 System.out.println("No known command selected");
