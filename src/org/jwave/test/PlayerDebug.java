@@ -1,5 +1,6 @@
 package org.jwave.test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -162,6 +163,15 @@ public final class PlayerDebug {
                     name = in.next();
                     manager.renamePlaylist(p, name);
                 } catch (PlaylistNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }

@@ -45,6 +45,7 @@ final class DynamicPlayerImpl implements DynamicPlayer {
         this.paused = false;
         this.agent = new ClockAgent("Playback");
         this.set = new HashSet<>();
+        this.agent.startClockAgent();
     }
     
     
@@ -175,7 +176,7 @@ final class DynamicPlayerImpl implements DynamicPlayer {
             this.stopped = false;
             this.name = threadName;
             this.t = new Thread(this, this.name);
-            this.t.start();
+//            this.t.start();
         }
         
         @Override
@@ -191,7 +192,12 @@ final class DynamicPlayerImpl implements DynamicPlayer {
             }
         }
         
-        public void stop() {
+        public void startClockAgent() {
+            this.setStopped(false);
+            this.t.start();
+        }
+        
+        public void stopClockAgent() {
             this.setStopped(true);
         }
         
