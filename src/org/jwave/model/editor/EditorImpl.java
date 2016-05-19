@@ -65,13 +65,22 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public int getSongLength() {
+	public int getOriginalSongLength() {
 		if (isSongLoaded()) {
-			return lengthOfSong;
+			return this.lengthOfSong;
 		} else {
 			return -1;
 		}
 	}
+	
+	@Override
+	public int getModifiedSongLength() {
+		if (isSongLoaded()) {
+			return this.editCuts.get(this.editCuts.size() - 1).getCutTo();
+		} else {
+			return -1;
+		}
+	}	
 
 	@Override
 	public void setSelectionFrom(int ms) {
@@ -519,7 +528,7 @@ public class EditorImpl implements Editor {
 			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
 			float[] leftChannel = song.getChannel(AudioSample.LEFT);
 			
-			int sampleSize = (int) ((leftChannel.length * (float) ((float) (to - from) / (float) getSongLength())) / (float) samples);
+			int sampleSize = (int) ((leftChannel.length * (float) ((float) (to - from) / (float) getModifiedSongLength())) / (float) samples);
 			if (sampleSize < 1) {
 				sampleSize = 1;
 			}
@@ -568,7 +577,7 @@ public class EditorImpl implements Editor {
 	
 	public void printWaveform() {
 		if (songLoaded) {
-			List<Float> results = getWaveform(0, getSongLength(), 1000);
+			List<Float> results = getWaveform(0, getOriginalSongLength(), 1000);
 			
 			System.out.println(results.size());
 			
