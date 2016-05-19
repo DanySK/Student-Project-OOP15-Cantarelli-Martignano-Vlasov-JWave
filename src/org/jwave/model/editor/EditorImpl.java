@@ -616,7 +616,10 @@ public class EditorImpl implements Editor {
 							samplesRight[k] = (float) 0.0;
 						}
 					}
-					
+
+					/*
+					 * first we do the left channel
+					 */
 					float highest = 0;
 					float lowest = 0;
 					float quadraticTotalPositive = 0;
@@ -642,6 +645,35 @@ public class EditorImpl implements Editor {
 					waveformValues.add(lowest);
 					waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesLeft.length)));
 					waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)));
+					
+					/*
+					 * then we do the right channel
+					 */
+					highest = 0;
+					lowest = 0;
+					quadraticTotalPositive = 0;
+					quadraticTotalNegative = 0;
+					
+					for (int k = 0; k < samplesRight.length; k++) {
+						if (samplesRight[k] > 0) {
+							quadraticTotalPositive += Math.pow(samplesRight[k], 2);
+							
+							if (samplesRight[k] > highest) {
+								highest = samplesRight[k];
+							}							
+						} else if (samplesRight[k] < 0) {
+							quadraticTotalNegative += Math.pow(samplesRight[k], 2);
+							
+							if (samplesRight[k] < lowest) {
+								lowest = samplesRight[k];
+							}
+						}
+					}
+					
+					waveformValues.add(highest);
+					waveformValues.add(lowest);
+					waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesRight.length)));
+					waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesRight.length)));					
 				}
 				
 				if (j + 1 >= this.editCuts.get(i).getSegments().size()) {
