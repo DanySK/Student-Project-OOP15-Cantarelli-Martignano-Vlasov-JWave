@@ -619,17 +619,29 @@ public class EditorImpl implements Editor {
 					
 					float highest = 0;
 					float lowest = 0;
+					float quadraticTotalPositive = 0;
+					float quadraticTotalNegative = 0;
 					
 					for (int k = 0; k < samplesLeft.length; k++) {
-						if (samplesLeft[k] > 0 && samplesLeft[k] > highest) {
-							highest = samplesLeft[k];
-						} else if (samplesLeft[k] < 0 && samplesLeft[k] < lowest) {
-							lowest = samplesLeft[k];
+						if (samplesLeft[k] > 0) {
+							quadraticTotalPositive += Math.pow(samplesLeft[k], 2);
+							
+							if (samplesLeft[k] > highest) {
+								highest = samplesLeft[k];
+							}							
+						} else if (samplesLeft[k] < 0) {
+							quadraticTotalNegative += Math.pow(samplesLeft[k], 2);
+							
+							if (samplesLeft[k] < lowest) {
+								lowest = samplesLeft[k];
+							}
 						}
 					}
 					
 					waveformValues.add(highest);
 					waveformValues.add(lowest);
+					waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesLeft.length)));
+					waveformValues.add((float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)));
 				}
 				
 				if (j + 1 >= this.editCuts.get(i).getSegments().size()) {
