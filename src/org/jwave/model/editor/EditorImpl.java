@@ -601,7 +601,7 @@ public class EditorImpl implements Editor {
 				
 				System.out.println(segmentFrom + " " + segmentTo);
 				
-				for (int chunkIdx = (int) (segmentFrom / lengthOfChunks); chunkIdx < (int) (segmentTo / lengthOfChunks) - 1; ++chunkIdx) {
+				for (int chunkIdx = (int) Math.floor(segmentFrom / lengthOfChunks); chunkIdx < (int) Math.floor(segmentTo / lengthOfChunks); ++chunkIdx) {
 					int chunkStartIndex = chunkIdx * sampleSize;
 					int chunkSize = Math.min(leftChannel.length - chunkStartIndex, sampleSize);
 					
