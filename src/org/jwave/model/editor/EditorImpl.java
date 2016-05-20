@@ -209,7 +209,7 @@ public class EditorImpl implements Editor {
 			}
 		}
 		
-		return new Cut(getSelectionFrom(), getSelectionFrom() + copiedCutLength, copiedSegments);
+		return new Cut(getSelectionFrom() + 1, getSelectionFrom() + copiedCutLength, copiedSegments);
 	}	
 
 	@Override
@@ -249,13 +249,14 @@ public class EditorImpl implements Editor {
 			}
 			
 			Cut leftCut = new Cut(cutToDivide.getCutFrom(), halfPoint, leftSegments);
-			Cut rightCut = new Cut(cutToInsert.getCutTo(), cutToInsert.getCutTo() + rightHalfLength, rightSegments);			
+			Cut rightCut = new Cut(cutToInsert.getCutTo() + 1, cutToInsert.getCutTo() + rightHalfLength, rightSegments);			
 			
 			// shift all cuts after cut that was divided
 			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
 			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
 			for (i = editCuts.size() - 1; i > cutToDivideIndex + 1; i--) {
 				editCuts.set(i, editCuts.get(i - 2));
+				editCuts.get(i).setCutFrom(editCuts.get(i).getCutFrom() + 1);
 			}
 			
 			// finally set all three cuts to the new ones
@@ -616,7 +617,10 @@ public class EditorImpl implements Editor {
 							samplesRight[k] = (float) 0.0;
 						}
 					}
-					
+
+					/*
+					 * first we do the left channel
+					 */
 					float highest = 0;
 					float lowest = 0;
 					float quadraticTotalPositive = 0;
@@ -642,6 +646,35 @@ public class EditorImpl implements Editor {
 					waveformValues.add(lowest);
 					waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesLeft.length)));
 					waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)));
+					
+					/*
+					 * then we do the right channel
+					 */
+					highest = 0;
+					lowest = 0;
+					quadraticTotalPositive = 0;
+					quadraticTotalNegative = 0;
+					
+					for (int k = 0; k < samplesRight.length; k++) {
+						if (samplesRight[k] > 0) {
+							quadraticTotalPositive += Math.pow(samplesRight[k], 2);
+							
+							if (samplesRight[k] > highest) {
+								highest = samplesRight[k];
+							}							
+						} else if (samplesRight[k] < 0) {
+							quadraticTotalNegative += Math.pow(samplesRight[k], 2);
+							
+							if (samplesRight[k] < lowest) {
+								lowest = samplesRight[k];
+							}
+						}
+					}
+					
+					waveformValues.add(highest);
+					waveformValues.add(lowest);
+					waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesRight.length)));
+					waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesRight.length)));					
 				}
 				
 				if (j + 1 >= this.editCuts.get(i).getSegments().size()) {
