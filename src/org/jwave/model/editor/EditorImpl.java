@@ -346,7 +346,7 @@ public class EditorImpl implements Editor {
 				
 			int secondCutFrom = firstCutToDivideIndex != secondCutToDivideIndex ? secondCutToDivide.getCutFrom() - (selectionLength - (getSelectionTo() - secondCutToDivide.getCutFrom())) : firstCutToDivide.getCutFrom() + newFirstCutLength;
 			
-			editCuts.set(firstCutToDivideIndex + 1, new Cut(secondCutFrom, secondCutToDivide.getCutTo() - selectionLength, rightSegments));
+			editCuts.set(firstCutToDivideIndex + 1, new Cut(secondCutFrom + 1, secondCutToDivide.getCutTo() - selectionLength, rightSegments));
 			editCuts.set(firstCutToDivideIndex, new Cut(firstCutToDivide.getCutFrom(), firstCutToDivide.getCutFrom() + newFirstCutLength, leftSegments));
 			
 			// shift cut from's and to's down to account for the gap
