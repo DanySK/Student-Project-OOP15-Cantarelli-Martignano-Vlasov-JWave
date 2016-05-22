@@ -34,12 +34,6 @@ import org.jwave.model.player.SongImpl;
  * This is an implementation of {@link}Playlist.
  */
 final class PlaylistManagerImpl implements PlaylistManager {
-
-    private static final PlaylistManager SINGLETON = new PlaylistManagerImpl();
-     
-    private static final String HOME = "user.home";
-    private static final String SEPARATOR = "file.separator";
-    private static final String SAVE_DIR_NAME = "JWavePlaylists";
     
     private Set<Playlist> availablePlaylists;   //all the available playlists in the default directory
     private Playlist defaultQueue;
@@ -48,25 +42,18 @@ final class PlaylistManagerImpl implements PlaylistManager {
     private Optional<Song> currentLoaded;
     private Optional<Integer> currentIndexLoaded;
     
-    private PlaylistManagerImpl() {     
-        this.checkDefaultDir();
+    /**
+     * Creates a new PlaylistManagerImpl.
+     */
+    public PlaylistManagerImpl() {     
         this.availablePlaylists = new HashSet<>();
-        this.refreshAvailablePlaylists();
-        this.checkDefaultPlaylistLoading();
+//        this.refreshAvailablePlaylists();
+//        this.checkDefaultPlaylistLoading();
         this.loadedPlaylist = this.defaultQueue;
         this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension(), 0);
         this.loadedPlaylist.addEObserver(this.navigator);
         this.currentLoaded = Optional.empty();
         this.currentIndexLoaded = Optional.empty();
-    }
-    
-    @Override
-    public void savePlaylistToFile(final Playlist playlist, final String name, final String path) throws FileNotFoundException, IOException {
-       try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
-               new FileOutputStream(new File(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME 
-                       + System.getProperty(SEPARATOR) + playlist.getName() + ".jwo"))))) {
-           oos.writeObject(playlist);
-       }
     }
 
     @Override
@@ -76,21 +63,6 @@ final class PlaylistManagerImpl implements PlaylistManager {
         }
         this.defaultQueue.addSong(new SongImpl(audioFile));
     }  
-
-//    @Override
-//    public void openDir(final String path, final boolean enqueue) {
-//        this.checkEnqueue(enqueue);
-//        final File dir = new File(path);
-////        final Path dir = Paths.get(path);
-////      Files.newDirectoryStream(dir, filter) da provare che è più elegante
-//        final List<File> filesList = Arrays.asList(dir.listFiles());
-//        final List<File> audioFiles = filesList.stream()
-//                .filter(s -> s.getName().contains(".mp3") || s.getName().contains(".wav"))
-//                .collect(Collectors.toList());
-//        audioFiles.forEach(f -> {
-//            this.loadedPlaylist.addSong(new SongImpl(f));
-//        });
-//    }
 
     @Override
     public void reset() {
@@ -121,15 +93,6 @@ final class PlaylistManagerImpl implements PlaylistManager {
        return this.navigator;
     }
     
-    /**
-     * 
-     * @return
-     *          the singleton instance of PlaylistManagerImpl.
-     */
-    public static PlaylistManager getPlaylistManager() {
-        return SINGLETON;
-    }
-    
     @Override
     public void update(final ESource<? extends Optional<PlayMode>, ? extends Optional<Song>> s, 
             final Optional<PlayMode> arg1, final Optional<Song> arg2) {
@@ -151,13 +114,12 @@ final class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public Playlist createNewPlaylist(final String name) throws IllegalArgumentException, FileNotFoundException, IOException {
+    public Playlist createNewPlaylist(final String name) {
         if (this.isNameAlreadyPresent(name)) {
             throw new IllegalArgumentException("Name already present");
         }
         final Playlist out = new PlaylistImpl(name);
         this.availablePlaylists.add(out);
-        this.savePlaylistToFile(out, name, this.getDefaultSavePath());
         return out;
     }
 
@@ -173,55 +135,18 @@ final class PlaylistManagerImpl implements PlaylistManager {
     
     @Override
     public void deletePlaylist(final Playlist playlist) throws IllegalArgumentException {
-        if (playlist.getName().equals("default.jwo")) {
-            throw new IllegalArgumentException("Cannot delete the default playlist");
-        } else {
+        if (!playlist.getName().equals("default")) {
             this.availablePlaylists.remove(playlist);
-            final Path filePath = Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) 
-            + playlist.getName());
-           try {
-               Files.delete(filePath);
-           } catch (NoSuchFileException ex) {
-               System.err.println("FileContainingPlaylistNotFound");
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
         }
+        throw new IllegalArgumentException("Cannot delete the default playlist");
     }
 
     @Override
-    public void refreshAvailablePlaylists() {   //TODO check if it is better to throw exceptions
-        final Path defaultDir = Paths.get(this.getDefaultSavePath());
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir)) {
-            for (Path file : stream) {
-               if (Files.isRegularFile(file)) {
-                   if (file.getFileName().equals("default.jwo")) {
-                       this.defaultQueue = this.loadPlaylist(file.toFile());    //TODO refactoring duplicate code and if structure
-                   } else {
-                       if (file.getFileName().endsWith(".jwo")) {
-                           this.availablePlaylists.add(this.loadPlaylist(file.toFile()));
-                       }
-                   }
-               }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public Playlist selectPlaylist(final String name) throws PlaylistNotFoundException {
-        if (this.isNameAlreadyPresent(name)) {
-            return this.availablePlaylists.stream()
-                    .filter(p -> p.getName().equals(name))
-                    .findAny()
-                    .get();
-        }
-        throw new PlaylistNotFoundException();
+    public Playlist selectPlaylist(final String name) {
+        return this.availablePlaylists.stream()
+                .filter(p -> p.getName().equals(name))
+                .findAny()
+                .get();
     }
 
     @Override
@@ -283,20 +208,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
         }
     }
 
-    private boolean isDefaultSaveDirectoryPresent() {
-        //inspired by Oracle Java tutorials.
-        final Path userHomeDir  = Paths.get(System.getProperty(HOME));
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(userHomeDir)) {
-            for (Path file : stream) {
-               if (Files.isDirectory(file) && file.getFileName().toString().equals(SAVE_DIR_NAME)) {
-                   return true;
-               }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+    
     
     private void createSaveDir() {
         final Path saveDirPath = Paths.get(this.getDefaultSavePath());
@@ -319,11 +231,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
         return file.getName().endsWith(".jwo");
     }
     
-    private void checkDefaultDir() {
-        if (!this.isDefaultSaveDirectoryPresent()) {
-            this.createSaveDir();
-        }
-    }
+    
     
     private void checkDefaultPlaylistLoading() {
         if (this.defaultQueue == null) {       
@@ -335,7 +243,5 @@ final class PlaylistManagerImpl implements PlaylistManager {
         }
     }
     
-    private String getDefaultSavePath() {
-        return System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME;
-    }
+    
 }

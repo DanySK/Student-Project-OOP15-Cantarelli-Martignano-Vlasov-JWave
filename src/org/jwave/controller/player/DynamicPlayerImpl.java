@@ -20,8 +20,6 @@ final class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_DEPTH = 16;
-
-    private static final DynamicPlayer SINGLETON = new DynamicPlayerImpl();
     
     private Set<EObserver<? super Optional<PlayMode>, ? super Optional<Song>>> set;
     
@@ -37,7 +35,7 @@ final class DynamicPlayerImpl implements DynamicPlayer {
     /**
      * Creates a new DynamicPlayerImpl.
      */
-    private DynamicPlayerImpl() { 
+    public DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
         this.currentPlayMode = PlayMode.NO_LOOP;
         this.volumeControl = new Gain();
