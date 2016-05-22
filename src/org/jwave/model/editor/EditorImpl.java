@@ -508,15 +508,16 @@ public class EditorImpl implements Editor {
 	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	public List<Float> getWaveform(int from, int to, int samples) {
 		List<Float> waveformValues = new ArrayList<Float>();
-		ArrayList<FloatBuffer> buffers;
-		float[][] spectra;
-		FloatBuffer left;
-		FloatBuffer right;
-		float lengthOfChunks;
-		float runningTotal = 0;
-		float maxLoopAverage = 0;
 		
 		if (songLoaded) {	
+			ArrayList<FloatBuffer> buffers;
+			float[][] spectra;
+			FloatBuffer left;
+			FloatBuffer right;
+			float lengthOfChunks;
+			float runningTotal = 0;
+			float maxLoopAverage = 0;
+						
 			AudioFormat format = song.getFormat();
 			
 			buffers = new ArrayList<FloatBuffer>(20);
@@ -581,25 +582,14 @@ public class EditorImpl implements Editor {
 				}
 				
 				currentOffset += editCuts.get(endCutIndex).getSegments().get(i).getY() - editCuts.get(endCutIndex).getSegments().get(i).getX();
-			}			
-			
-			System.out.println(startCutIndex);
-			System.out.println(startSegmentIndex);
-			System.out.println(startSegmentOffset);
-			System.out.println(endCutIndex);
-			System.out.println(endSegmentIndex);
-			System.out.println(endSegmentLength);
+			}
 			
 			int i = startCutIndex;
 			int j = startSegmentIndex;
 
-			while (i < endCutIndex || (i == endCutIndex && j <= endSegmentIndex)) {
-				System.out.println(i + " " + j);
-				
+			while (i < endCutIndex || (i == endCutIndex && j <= endSegmentIndex)) {	
 				int segmentFrom = (i == startCutIndex && j == startSegmentIndex) ? startSegmentOffset : this.editCuts.get(i).getSegments().get(j).getX();
 				int segmentTo = (i == endCutIndex && j == endSegmentIndex) ? this.editCuts.get(i).getSegments().get(j).getX() + endSegmentLength : this.editCuts.get(i).getSegments().get(j).getY();
-				
-				System.out.println(segmentFrom + " " + segmentTo);
 				
 				for (int chunkIdx = (int) Math.floor(segmentFrom / lengthOfChunks); chunkIdx < (int) Math.floor(segmentTo / lengthOfChunks); ++chunkIdx) {
 					int chunkStartIndex = chunkIdx * sampleSize;
