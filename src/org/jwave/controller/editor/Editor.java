@@ -37,6 +37,14 @@ public interface Editor {
 	int getOriginalSongLength();
 	
     /**
+     * Gets the length of the modified song.
+     *          
+     * @return
+     * 			length of modified song in ms, -1 if no song loaded.
+     */
+	int getModifiedSongLength();	
+	
+    /**
      * Sets the selection-from cursor, specifying from which point
      * the current selection begins. Also referred to as the main
      * cursor, because of it's usage to paste copied audio.
@@ -136,5 +144,22 @@ public interface Editor {
      * @return
      * 			true if something has been copied, false otherwise.
      */
-	boolean isSomethingCopied();	
+	boolean isSomethingCopied();
+	
+    /**
+     * Pastes the currently copied selection at the main cursor.
+     *          
+     * @return
+     * 			true if something has been copied and main cursor is set,
+     * 			false otherwise.
+     */
+	boolean pasteCopiedSelection();
+	
+    /**
+     * Cuts the current selection, deleting it.
+     *          
+     * @return
+     * 			true if something is selected, false otherwise.
+     */
+	boolean cutSelection(); 	
 }

@@ -21,7 +21,7 @@ public interface Cut {
      * @return
      * 			the position (in ms) of the beginning of the cut.
      */	
-	int getCutFrom();
+	int getFrom();
 	
     /**
      * Gets the position where this cut ends.
@@ -29,7 +29,7 @@ public interface Cut {
      * @return
      * 			the position (in ms) of the end of the cut.
      */		
-	int getCutTo();
+	int getTo();
 	
     /**
      * Sets the position where this cut begins.
@@ -37,7 +37,7 @@ public interface Cut {
      * @param from
      * 			the position (in ms) of the beginning of the cut.
      */		
-	void setCutFrom(int from);
+	void setFrom(int from);
 	
     /**
      * Sets the position where this cut end.
@@ -45,7 +45,7 @@ public interface Cut {
      * @param to
      * 			the position (in ms) of the end of the cut.
      */			
-	void setCutTo(int to);
+	void setTo(int to);
 	
     /**
      * Gets the length of the cut.
@@ -53,7 +53,7 @@ public interface Cut {
      * @return
      * 			the length (in ms) of the cut.
      */
-	int getCutLength();
+	int getLength();
 	
     /**
      * Gets a list of all of this cut's segments.

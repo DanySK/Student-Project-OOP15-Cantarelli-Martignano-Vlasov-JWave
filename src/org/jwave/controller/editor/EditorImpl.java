@@ -37,7 +37,16 @@ public class EditorImpl implements Editor {
 		} else {
 			return -1;
 		}
-	}	
+	}
+	
+	@Override
+	public int getModifiedSongLength() {
+		if (isSongLoaded()) {
+			return this.song.getModifiedLength();
+		} else {
+			return -1;
+		}
+	}		
 	
 	@Override
 	public void setSelectionFrom(int ms) {
@@ -106,5 +115,27 @@ public class EditorImpl implements Editor {
 	@Override
 	public boolean isSomethingCopied() {
 		return (this.copiedFrom >= 0 && this.copiedTo >= 0);
-	}	
+	}
+	
+	@Override
+	public boolean pasteCopiedSelection() {
+		if (isCursorSet() && isSomethingCopied()) {
+			this.song.pasteSelectionAt(getCopiedFrom(), getCopiedTo(), getSelectionFrom());
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean cutSelection() {
+		if (isSomethingSelected()) {
+			this.song.deleteSelection(getSelectionFrom(), getSelectionTo());
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

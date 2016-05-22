@@ -15,27 +15,27 @@ public class CutImpl implements Cut {
 	}
 	
 	@Override
-	public int getCutFrom() {
+	public int getFrom() {
 		return this.from;
 	}	
 	
 	@Override
-	public int getCutTo() {
+	public int getTo() {
 		return this.to;
 	}
 	
 	@Override
-	public void setCutFrom(int from) {
+	public void setFrom(int from) {
 		this.from = from;
 	}	
 	
 	@Override
-	public void setCutTo(int to) {
+	public void setTo(int to) {
 		this.to = to;
 	}
 	
 	@Override
-	public int getCutLength() {
+	public int getLength() {
 		return this.to - this.from;
 	}
 	
