@@ -1,40 +1,65 @@
 package org.jwave.model.editor;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Cut {
-	private int msFrom;
-	private int msTo;
-	private final List<Pair<Integer, Integer>> singleSegments;
+/**
+ * This interface models the concept of cuts, segments of specific length
+ * that subdivide any given song into multiple pieces. Cuts have a beginning
+ * and an end that are relative to the length of the final modified song.
+ * 
+ * Cuts also contain a list of the segments that make up the cut, segments
+ * are similiar to cuts but represent segments of the song relative to
+ * the original song, and are used for obtaining actual audio.
+ * 
+ * All "ms" acronyms stand for milliseconds.
+ *
+ */
+public interface Cut {
+    /**
+     * Gets the position where this cut begins.
+     *          
+     * @return
+     * 			the position (in ms) of the beginning of the cut.
+     */	
+	int getCutFrom();
 	
-	public Cut(int from, int to, ArrayList<Pair<Integer, Integer>> segments) {
-		msFrom = from;
-		msTo = to;
-		singleSegments = new ArrayList<>(segments);
-	}
+    /**
+     * Gets the position where this cut end.
+     *          
+     * @return
+     * 			the position (in ms) of the end of the cut.
+     */		
+	int getCutTo();
 	
-	public int getCutTo() {
-		return this.msTo;
-	}
+    /**
+     * Sets the position where this cut begins.
+     *          
+     * @param from
+     * 			the position (in ms) of the beginning of the cut.
+     */		
+	void setCutFrom(int from);
 	
-	public int getCutFrom() {
-		return this.msFrom;
-	}
+    /**
+     * Sets the position where this cut end.
+     *          
+     * @param to
+     * 			the position (in ms) of the end of the cut.
+     */			
+	void setCutTo(int to);
 	
-	public void setCutTo(int to) {
-		this.msTo = to;
-	}
+    /**
+     * Gets the length of the cut.
+     *          
+     * @return
+     * 			the length of the cut in ms.
+     */
+	int getCutLength();
 	
-	public void setCutFrom(int from) {
-		this.msFrom = from;
-	}
-	
-	public int getCutLength() {
-		return this.msTo - this.msFrom;
-	}
-	
-	public List<Pair<Integer, Integer>> getSegments() {
-		return this.singleSegments;
-	}
+    /**
+     * Gets a list of all of this cut's segments.
+     *          
+     * @return
+     * 			a list of segments that make up this cut.
+     */	
+	List<Pair<Integer, Integer>> getSegments();
 }

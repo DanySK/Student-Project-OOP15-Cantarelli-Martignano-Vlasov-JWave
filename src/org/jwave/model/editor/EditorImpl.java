@@ -21,7 +21,7 @@ import ddf.minim.analysis.FFT;
 import ddf.minim.javasound.FloatSampleBuffer;
 
 public class EditorImpl implements Editor {
-	private final List<Cut> editCuts;
+	private final List<CutImpl> editCuts;
 	
 	private int selectionFrom;
 	private int selectionTo;
@@ -55,7 +55,7 @@ public class EditorImpl implements Editor {
 		
 		// default initial cut, entire original song in a single cut
 		editCuts.clear();
-		editCuts.add(new Cut(0, lengthOfSong, new ArrayList<Pair<Integer, Integer>>(Arrays.asList(new Pair<>(new Integer(0), new Integer(lengthOfSong))))));
+		editCuts.add(new CutImpl(0, lengthOfSong, new ArrayList<Pair<Integer, Integer>>(Arrays.asList(new Pair<>(new Integer(0), new Integer(lengthOfSong))))));
 	
 		System.out.println("Song loaded.");
 	}
@@ -152,7 +152,7 @@ public class EditorImpl implements Editor {
 		return (this.copiedFrom >= 0 && this.copiedTo >= 0);
 	}
 	
-	private Cut generateCopiedCut() {
+	private CutImpl generateCopiedCut() {
 		int copiedCutLength = getCopiedTo() - getCopiedFrom();
 		ArrayList<Pair<Integer, Integer>> copiedSegments = new ArrayList<>();
 		
@@ -209,15 +209,15 @@ public class EditorImpl implements Editor {
 			}
 		}
 		
-		return new Cut(getSelectionFrom() + 1, getSelectionFrom() + copiedCutLength, copiedSegments);
+		return new CutImpl(getSelectionFrom() + 1, getSelectionFrom() + copiedCutLength, copiedSegments);
 	}	
 
 	@Override
 	public boolean pasteCopiedSelection() {
 		if (isCursorSet() && isSomethingCopied()) {
 			int cutToDivideIndex = 0;
-			Cut cutToDivide = null;
-			Cut cutToInsert = generateCopiedCut();
+			CutImpl cutToDivide = null;
+			CutImpl cutToInsert = generateCopiedCut();
 			
 			for (int i = 0; i < editCuts.size(); i++) {
 				if (editCuts.get(i).getCutFrom() <= getSelectionFrom() && editCuts.get(i).getCutTo() >= getSelectionFrom()) {
@@ -248,12 +248,12 @@ public class EditorImpl implements Editor {
 				rightSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX(), cutToDivide.getSegments().get(i).getY()));
 			}
 			
-			Cut leftCut = new Cut(cutToDivide.getCutFrom(), halfPoint, leftSegments);
-			Cut rightCut = new Cut(cutToInsert.getCutTo() + 1, cutToInsert.getCutTo() + rightHalfLength, rightSegments);			
+			CutImpl leftCut = new CutImpl(cutToDivide.getCutFrom(), halfPoint, leftSegments);
+			CutImpl rightCut = new CutImpl(cutToInsert.getCutTo() + 1, cutToInsert.getCutTo() + rightHalfLength, rightSegments);			
 			
 			// shift all cuts after cut that was divided
-			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
-			editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+			editCuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+			editCuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
 			for (i = editCuts.size() - 1; i > cutToDivideIndex + 1; i--) {
 				editCuts.set(i, editCuts.get(i - 2));
 				editCuts.get(i).setCutFrom(editCuts.get(i).getCutFrom() + 1);
@@ -277,7 +277,7 @@ public class EditorImpl implements Editor {
 			int selectionLength = getSelectionTo() - getSelectionFrom();
 			
 			int firstCutToDivideIndex = 0;
-			Cut firstCutToDivide = null;
+			CutImpl firstCutToDivide = null;
 			
 			for (i = 0; i < editCuts.size(); i++) {
 				if (editCuts.get(i).getCutFrom() <= getSelectionFrom() && editCuts.get(i).getCutTo() >= getSelectionFrom()) {
@@ -300,7 +300,7 @@ public class EditorImpl implements Editor {
 			leftSegments.add(new Pair<>(firstCutToDivide.getSegments().get(i).getX(), firstCutToDivide.getSegments().get(i).getX() + (newFirstCutLength - segmentCounter)));			
 			
 			int secondCutToDivideIndex = 0;
-			Cut secondCutToDivide = null;
+			CutImpl secondCutToDivide = null;
 			
 			for (i = 0; i < editCuts.size(); i++) {
 				if (editCuts.get(i).getCutFrom() <= getSelectionTo() && editCuts.get(i).getCutTo() >= getSelectionTo()) {
@@ -336,7 +336,7 @@ public class EditorImpl implements Editor {
 			
 			// set new cuts only after building the new ones
 			if (firstCutToDivideIndex == secondCutToDivideIndex) {
-				editCuts.add(new Cut(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+				editCuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
 			
 				// shift actual cuts down to account that single cut will become two cuts
 				for (i = editCuts.size() - 1; i > firstCutToDivideIndex + 1; i--) {
@@ -346,8 +346,8 @@ public class EditorImpl implements Editor {
 				
 			int secondCutFrom = firstCutToDivideIndex != secondCutToDivideIndex ? secondCutToDivide.getCutFrom() - (selectionLength - (getSelectionTo() - secondCutToDivide.getCutFrom())) : firstCutToDivide.getCutFrom() + newFirstCutLength;
 			
-			editCuts.set(firstCutToDivideIndex + 1, new Cut(secondCutFrom + 1, secondCutToDivide.getCutTo() - selectionLength, rightSegments));
-			editCuts.set(firstCutToDivideIndex, new Cut(firstCutToDivide.getCutFrom(), firstCutToDivide.getCutFrom() + newFirstCutLength, leftSegments));
+			editCuts.set(firstCutToDivideIndex + 1, new CutImpl(secondCutFrom + 1, secondCutToDivide.getCutTo() - selectionLength, rightSegments));
+			editCuts.set(firstCutToDivideIndex, new CutImpl(firstCutToDivide.getCutFrom(), firstCutToDivide.getCutFrom() + newFirstCutLength, leftSegments));
 			
 			// shift cut from's and to's down to account for the gap
 			for (i = firstCutToDivideIndex + 2; i < editCuts.size(); i++) {
