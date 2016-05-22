@@ -24,7 +24,7 @@ public interface Cut {
 	int getCutFrom();
 	
     /**
-     * Gets the position where this cut end.
+     * Gets the position where this cut ends.
      *          
      * @return
      * 			the position (in ms) of the end of the cut.
@@ -51,7 +51,7 @@ public interface Cut {
      * Gets the length of the cut.
      *          
      * @return
-     * 			the length of the cut in ms.
+     * 			the length (in ms) of the cut.
      */
 	int getCutLength();
 	
