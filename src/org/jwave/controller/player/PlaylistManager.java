@@ -17,46 +17,9 @@ import org.jwave.model.player.Song;
  * for navigate them.
  */
 public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<Song>> {
-
-    /**
-     * Saves a playlist in the file system.
-     * 
-     * @param playlist
-     *          the playlist to be saved.
-     *          
-     * @param name
-     *          the name of the new playlist.         
-     *          
-     * @param path     
-     *          the path where the playlist will be stored.
-     *          
-     * @throws FileNotFoundException
-     *          if the path is not correct.
-     *          
-     * @throws IOException
-     *          if the path is not correct.
-     */
-    void savePlaylistToFile(Playlist playlist, String name, String path) throws FileNotFoundException, IOException;
-
-//    /**
-//     * Loads a playlist from the filesystem and adds it to the collection of available playlists.
-//     * 
-//     * @param playlist
-//     *          the file containing the playlist to be loaded.
-//     *          
-//     * @throws IllegalArgumentException
-//     *          if the file is not recognized as a playlist.
-//     *          
-//     * @throws ClassNotFoundException
-//     *          if the file doesn't contain a playlist.
-//     * 
-//     * @throws IOException
-//     *          if the path is wrong.
-//     */
-//    void loadPlaylist(File playlist) throws IllegalArgumentException, ClassNotFoundException, IOException;
     
     /**
-     * Loads a .wav or .mp3 file from the file system and adds it to the default playlist.
+     * Loads an audio file and adds it to the default playlist.
      * 
      * @param audioFile
      *          the audioFile to be loaded.
@@ -65,21 +28,9 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      *          when trying to open a non audio file.
      */
     void openAudioFile(File audioFile) throws IllegalArgumentException;
-
-//    /**
-//     * Open all the audio files contained in a directory.
-//     * 
-//     * @param path
-//     *          the absolute path of the directory.
-//     *          
-//     * @param enqueue
-//     *          if true all the files will be added to the current playlist,
-//     *          else the will be put in a new playlist.
-//     */
-//    void openDir(String path, boolean enqueue); //maybe it will be useless.
     
     /**
-     * Creates a new playlist and saves it in the program default directory.
+     * Creates a new playlist and adds it to the collection of available playlists.
      * 
      * @param name
      *          new playlist name.
@@ -87,33 +38,18 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      * @return 
      *          the playlist created
      * 
-     * @throws IllegalArgumentException
-     *          when passing a name tha is already present
-     * 
-     * @throws IOException 
-     *          when trying to save the playlist in the file system.
-     * 
-     * @throws FileNotFoundException                 
-     *          when having problems creating the file.
-     *      
      */
-    Playlist createNewPlaylist(String name) throws IllegalArgumentException, FileNotFoundException, IOException;
+    Playlist createNewPlaylist(String name);
     
     /**
      * Deletes a playlist.
      * 
      * @param playlist
      *          the playlist to be deleted.
-     *          
-     * @throws IllegalArgumentException
-     *          when s
      */
-    void deletePlaylist(Playlist playlist) throws IllegalArgumentException;
+    void deletePlaylist(Playlist playlist);
     
-    /**
-     * Refreshes the collection of available playlists.
-     */
-    void refreshAvailablePlaylists();
+    
     
     /**
      * Resets the playlist manager so the default playlist will be cleaned and it will become 
@@ -128,12 +64,8 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      *          the name of the playlist to be selected.
      * @return
      *          the selected playlist.
-     *          
-     * @throws PlaylistNotFoundException
-     *          when the collection of available playlists doesn't contain a playlist with
-     *          the specified name.
      */
-    Playlist selectPlaylist(String name) throws PlaylistNotFoundException;
+    Playlist selectPlaylist(String name);
     
     /**
      * Renames the selected playlist.
@@ -143,15 +75,8 @@ public interface PlaylistManager extends EObserver<Optional<PlayMode>, Optional<
      *
      * @param newName
      *          the new name to be assigned to the playlist.          
-     *          
-     * @throws IllegalArgumentException
-     *          when passing a wrong name or a name that is already present in another playlist.
-     *          
-     * @throws IOException 
-     * 
-     * @throws FileNotFoundException 
      */
-    void renamePlaylist(Playlist playlist, String newName) throws IllegalArgumentException, FileNotFoundException, IOException;
+    void renamePlaylist(Playlist playlist, String newName);
     
     /**
      *
