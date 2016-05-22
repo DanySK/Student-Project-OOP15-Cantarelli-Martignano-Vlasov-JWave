@@ -4,43 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CutImpl implements Cut {
-	private int msFrom;
-	private int msTo;
-	private final List<Pair<Integer, Integer>> singleSegments;
+	private int from;
+	private int to;
+	private final List<Pair<Integer, Integer>> segments;
 	
 	public CutImpl(int from, int to, ArrayList<Pair<Integer, Integer>> segments) {
-		msFrom = from;
-		msTo = to;
-		singleSegments = new ArrayList<>(segments);
+		this.from = from;
+		this.to = to;
+		this.segments = new ArrayList<>(segments);
 	}
 	
 	@Override
 	public int getCutFrom() {
-		return this.msFrom;
+		return this.from;
 	}	
 	
 	@Override
 	public int getCutTo() {
-		return this.msTo;
+		return this.to;
 	}
 	
 	@Override
 	public void setCutFrom(int from) {
-		this.msFrom = from;
+		this.from = from;
 	}	
 	
 	@Override
 	public void setCutTo(int to) {
-		this.msTo = to;
+		this.to = to;
 	}
 	
 	@Override
 	public int getCutLength() {
-		return this.msTo - this.msFrom;
+		return this.to - this.from;
 	}
 	
 	@Override
 	public List<Pair<Integer, Integer>> getSegments() {
-		return this.singleSegments;
+		return this.segments;
 	}
 }
