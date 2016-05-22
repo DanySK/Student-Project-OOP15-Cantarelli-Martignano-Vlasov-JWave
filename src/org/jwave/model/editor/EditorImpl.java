@@ -510,23 +510,7 @@ public class EditorImpl implements Editor {
 		List<Float> waveformValues = new ArrayList<Float>();
 		
 		if (songLoaded) {	
-			ArrayList<FloatBuffer> buffers;
-			float[][] spectra;
-			FloatBuffer left;
-			FloatBuffer right;
 			float lengthOfChunks;
-			float runningTotal = 0;
-			float maxLoopAverage = 0;
-						
-			AudioFormat format = song.getFormat();
-			
-			buffers = new ArrayList<FloatBuffer>(20);
-			left = FloatBuffer.allocate(bufferSize * 10);
-			if (format.getChannels() == Minim.STEREO) {
-			  right = FloatBuffer.allocate(bufferSize * 10);
-			} else {
-			  right = null;
-			}		
 			
 			float[] rightChannel = song.getChannel(AudioSample.RIGHT);
 			float[] leftChannel = song.getChannel(AudioSample.LEFT);
