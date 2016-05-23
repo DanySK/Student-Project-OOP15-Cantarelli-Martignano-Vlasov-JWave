@@ -8,5 +8,8 @@
 	<classpathentry kind="lib" path="lib/Minim/mp3spi1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/Minim/tritonus_aos.jar"/>
 	<classpathentry kind="lib" path="lib/Minim/tritonus_share.jar"/>
+	<classpathentry kind="lib" path="lib/mp3agic/mp3agic-0.8.5-SNAPSHOT-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/mp3agic/mp3agic-0.8.5-SNAPSHOT-sources.jar"/>
+	<classpathentry kind="lib" path="lib/mp3agic/mp3agic-0.8.5-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

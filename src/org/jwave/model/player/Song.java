@@ -27,5 +27,5 @@ public interface Song {
      * @return
      *          all metadata available for the song.
      */
-    MetaData getMetaData();
+    MetaDataV1 getMetaData();
 }

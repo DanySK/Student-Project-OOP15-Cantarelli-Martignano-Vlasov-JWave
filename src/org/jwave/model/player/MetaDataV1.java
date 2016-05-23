@@ -5,7 +5,7 @@ package org.jwave.model.player;
  * all the information contained in a {@link}Song.
  *
  */
-public interface MetaData {
+public interface MetaDataV1 {
     
     /**
      * 

@@ -1,6 +1,6 @@
 package org.jwave.model.editor;
 
-import org.jwave.model.player.MetaData;
+import org.jwave.model.player.MetaDataV1;
 import org.jwave.model.player.Song;
 
 public abstract class SongDecorator implements Song {
@@ -18,7 +18,7 @@ public abstract class SongDecorator implements Song {
 		return decoratedSong.getAbsolutePath();
 	}
 
-	public MetaData getMetaData() {
+	public MetaDataV1 getMetaData() {
 		return decoratedSong.getMetaData();
 	}
 }

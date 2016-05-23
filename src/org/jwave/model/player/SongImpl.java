@@ -13,7 +13,7 @@ public class SongImpl implements Song, Serializable {
      */
     private static final long serialVersionUID = 9045721077357297256L;
     private File decorated;
-    private MetaData metaData;
+    private MetaDataV1 metaData;
     
     /**
      * Creates a new song object.
@@ -37,7 +37,7 @@ public class SongImpl implements Song, Serializable {
     }
 
     @Override
-    public MetaData getMetaData() {
+    public MetaDataV1 getMetaData() {
         return this.metaData;
     }
 }

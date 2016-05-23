@@ -115,6 +115,7 @@ public class Controller {
         try (final ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(
                 new FileInputStream(playlist)))) {
             final Playlist extractedPlaylist = (Playlist) ois.readObject();
+            //TODO manage case when a playlist with the same name is already present.
             return extractedPlaylist;
         }
     }

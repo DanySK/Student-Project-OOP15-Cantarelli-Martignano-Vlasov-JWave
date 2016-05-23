@@ -14,10 +14,10 @@ import ddf.minim.AudioPlayer;
 import ddf.minim.Minim;
 
 /**
- * This class is an implementation of {@link MetaData}.
+ * This class is an implementation of {@link MetaDataV1}.
  *
  */
-public class MetaDataImpl implements MetaData, Serializable {
+public class MetaDataImpl implements MetaDataV1, Serializable {
    
     /**
      * 
