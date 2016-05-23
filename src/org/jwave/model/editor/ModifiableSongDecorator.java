@@ -232,4 +232,14 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 			cuts.get(i).setTo(cuts.get(i).getTo() - selectionLength);
 		}		
 	}
+	
+	@Override
+	public void printAllCuts() {
+		for (int i = 0; i < cuts.size(); i++) {
+			System.out.println("Cut " + i + ": from " + cuts.get(i).getFrom() + "ms to " + cuts.get(i).getTo() + "ms");
+			for (int j = 0; j < cuts.get(i).getSegments().size(); j++) {
+				System.out.println("    Segment " + j + ": from " + cuts.get(i).getSegments().get(j).getX() + "ms to " + cuts.get(i).getSegments().get(j).getY() + "ms");
+			}
+		}
+	}	
 }
