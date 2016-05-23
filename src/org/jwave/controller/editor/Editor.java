@@ -114,7 +114,7 @@ public interface Editor {
      * @return
      * 			true if selection exists, false otherwise
      */
-	boolean copySelection();
+	void copySelection();
 	
     /**
      * Gets the starting point of the copied selection.
@@ -155,7 +155,7 @@ public interface Editor {
      * 			true if something has been copied and main cursor is set,
      * 			false otherwise.
      */
-	boolean pasteCopiedSelection();
+	void pasteCopiedSelection();
 	
     /**
      * Cuts the current selection, deleting it.
@@ -163,7 +163,7 @@ public interface Editor {
      * @return
      * 			true if something is selected, false otherwise.
      */
-	boolean cutSelection();
+	void cutSelection();
 	
     /**
      * Returns a list of values that represent the waveform of the currently

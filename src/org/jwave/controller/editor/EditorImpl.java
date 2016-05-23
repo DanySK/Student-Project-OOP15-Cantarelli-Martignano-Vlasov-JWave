@@ -33,31 +33,39 @@ public class EditorImpl implements Editor {
 	}	
 	
 	@Override
-	public int getOriginalSongLength() {
+	public int getOriginalSongLength() throws IllegalStateException {
 		if (this.isSongLoaded()) {
 			return this.song.getLength();
 		} else {
-			return -1;
+			throw new IllegalStateException();
 		}
 	}
 	
 	@Override
-	public int getModifiedSongLength() {
+	public int getModifiedSongLength() throws IllegalStateException {
 		if (isSongLoaded()) {
 			return this.song.getModifiedLength();
 		} else {
-			return -1;
+			throw new IllegalStateException();
 		}
 	}		
 	
 	@Override
-	public void setSelectionFrom(int ms) {
-		this.selectionFrom = ms;		
+	public void setSelectionFrom(int ms) throws IllegalArgumentException {
+		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
+			this.selectionFrom = ms;
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override
-	public void setSelectionTo(int ms) {
-		this.selectionTo = ms;
+	public void setSelectionTo(int ms) throws IllegalArgumentException {
+		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
+			this.selectionTo = ms;
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override
@@ -87,25 +95,31 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public boolean copySelection() {
+	public void copySelection() throws IllegalStateException {
 		if (isSomethingSelected()) {
 			this.copiedFrom = this.selectionFrom;
 			this.copiedTo = this.selectionTo;
-			
-			return true;
 		} else {
-			return false;
+			throw new IllegalStateException();
 		}
 	}
 
 	@Override
-	public int getCopiedFrom() {
-		return this.copiedFrom;
+	public int getCopiedFrom() throws IllegalStateException {
+		if (this.isSomethingCopied()) {
+			return this.copiedFrom;
+		} else {
+			throw new IllegalStateException();
+		}	
 	}
 
 	@Override
-	public int getCopiedTo() {
-		return this.copiedTo;
+	public int getCopiedTo() throws IllegalStateException {
+		if (this.isSomethingCopied()) {
+			return this.copiedTo;
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override
@@ -120,24 +134,20 @@ public class EditorImpl implements Editor {
 	}
 	
 	@Override
-	public boolean pasteCopiedSelection() {
+	public void pasteCopiedSelection() throws IllegalStateException {
 		if (isCursorSet() && isSomethingCopied()) {
 			this.song.pasteSelectionAt(getCopiedFrom(), getCopiedTo(), getSelectionFrom());
-			
-			return true;
 		} else {
-			return false;
+			throw new IllegalStateException();
 		}
 	}
 	
 	@Override
-	public boolean cutSelection() {
+	public void cutSelection() throws IllegalStateException {
 		if (isSomethingSelected()) {
 			this.song.deleteSelection(getSelectionFrom(), getSelectionTo());
-			
-			return true;
 		} else {
-			return false;
+			throw new IllegalStateException();
 		}
 	}
 	
