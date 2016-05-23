@@ -73,7 +73,7 @@ public class EditorDebug {
 //					songEditor.exportSongMP3("/Users/alexvlasov/Downloads/hello.wav", "/Users/alexvlasov/Downloads/ciao.mp3");
 					break;
 				case 11:
-//					songEditor.printWaveform();
+					songEditor.printWaveform();
 					break;
 				default:
 					break;
