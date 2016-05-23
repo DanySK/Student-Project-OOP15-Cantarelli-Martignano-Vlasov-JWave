@@ -40,7 +40,7 @@ public class Controller {
         this.player = new DynamicPlayerImpl();
         this.playlistManager = new PlaylistManagerImpl(this.loadDefaultPlaylist());
         this.currentAvailableCache = new HashSet<>();
-        this.clockAgent = new ClockAgent(this.player, "Clock_Agent");
+        this.clockAgent = new ClockAgent(this.player, this.playlistManager, "Clock_Agent");
         this.clockAgent.startClockAgent();
         this.refreshAvailableCache();   //TODO finish implementation
     }

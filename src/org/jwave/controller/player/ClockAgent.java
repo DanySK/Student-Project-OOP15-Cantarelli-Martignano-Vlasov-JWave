@@ -1,16 +1,19 @@
 package org.jwave.controller.player;
 
 import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.PlaylistManager;
 
 public class ClockAgent implements Runnable {
     
     private Thread t;
     private String name;
     private DynamicPlayer dynPlayer;
+    private PlaylistManager playlistManager;
     private volatile boolean stopped;
     
-    public ClockAgent(final DynamicPlayer player, final String threadName) {
+    public ClockAgent(final DynamicPlayer player, final PlaylistManager manager, final String threadName) {
         this.dynPlayer = player;
+        this.playlistManager = manager;
         this.stopped = false;
         this.name = threadName;
         this.t = new Thread(this, this.name);
@@ -31,7 +34,7 @@ public class ClockAgent implements Runnable {
     
     private void checkInReproduction() {
         if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() && !this.dynPlayer.isPaused()) {
-            //loading next song
+            this.dynPlayer.setPlayer(this.playlistManager.next());
             this.dynPlayer.play();
         }
     }
