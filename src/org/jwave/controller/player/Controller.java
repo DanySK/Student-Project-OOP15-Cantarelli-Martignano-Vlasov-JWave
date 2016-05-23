@@ -52,21 +52,21 @@ public class Controller {
         this.reloadAvailableCache();
     }
     
-    /**
-     * Saves a playlist in the file system.
-     * 
-     * @param playlist
-     *          the playlist to be saved.
-     *          
-     * @param name
-     *          the name of the new playlist.         
-     *          
-     * @param path     
-     *          the path where the playlist will be stored.
-     * @throws IOException 
-     * @throws FileNotFoundException 
-     */
-    void savePlaylistToFile(final Playlist playlist, final String name, final String path) throws FileNotFoundException, IOException {
+//    /**
+//     * Saves a playlist in the file system.
+//     * 
+//     * @param playlist
+//     *          the playlist to be saved.
+//     *          
+//     * @param name
+//     *          the name of the new playlist.         
+//     *          
+//     * @param path     
+//     *          the path where the playlist will be stored.
+//     * @throws IOException 
+//     * @throws FileNotFoundException 
+//     */
+    private void savePlaylistToFile(final Playlist playlist, final String name, final String path) throws FileNotFoundException, IOException {
         try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
                 new FileOutputStream(new File(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME 
                         + System.getProperty(SEPARATOR) + playlist.getName() + ".jwo"))))) {
@@ -84,36 +84,29 @@ public class Controller {
             final  DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir);
             for (Path file : stream) {
                 if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jwo")) {
-                    try {
-                        this.currentAvailableCache.add(this.loadPlaylist(file.toFile()));
-                    } catch (IllegalArgumentException | ClassNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    this.currentAvailableCache.add(this.loadPlaylist(file.toFile()));
                 }
             }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
+        } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
+            System.out.println("Error while loading playlist.");
+        } 
     }
     
-    /**
-     * Renames a playlist.
-     * 
-     * @param playlist
-     * @param newName
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    public void renamePlaylist(final Playlist playlist, final String newName) throws FileNotFoundException, IOException {       //TODO check method utility
-        final String oldName = playlist.getName();
-        this.playlistManager.renamePlaylist(playlist, newName);
-        final Path filePath = Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + oldName);
-        this.savePlaylistToFile(playlist, playlist.getName(), this.getDefaultSavePath());
-        Files.delete(filePath);
-    }
+//    /**
+//     * Renames a playlist.
+//     * 
+//     * @param playlist
+//     * @param newName
+//     * @throws FileNotFoundException
+//     * @throws IOException
+//     */
+//    public void renamePlaylist(final Playlist playlist, final String newName) throws FileNotFoundException, IOException {       //TODO check method utility
+//        final String oldName = playlist.getName();
+//        this.playlistManager.renamePlaylist(playlist, newName);
+//        final Path filePath = Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + oldName);
+//        this.savePlaylistToFile(playlist, playlist.getName(), this.getDefaultSavePath());
+//        Files.delete(filePath);
+//    }
     
     private Playlist loadPlaylist(final File playlist) throws IllegalArgumentException, ClassNotFoundException, IOException {
         if (!this.isAPlaylist(playlist)) {
@@ -145,15 +138,6 @@ public class Controller {
         return this.playlistManager;
     }
     
-    private void createSaveDir() {
-        final Path saveDirPath = Paths.get(this.getDefaultSavePath());
-        try {
-            Files.createDirectory(saveDirPath);
-        } catch (IOException e) {
-            System.err.println("Cannot create default save directory.");
-        }
-    }
-    
     private void checkDefaultDir() {
         if (!this.isDefaultSaveDirectoryPresent()) {
             this.createSaveDir();
@@ -174,6 +158,16 @@ public class Controller {
         return false;
     }
     
+    private void createSaveDir() {
+        final Path saveDirPath = Paths.get(this.getDefaultSavePath());
+        try {
+            Files.createDirectory(saveDirPath);
+        } catch (IOException e) {
+            System.err.println("Cannot create default save directory.");
+        }
+    }
+    
+    
     private boolean isAPlaylist(final File file) {
         return file.getName().endsWith(".jwo");
     }
@@ -186,8 +180,35 @@ public class Controller {
         return (name.endsWith(".wav") || name.endsWith(".mp3")); 
     }
     
-    private Playlist loadDefaultPlaylist() {
-        //TODO implementation
-        return new PlaylistImpl("default");
+    private Playlist loadDefaultPlaylist() {    //TODO improve implementation
+        final Path defaultDir = Paths.get(this.getDefaultSavePath());
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir)) {
+            for (Path file : stream) {
+               if (Files.isDirectory(file) && file.getFileName().toString().equals(DEF_PLAYLIST_NAME)) {
+                   return this.loadPlaylist(file.toFile());   
+               }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        final Playlist defaultOut = new PlaylistImpl("default");
+        try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
+                new FileOutputStream(new File(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME 
+                        + System.getProperty(SEPARATOR) + DEF_PLAYLIST_NAME))))) {
+            oos.writeObject(defaultOut);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return defaultOut;
     }
 }
