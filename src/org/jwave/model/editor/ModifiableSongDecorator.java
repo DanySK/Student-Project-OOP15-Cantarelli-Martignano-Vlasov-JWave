@@ -20,7 +20,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 	public ModifiableSongDecorator(Song decoratedSong) {
 		super(decoratedSong);
 		
-		songSample = minim.loadSample(this.getAbsolutePath(), 1024);
+		this.songSample = minim.loadSample(this.getAbsolutePath(), 2048);
 		
 		this.cuts = new ArrayList<>();
 		this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Pair<Integer, Integer>>(Arrays.asList(new Pair<>(new Integer(0), new Integer(this.songSample.length()))))));
@@ -36,7 +36,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		return this.cuts.get(this.cuts.size() - 1).getTo();
 	}
 	
-	private CutImpl generateCutFromSelection(int from, int to) {
+	private CutImpl generateCutFromSelection(int from, int to, int at) {
 		int copiedCutLength = to - from;
 		ArrayList<Pair<Integer, Integer>> copiedSegments = new ArrayList<>();
 		
@@ -93,27 +93,30 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 			}
 		}
 		
-		return new CutImpl(from + 1, from + copiedCutLength, copiedSegments);
+		return new CutImpl(at + 1, at + copiedCutLength, copiedSegments);
 	}	
 
 	@Override
 	public void pasteSelectionAt(int from, int to, int at) {
 		int cutToDivideIndex = 0;
 		CutImpl cutToDivide = null;
-		CutImpl cutToInsert = generateCutFromSelection(from, to);
+		CutImpl cutToInsert = generateCutFromSelection(from, to, at);
 		
 		for (int i = 0; i < cuts.size(); i++) {
-			if (cuts.get(i).getFrom() <= from && cuts.get(i).getTo() >= from) {
+			if (cuts.get(i).getFrom() <= at && cuts.get(i).getTo() >= at) {
 				cutToDivideIndex = i;
 				cutToDivide = cuts.get(cutToDivideIndex);
 			}
 		}
 		
-		int leftHalfLength = from - cutToDivide.getFrom();
+		int leftHalfLength = at - cutToDivide.getFrom();
 		int rightHalfLength = cutToDivide.getLength() - leftHalfLength;
 		int halfPoint = cutToDivide.getFrom() + leftHalfLength;
 		ArrayList<Pair<Integer, Integer>> leftSegments = new ArrayList<>();
 		ArrayList<Pair<Integer, Integer>> rightSegments = new ArrayList<>();
+		
+		System.out.println(leftHalfLength);
+		System.out.println(rightHalfLength);
 		
 		int i = 0;
 		int segmentCounter = 0;
@@ -232,4 +235,174 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 			cuts.get(i).setTo(cuts.get(i).getTo() - selectionLength);
 		}		
 	}
+	
+	@Override
+	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	public List<Float> getWaveform(int from, int to, int samples) {
+		List<Float> waveformValues = new ArrayList<Float>();
+			
+		float lengthOfChunks;
+		
+		float[] rightChannel = this.songSample.getChannel(AudioSample.RIGHT);
+		float[] leftChannel = this.songSample.getChannel(AudioSample.LEFT);
+		
+		int sampleSize = (int) ((leftChannel.length * (float) ((float) this.getModifiedLength() / (float) this.getLength())) / (float) samples);
+		if (sampleSize < 1) {
+			sampleSize = 1;
+		}
+		float[] samplesLeft = new float[sampleSize];
+		float[] samplesRight = new float[sampleSize];			
+
+		int totalChunks = (leftChannel.length / sampleSize) + 1;
+		
+		System.out.println(leftChannel.length);
+		  
+		lengthOfChunks = (float) this.getLength() / (float) totalChunks;
+		
+		int startCutIndex = 0;
+		int endCutIndex = 0;
+		int startSegmentIndex = -1;
+		int startSegmentOffset = 0;
+		int endSegmentIndex = -1;
+		int endSegmentLength = 0;
+		int currentOffset; // used to track at which point in cut we are
+		
+		for (int i = 0; i < cuts.size(); i++) {
+			if (cuts.get(i).getFrom() <= from && cuts.get(i).getTo() >= from) {
+				startCutIndex = i;
+			}
+		}
+		
+		int startCutOffset = from - cuts.get(startCutIndex).getFrom();
+		currentOffset = 0;
+		for (int i = 0; startSegmentIndex == -1; i++) {
+			if (currentOffset + (cuts.get(startCutIndex).getSegments().get(i).getY() - cuts.get(startCutIndex).getSegments().get(i).getX()) > startCutOffset) {
+				startSegmentIndex = i;
+				startSegmentOffset = startCutOffset - currentOffset;
+			}
+			
+			currentOffset += cuts.get(startCutIndex).getSegments().get(i).getY() - cuts.get(startCutIndex).getSegments().get(i).getX();
+		}
+		
+		for (int i = 0; i < cuts.size(); i++) {
+			if (cuts.get(i).getFrom() <= to && cuts.get(i).getTo() >= to) {
+				endCutIndex = i;
+			}
+		}
+		
+		int endCutOffset = to - cuts.get(endCutIndex).getFrom();
+		currentOffset = 0;
+		for (int i = 0; endSegmentIndex == -1; i++) {
+			if (currentOffset + (cuts.get(endCutIndex).getSegments().get(i).getY() - cuts.get(endCutIndex).getSegments().get(i).getX()) > startCutOffset) {
+				endSegmentIndex = i;
+				endSegmentLength = endCutOffset - currentOffset;
+			}
+			
+			currentOffset += cuts.get(endCutIndex).getSegments().get(i).getY() - cuts.get(endCutIndex).getSegments().get(i).getX();
+		}
+		
+		int i = startCutIndex;
+		int j = startSegmentIndex;
+
+		while (i < endCutIndex || (i == endCutIndex && j <= endSegmentIndex)) {	
+			int segmentFrom = (i == startCutIndex && j == startSegmentIndex) ? startSegmentOffset : this.cuts.get(i).getSegments().get(j).getX();
+			int segmentTo = (i == endCutIndex && j == endSegmentIndex) ? this.cuts.get(i).getSegments().get(j).getX() + endSegmentLength : this.cuts.get(i).getSegments().get(j).getY();
+			
+			for (int chunkIdx = (int) Math.floor(segmentFrom / lengthOfChunks); chunkIdx < (int) Math.floor(segmentTo / lengthOfChunks); ++chunkIdx) {
+				int chunkStartIndex = chunkIdx * sampleSize;
+				int chunkSize = Math.min(leftChannel.length - chunkStartIndex, sampleSize);
+				
+				System.arraycopy(leftChannel, chunkStartIndex, samplesLeft, 0, chunkSize);
+				System.arraycopy(rightChannel, chunkStartIndex, samplesRight, 0, chunkSize);
+				
+				if (chunkSize < sampleSize) {
+					for (int k = chunkSize; k < samplesLeft.length - 1; k++) {
+						samplesLeft[k] = (float) 0.0;
+					}
+					
+					for (int k = chunkSize; k < samplesRight.length - 1; k++) {
+						samplesRight[k] = (float) 0.0;
+					}
+				}
+
+				/*
+				 * first we do the left channel
+				 */
+				float highest = 0;
+				float lowest = 0;
+				float quadraticTotalPositive = 0;
+				float quadraticTotalNegative = 0;
+				
+				for (int k = 0; k < samplesLeft.length; k++) {
+					if (samplesLeft[k] > 0) {
+						quadraticTotalPositive += Math.pow(samplesLeft[k], 2);
+						
+						if (samplesLeft[k] > highest) {
+							highest = samplesLeft[k];
+						}							
+					} else if (samplesLeft[k] < 0) {
+						quadraticTotalNegative += Math.pow(samplesLeft[k], 2);
+						
+						if (samplesLeft[k] < lowest) {
+							lowest = samplesLeft[k];
+						}
+					}
+				}
+				
+				waveformValues.add(highest);
+				waveformValues.add(lowest);
+				waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesLeft.length)));
+				waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)));
+				
+				/*
+				 * then we do the right channel
+				 */
+				highest = 0;
+				lowest = 0;
+				quadraticTotalPositive = 0;
+				quadraticTotalNegative = 0;
+				
+				for (int k = 0; k < samplesRight.length; k++) {
+					if (samplesRight[k] > 0) {
+						quadraticTotalPositive += Math.pow(samplesRight[k], 2);
+						
+						if (samplesRight[k] > highest) {
+							highest = samplesRight[k];
+						}							
+					} else if (samplesRight[k] < 0) {
+						quadraticTotalNegative += Math.pow(samplesRight[k], 2);
+						
+						if (samplesRight[k] < lowest) {
+							lowest = samplesRight[k];
+						}
+					}
+				}
+				
+				waveformValues.add(highest);
+				waveformValues.add(lowest);
+				waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesRight.length)));
+				waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesRight.length)));					
+			}
+			
+			if (j + 1 >= this.cuts.get(i).getSegments().size()) {
+				j = 0;
+				i++;
+			} else {
+				j++;
+			}
+		}
+
+		return waveformValues;
+	}	
+	
+	@Override
+	public void printAllCuts() {
+		for (int i = 0; i < cuts.size(); i++) {
+			System.out.println("Cut " + i + ": from " + cuts.get(i).getFrom() + "ms to " + cuts.get(i).getTo() + "ms");
+			for (int j = 0; j < cuts.get(i).getSegments().size(); j++) {
+				System.out.println("    Segment " + j + ": from " + cuts.get(i).getSegments().get(j).getX() + "ms to " + cuts.get(i).getSegments().get(j).getY() + "ms");
+			}
+		}
+	}	
 }

@@ -1,5 +1,7 @@
 package org.jwave.controller.editor;
 
+import java.util.List;
+
 import org.jwave.model.player.Song;
 
 /**
@@ -112,7 +114,7 @@ public interface Editor {
      * @return
      * 			true if selection exists, false otherwise
      */
-	boolean copySelection();
+	void copySelection();
 	
     /**
      * Gets the starting point of the copied selection.
@@ -153,7 +155,7 @@ public interface Editor {
      * 			true if something has been copied and main cursor is set,
      * 			false otherwise.
      */
-	boolean pasteCopiedSelection();
+	void pasteCopiedSelection();
 	
     /**
      * Cuts the current selection, deleting it.
@@ -161,5 +163,45 @@ public interface Editor {
      * @return
      * 			true if something is selected, false otherwise.
      */
-	boolean cutSelection(); 	
+	void cutSelection();
+	
+    /**
+     * Returns a list of values that represent the waveform of the currently
+     * loaded, and possibly modified, song. This method allows the caller to
+     * specify what segment of the song to get the waveform of, and the amount
+     * of samples to divide that segment into.
+     * 
+     * The values returned are returned in groups of 8 values for each sample:
+     * 4 values for each audio channel (the left and right channel),
+     * of these 2 represent the maximum and minimum amplitude for that sample
+     * or group of samples, and 2 represent the root mean square of the sample
+     * or group of samples.
+     * 
+     * All values are normalized in a -1 to 1 range.
+     * 
+     * @param from
+     * 			from what position (in ms) to get the waveform.
+     * @param to
+     * 			to what position (in ms) to get the waveform.
+     * @param samples
+     * 			number of sets of values to retrieve for the asked for interval.
+     * @return
+     * 			a list of numbers representing the waveform of the modified song,
+     * 			in sets of 8.
+     */
+	List<Float> getWaveform(int from, int to, int samples);	
+	
+    /**
+     * Temporary debug method for printing a text representation of the
+     * waveform of the currently loaded modifiable song.
+     * 
+     */
+	void printWaveform();
+	
+    /**
+     * Temporary debug method for printing information relative to the current
+     * state of the modified song, including cuts, segments and cursors.
+     * 
+     */
+	void printSongDebug();
 }
