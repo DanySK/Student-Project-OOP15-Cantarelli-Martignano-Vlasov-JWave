@@ -56,6 +56,17 @@ public interface Cut {
 	int getLength();
 	
     /**
+     * Gets a segment by index.
+     * 
+     * @param i
+     * 			index of segment to retrieve.
+     *          
+     * @return
+     * 			the segment.
+     */	
+	Segment getSegment(int i);
+	
+    /**
      * Gets a list of all of this cut's segments.
      *          
      * @return

@@ -40,6 +40,11 @@ public class CutImpl implements Cut {
 	}
 	
 	@Override
+	public Segment getSegment(int i) {
+		return this.segments.get(i);
+	}
+	
+	@Override
 	public List<Segment> getSegments() {
 		return this.segments;
 	}
