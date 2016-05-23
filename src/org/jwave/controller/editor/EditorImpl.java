@@ -1,5 +1,7 @@
 package org.jwave.controller.editor;
 
+import java.util.List;
+
 import org.jwave.model.editor.ModifiableSongDecorator;
 import org.jwave.model.player.Song;
 
@@ -31,31 +33,39 @@ public class EditorImpl implements Editor {
 	}	
 	
 	@Override
-	public int getOriginalSongLength() {
+	public int getOriginalSongLength() throws IllegalStateException {
 		if (this.isSongLoaded()) {
 			return this.song.getLength();
 		} else {
-			return -1;
+			throw new IllegalStateException();
 		}
 	}
 	
 	@Override
-	public int getModifiedSongLength() {
+	public int getModifiedSongLength() throws IllegalStateException {
 		if (isSongLoaded()) {
 			return this.song.getModifiedLength();
 		} else {
-			return -1;
+			throw new IllegalStateException();
 		}
 	}		
 	
 	@Override
-	public void setSelectionFrom(int ms) {
-		this.selectionFrom = ms;		
+	public void setSelectionFrom(int ms) throws IllegalArgumentException {
+		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
+			this.selectionFrom = ms;
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override
-	public void setSelectionTo(int ms) {
-		this.selectionTo = ms;
+	public void setSelectionTo(int ms) throws IllegalArgumentException {
+		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
+			this.selectionTo = ms;
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	@Override
@@ -85,25 +95,31 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public boolean copySelection() {
+	public void copySelection() throws IllegalStateException {
 		if (isSomethingSelected()) {
 			this.copiedFrom = this.selectionFrom;
 			this.copiedTo = this.selectionTo;
-			
-			return true;
 		} else {
-			return false;
+			throw new IllegalStateException();
 		}
 	}
 
 	@Override
-	public int getCopiedFrom() {
-		return this.copiedFrom;
+	public int getCopiedFrom() throws IllegalStateException {
+		if (this.isSomethingCopied()) {
+			return this.copiedFrom;
+		} else {
+			throw new IllegalStateException();
+		}	
 	}
 
 	@Override
-	public int getCopiedTo() {
-		return this.copiedTo;
+	public int getCopiedTo() throws IllegalStateException {
+		if (this.isSomethingCopied()) {
+			return this.copiedTo;
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override
@@ -118,24 +134,51 @@ public class EditorImpl implements Editor {
 	}
 	
 	@Override
-	public boolean pasteCopiedSelection() {
+	public void pasteCopiedSelection() throws IllegalStateException {
 		if (isCursorSet() && isSomethingCopied()) {
 			this.song.pasteSelectionAt(getCopiedFrom(), getCopiedTo(), getSelectionFrom());
-			
-			return true;
 		} else {
-			return false;
+			throw new IllegalStateException();
 		}
 	}
 	
 	@Override
-	public boolean cutSelection() {
+	public void cutSelection() throws IllegalStateException {
 		if (isSomethingSelected()) {
 			this.song.deleteSelection(getSelectionFrom(), getSelectionTo());
-			
-			return true;
 		} else {
-			return false;
+			throw new IllegalStateException();
 		}
 	}
+	
+	@Override
+	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	public List<Float> getWaveform(int from, int to, int samples) {
+		return this.song.getWaveform(from, to, samples);
+	}	
+	
+	public void printWaveform() {
+		System.out.println("asdasdas");
+		
+		if (this.isSongLoaded()) {
+			System.out.println("asdasdas");
+			
+			List<Float> results = this.song.getWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
+			
+			System.out.println(results.size());
+			
+			for (int i = 0; i < results.size(); i += 8) {
+				System.out.println(i / 8 + ", " + results.get(i) + ", " + results.get(i + 1) + ", " + results.get(i + 2) + ", " + results.get(i + 3));
+			}
+		}		
+	}
+	
+	@Override
+	public void printSongDebug() {
+		System.out.println("Current selection: from " + getSelectionFrom() + "ms to " + getSelectionTo() + "ms");
+		System.out.println("Copied selection: from " + getCopiedFrom() + "ms to " + getCopiedTo() + "ms");
+		
+		this.song.printAllCuts();
+	}	
 }

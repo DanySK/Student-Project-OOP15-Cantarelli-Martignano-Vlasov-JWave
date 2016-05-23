@@ -11,5 +11,12 @@
 	<classpathentry kind="lib" path="lib/mp3agic/mp3agic-0.8.5-SNAPSHOT-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/mp3agic/mp3agic-0.8.5-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="lib" path="lib/mp3agic/mp3agic-0.8.5-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="library/jave-1.0.2.jar"/>
+	<classpathentry kind="lib" path="library/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="library/jsminim.jar"/>
+	<classpathentry kind="lib" path="library/minim.jar"/>
+	<classpathentry kind="lib" path="library/mp3spi1.9.5.jar"/>
+	<classpathentry kind="lib" path="library/tritonus_aos.jar"/>
+	<classpathentry kind="lib" path="library/tritonus_share.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

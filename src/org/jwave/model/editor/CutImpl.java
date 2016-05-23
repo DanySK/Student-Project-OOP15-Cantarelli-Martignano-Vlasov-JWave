@@ -6,9 +6,9 @@ import java.util.List;
 public class CutImpl implements Cut {
 	private int from;
 	private int to;
-	private final List<Pair<Integer, Integer>> segments;
+	private final List<Segment> segments;
 	
-	public CutImpl(int from, int to, ArrayList<Pair<Integer, Integer>> segments) {
+	public CutImpl(int from, int to, ArrayList<Segment> segments) {
 		this.from = from;
 		this.to = to;
 		this.segments = new ArrayList<>(segments);
@@ -40,7 +40,12 @@ public class CutImpl implements Cut {
 	}
 	
 	@Override
-	public List<Pair<Integer, Integer>> getSegments() {
+	public Segment getSegment(int i) {
+		return this.segments.get(i);
+	}
+	
+	@Override
+	public List<Segment> getSegments() {
 		return this.segments;
 	}
 }
