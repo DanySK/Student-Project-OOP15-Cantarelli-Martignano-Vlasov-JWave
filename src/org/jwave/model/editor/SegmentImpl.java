@@ -23,5 +23,4 @@ public class SegmentImpl implements Segment {
 	public int getLength() {
 		return this.to - this.from;
 	}
-
 }

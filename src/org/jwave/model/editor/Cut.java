@@ -61,5 +61,5 @@ public interface Cut {
      * @return
      * 			a list of segments that make up this cut.
      */	
-	List<Pair<Integer, Integer>> getSegments();
+	List<Segment> getSegments();
 }

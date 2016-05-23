@@ -23,7 +23,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		this.songSample = minim.loadSample(this.getAbsolutePath(), 2048);
 		
 		this.cuts = new ArrayList<>();
-		this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Pair<Integer, Integer>>(Arrays.asList(new Pair<>(new Integer(0), new Integer(this.songSample.length()))))));
+		this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 	
 	private CutImpl generateCutFromSelection(int from, int to, int at) {
 		int copiedCutLength = to - from;
-		ArrayList<Pair<Integer, Integer>> copiedSegments = new ArrayList<>();
+		ArrayList<Segment> copiedSegments = new ArrayList<>();
 		
 		int currentCutIndex = -1;
 		int currentSegmentIndex = -1;	
@@ -60,7 +60,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		int initialSegmentOffset = 0;
 		int copiedOffset = from - cuts.get(currentCutIndex).getFrom(); // WithRespectToCutFrom
 		while (currentSegmentIndex == -1) {
-			currentSegmentLength = cuts.get(currentCutIndex).getSegments().get(i).getY() - cuts.get(currentCutIndex).getSegments().get(i).getX();
+			currentSegmentLength = cuts.get(currentCutIndex).getSegments().get(i).getTo() - cuts.get(currentCutIndex).getSegments().get(i).getFrom();
 			if (j <= copiedOffset && (j + currentSegmentLength) >= copiedOffset) {
 				currentSegmentIndex = i;
 				initialSegmentOffset = copiedOffset - j;
@@ -75,16 +75,16 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		i = currentCutIndex;
 		j = currentSegmentIndex;
 		while (totalCopied < copiedCutLength) {
-			currentSegmentLength = cuts.get(i).getSegments().get(j).getY() - (cuts.get(i).getSegments().get(j).getX() + initialSegmentOffset);
+			currentSegmentLength = cuts.get(i).getSegments().get(j).getTo() - (cuts.get(i).getSegments().get(j).getFrom() + initialSegmentOffset);
 		
-			copiedSegments.add(new Pair<>(new Integer(cuts.get(i).getSegments().get(j).getX() + initialSegmentOffset),
-										  new Integer(totalCopied + currentSegmentLength < copiedCutLength ? 
-												  		cuts.get(i).getSegments().get(j).getY() :
-												  		cuts.get(i).getSegments().get(j).getY() - (totalCopied + currentSegmentLength - copiedCutLength)
-												  	  )));
+			copiedSegments.add(new SegmentImpl(cuts.get(i).getSegments().get(j).getFrom() + initialSegmentOffset,
+										  totalCopied + currentSegmentLength < copiedCutLength ? 
+												  		cuts.get(i).getSegments().get(j).getTo() :
+												  		cuts.get(i).getSegments().get(j).getTo() - (totalCopied + currentSegmentLength - copiedCutLength)
+												  	  ));
 			
 			initialSegmentOffset = 0;
-			totalCopied += copiedSegments.get(copiedSegments.size() - 1).getY() - copiedSegments.get(copiedSegments.size() - 1).getX();
+			totalCopied += copiedSegments.get(copiedSegments.size() - 1).getTo() - copiedSegments.get(copiedSegments.size() - 1).getFrom();
 			
 			j++;
 			if (j >= cuts.get(i).getSegments().size()) {
@@ -112,34 +112,34 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		int leftHalfLength = at - cutToDivide.getFrom();
 		int rightHalfLength = cutToDivide.getLength() - leftHalfLength;
 		int halfPoint = cutToDivide.getFrom() + leftHalfLength;
-		ArrayList<Pair<Integer, Integer>> leftSegments = new ArrayList<>();
-		ArrayList<Pair<Integer, Integer>> rightSegments = new ArrayList<>();
+		ArrayList<Segment> leftSegments = new ArrayList<>();
+		ArrayList<Segment> rightSegments = new ArrayList<>();
 		
 		System.out.println(leftHalfLength);
 		System.out.println(rightHalfLength);
 		
 		int i = 0;
 		int segmentCounter = 0;
-		while (segmentCounter + (cutToDivide.getSegments().get(i).getY() - cutToDivide.getSegments().get(i).getX()) < leftHalfLength) {
-			leftSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX(), cutToDivide.getSegments().get(i).getY()));
-			segmentCounter += (cutToDivide.getSegments().get(i).getY() - cutToDivide.getSegments().get(i).getX());
+		while (segmentCounter + (cutToDivide.getSegments().get(i).getTo() - cutToDivide.getSegments().get(i).getFrom()) < leftHalfLength) {
+			leftSegments.add(new SegmentImpl(cutToDivide.getSegments().get(i).getFrom(), cutToDivide.getSegments().get(i).getTo()));
+			segmentCounter += (cutToDivide.getSegments().get(i).getTo() - cutToDivide.getSegments().get(i).getFrom());
 			i++;
 		}
 		
 		// middle segments
-		leftSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX(), cutToDivide.getSegments().get(i).getX() + (leftHalfLength - segmentCounter)));
-		rightSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX() + (leftHalfLength - segmentCounter), cutToDivide.getSegments().get(i).getY()));
+		leftSegments.add(new SegmentImpl(cutToDivide.getSegments().get(i).getFrom(), cutToDivide.getSegments().get(i).getFrom() + (leftHalfLength - segmentCounter)));
+		rightSegments.add(new SegmentImpl(cutToDivide.getSegments().get(i).getFrom() + (leftHalfLength - segmentCounter), cutToDivide.getSegments().get(i).getTo()));
 		
 		for (i++; i < cutToDivide.getSegments().size(); i++) {
-			rightSegments.add(new Pair<>(cutToDivide.getSegments().get(i).getX(), cutToDivide.getSegments().get(i).getY()));
+			rightSegments.add(new SegmentImpl(cutToDivide.getSegments().get(i).getFrom(), cutToDivide.getSegments().get(i).getTo()));
 		}
 		
 		CutImpl leftCut = new CutImpl(cutToDivide.getFrom(), halfPoint, leftSegments);
 		CutImpl rightCut = new CutImpl(cutToInsert.getTo() + 1, cutToInsert.getTo() + rightHalfLength, rightSegments);			
 		
 		// shift all cuts after cut that was divided
-		cuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
-		cuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+		cuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Segment>())); // filler cut, to increase size
+		cuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Segment>())); // filler cut, to increase size
 		for (i = cuts.size() - 1; i > cutToDivideIndex + 1; i--) {
 			cuts.set(i, cuts.get(i - 2));
 			cuts.get(i).setFrom(cuts.get(i).getFrom() + 1);
@@ -167,17 +167,17 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		}
 		
 		int newFirstCutLength = from - firstCutToDivide.getFrom();
-		ArrayList<Pair<Integer, Integer>> leftSegments = new ArrayList<>();
+		ArrayList<Segment> leftSegments = new ArrayList<>();
 		
 		i = 0;
 		int segmentCounter = 0;
-		while (segmentCounter + (firstCutToDivide.getSegments().get(i).getY() - firstCutToDivide.getSegments().get(i).getX()) < newFirstCutLength) {
-			leftSegments.add(new Pair<>(firstCutToDivide.getSegments().get(i).getX(), firstCutToDivide.getSegments().get(i).getY()));				
-			segmentCounter += (firstCutToDivide.getSegments().get(i).getY() - firstCutToDivide.getSegments().get(i).getX());
+		while (segmentCounter + (firstCutToDivide.getSegments().get(i).getTo() - firstCutToDivide.getSegments().get(i).getFrom()) < newFirstCutLength) {
+			leftSegments.add(new SegmentImpl(firstCutToDivide.getSegments().get(i).getFrom(), firstCutToDivide.getSegments().get(i).getTo()));				
+			segmentCounter += (firstCutToDivide.getSegments().get(i).getTo() - firstCutToDivide.getSegments().get(i).getFrom());
 			i++;
 		}
 		
-		leftSegments.add(new Pair<>(firstCutToDivide.getSegments().get(i).getX(), firstCutToDivide.getSegments().get(i).getX() + (newFirstCutLength - segmentCounter)));			
+		leftSegments.add(new SegmentImpl(firstCutToDivide.getSegments().get(i).getFrom(), firstCutToDivide.getSegments().get(i).getFrom() + (newFirstCutLength - segmentCounter)));			
 		
 		int secondCutToDivideIndex = 0;
 		CutImpl secondCutToDivide = null;
@@ -190,23 +190,23 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		}
 		
 		int newSecondCutLength = to - secondCutToDivide.getFrom(); // length of part being cut away
-		ArrayList<Pair<Integer, Integer>> rightSegments = new ArrayList<>();
+		ArrayList<Segment> rightSegments = new ArrayList<>();
 		
 		i = 0;
 		segmentCounter = 0;
 		
 		System.out.println(newSecondCutLength);
-		System.out.println(segmentCounter + (secondCutToDivide.getSegments().get(i).getY() - secondCutToDivide.getSegments().get(i).getX()));
+		System.out.println(segmentCounter + (secondCutToDivide.getSegments().get(i).getTo() - secondCutToDivide.getSegments().get(i).getFrom()));
 		
-		while (segmentCounter + (secondCutToDivide.getSegments().get(i).getY() - secondCutToDivide.getSegments().get(i).getX()) < newSecondCutLength) {				
-			segmentCounter += (secondCutToDivide.getSegments().get(i).getY() - secondCutToDivide.getSegments().get(i).getX());
+		while (segmentCounter + (secondCutToDivide.getSegments().get(i).getTo() - secondCutToDivide.getSegments().get(i).getFrom()) < newSecondCutLength) {				
+			segmentCounter += (secondCutToDivide.getSegments().get(i).getTo() - secondCutToDivide.getSegments().get(i).getFrom());
 			i++;
 		}
 		
-		rightSegments.add(new Pair<>(secondCutToDivide.getSegments().get(i).getX() + (newSecondCutLength - segmentCounter), secondCutToDivide.getSegments().get(i).getY()));
+		rightSegments.add(new SegmentImpl(secondCutToDivide.getSegments().get(i).getFrom() + (newSecondCutLength - segmentCounter), secondCutToDivide.getSegments().get(i).getTo()));
 		
 		for (i++; i < secondCutToDivide.getSegments().size(); i++) {
-			rightSegments.add(new Pair<>(secondCutToDivide.getSegments().get(i).getX(), secondCutToDivide.getSegments().get(i).getY()));
+			rightSegments.add(new SegmentImpl(secondCutToDivide.getSegments().get(i).getFrom(), secondCutToDivide.getSegments().get(i).getTo()));
 		}
 		
 		for (i = secondCutToDivideIndex - 1; i > firstCutToDivideIndex; i--) {
@@ -216,7 +216,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		
 		// set new cuts only after building the new ones
 		if (firstCutToDivideIndex == secondCutToDivideIndex) {
-			cuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Pair<Integer, Integer>>())); // filler cut, to increase size
+			cuts.add(new CutImpl(new Integer(0), new Integer(0), new ArrayList<Segment>())); // filler cut, to increase size
 		
 			// shift actual cuts down to account that single cut will become two cuts
 			for (i = cuts.size() - 1; i > firstCutToDivideIndex + 1; i--) {
@@ -277,12 +277,12 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		int startCutOffset = from - cuts.get(startCutIndex).getFrom();
 		currentOffset = 0;
 		for (int i = 0; startSegmentIndex == -1; i++) {
-			if (currentOffset + (cuts.get(startCutIndex).getSegments().get(i).getY() - cuts.get(startCutIndex).getSegments().get(i).getX()) > startCutOffset) {
+			if (currentOffset + (cuts.get(startCutIndex).getSegments().get(i).getTo() - cuts.get(startCutIndex).getSegments().get(i).getFrom()) > startCutOffset) {
 				startSegmentIndex = i;
 				startSegmentOffset = startCutOffset - currentOffset;
 			}
 			
-			currentOffset += cuts.get(startCutIndex).getSegments().get(i).getY() - cuts.get(startCutIndex).getSegments().get(i).getX();
+			currentOffset += cuts.get(startCutIndex).getSegments().get(i).getTo() - cuts.get(startCutIndex).getSegments().get(i).getFrom();
 		}
 		
 		for (int i = 0; i < cuts.size(); i++) {
@@ -294,20 +294,20 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		int endCutOffset = to - cuts.get(endCutIndex).getFrom();
 		currentOffset = 0;
 		for (int i = 0; endSegmentIndex == -1; i++) {
-			if (currentOffset + (cuts.get(endCutIndex).getSegments().get(i).getY() - cuts.get(endCutIndex).getSegments().get(i).getX()) > startCutOffset) {
+			if (currentOffset + (cuts.get(endCutIndex).getSegments().get(i).getTo() - cuts.get(endCutIndex).getSegments().get(i).getFrom()) > startCutOffset) {
 				endSegmentIndex = i;
 				endSegmentLength = endCutOffset - currentOffset;
 			}
 			
-			currentOffset += cuts.get(endCutIndex).getSegments().get(i).getY() - cuts.get(endCutIndex).getSegments().get(i).getX();
+			currentOffset += cuts.get(endCutIndex).getSegments().get(i).getTo() - cuts.get(endCutIndex).getSegments().get(i).getFrom();
 		}
 		
 		int i = startCutIndex;
 		int j = startSegmentIndex;
 
 		while (i < endCutIndex || (i == endCutIndex && j <= endSegmentIndex)) {	
-			int segmentFrom = (i == startCutIndex && j == startSegmentIndex) ? startSegmentOffset : this.cuts.get(i).getSegments().get(j).getX();
-			int segmentTo = (i == endCutIndex && j == endSegmentIndex) ? this.cuts.get(i).getSegments().get(j).getX() + endSegmentLength : this.cuts.get(i).getSegments().get(j).getY();
+			int segmentFrom = (i == startCutIndex && j == startSegmentIndex) ? startSegmentOffset : this.cuts.get(i).getSegments().get(j).getFrom();
+			int segmentTo = (i == endCutIndex && j == endSegmentIndex) ? this.cuts.get(i).getSegments().get(j).getFrom() + endSegmentLength : this.cuts.get(i).getSegments().get(j).getTo();
 			
 			for (int chunkIdx = (int) Math.floor(segmentFrom / lengthOfChunks); chunkIdx < (int) Math.floor(segmentTo / lengthOfChunks); ++chunkIdx) {
 				int chunkStartIndex = chunkIdx * sampleSize;
@@ -401,7 +401,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		for (int i = 0; i < cuts.size(); i++) {
 			System.out.println("Cut " + i + ": from " + cuts.get(i).getFrom() + "ms to " + cuts.get(i).getTo() + "ms");
 			for (int j = 0; j < cuts.get(i).getSegments().size(); j++) {
-				System.out.println("    Segment " + j + ": from " + cuts.get(i).getSegments().get(j).getX() + "ms to " + cuts.get(i).getSegments().get(j).getY() + "ms");
+				System.out.println("    Segment " + j + ": from " + cuts.get(i).getSegments().get(j).getFrom() + "ms to " + cuts.get(i).getSegments().get(j).getTo() + "ms");
 			}
 		}
 	}	
