@@ -161,5 +161,12 @@ public interface Editor {
      * @return
      * 			true if something is selected, false otherwise.
      */
-	boolean cutSelection(); 	
+	boolean cutSelection(); 
+	
+    /**
+     * Temporary debug method for printing information relative to the current
+     * state of the modified song, including cuts, segments and cursors.
+     * 
+     */
+	void printSongDebug();	
 }

@@ -138,4 +138,12 @@ public class EditorImpl implements Editor {
 			return false;
 		}
 	}
+	
+	@Override
+	public void printSongDebug() {
+		System.out.println("Current selection: from " + getSelectionFrom() + "ms to " + getSelectionTo() + "ms");
+		System.out.println("Copied selection: from " + getCopiedFrom() + "ms to " + getCopiedTo() + "ms");
+		
+		this.song.printAllCuts();
+	}	
 }
