@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import org.jwave.controller.PlaybackThread;
 import org.jwave.controller.player.AudioSystem;
-import org.jwave.controller.player.DynamicPlayer;
-import org.jwave.controller.player.PlaylistManager;
+import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.PlaylistManager;
 
 public final class UsePlayer {
 

@@ -16,8 +16,12 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.DynamicPlayerImpl;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistImpl;
+import org.jwave.model.player.PlaylistManager;
+import org.jwave.model.player.PlaylistManagerImpl;
 
 public class Controller {
 
@@ -29,13 +33,16 @@ public class Controller {
     private Collection<Playlist> currentAvailableCache;
     private DynamicPlayer player; 
     private PlaylistManager playlistManager; 
+    private ClockAgent clockAgent;
     
     public Controller() {
         this.checkDefaultDir();
         this.player = new DynamicPlayerImpl();
         this.playlistManager = new PlaylistManagerImpl(this.loadDefaultPlaylist());
         this.currentAvailableCache = new HashSet<>();
-        this.refreshAvailableCache();
+        this.clockAgent = new ClockAgent(this.player, "Clock_Agent");
+        this.clockAgent.startClockAgent();
+        this.refreshAvailableCache();   //TODO finish implementation
     }
     
     /**

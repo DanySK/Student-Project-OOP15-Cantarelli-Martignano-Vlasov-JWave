@@ -7,11 +7,11 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 import org.jwave.controller.player.AudioSystem;
-import org.jwave.controller.player.DynamicPlayer;
-import org.jwave.controller.player.PlaylistManager;
 import org.jwave.controller.player.PlaylistNotFoundException;
+import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Playlist;
+import org.jwave.model.player.PlaylistManager;
 
 /**
  * Class used for testing player functionalities from console. 
