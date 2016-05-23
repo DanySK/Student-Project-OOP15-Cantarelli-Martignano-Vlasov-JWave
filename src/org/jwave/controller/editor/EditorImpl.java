@@ -162,7 +162,7 @@ public class EditorImpl implements Editor {
 				System.out.println(i / 8 + ", " + results.get(i) + ", " + results.get(i + 1) + ", " + results.get(i + 2) + ", " + results.get(i + 3));
 			}
 		}		
-	}	
+	}
 	
 	@Override
 	public void printSongDebug() {

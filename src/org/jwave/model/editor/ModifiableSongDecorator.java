@@ -244,7 +244,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		float[] rightChannel = this.songSample.getChannel(AudioSample.RIGHT);
 		float[] leftChannel = this.songSample.getChannel(AudioSample.LEFT);
 		
-		int sampleSize = (int) ((leftChannel.length * (float) ((float) (to - from) / (float) this.getModifiedLength())) / (float) samples);
+		int sampleSize = (int) ((leftChannel.length * (float) ((float) this.getModifiedLength() / (float) this.getLength())) / (float) samples);
 		if (sampleSize < 1) {
 			sampleSize = 1;
 		}
