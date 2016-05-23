@@ -23,6 +23,10 @@ import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
 
+/**
+ * Defines the controller methods.
+ *
+ */
 public class Controller {
 
     private static final String HOME = "user.home";
@@ -35,6 +39,9 @@ public class Controller {
     private PlaylistManager playlistManager; 
     private ClockAgent clockAgent;
     
+    /**
+     * Creates a new instance of controller.
+     */
     public Controller() {
         this.checkDefaultDir();
         this.player = new DynamicPlayerImpl();
@@ -42,7 +49,7 @@ public class Controller {
         this.currentAvailableCache = new HashSet<>();
         this.clockAgent = new ClockAgent(this.player, this.playlistManager, "Clock_Agent");
         this.clockAgent.startClockAgent();
-        this.refreshAvailableCache();   //TODO finish implementation
+        this.reloadAvailableCache();
     }
     
     /**
@@ -70,10 +77,26 @@ public class Controller {
     /**
      * Refreshes the collection of available playlists.
      */
-    //TODO finish implementation
-    public void refreshAvailableCache() {   
+    public void reloadAvailableCache() {   
         final Path defaultDir = Paths.get(this.getDefaultSavePath());
-        final Collection<Playlist> out = new HashSet();
+        this.currentAvailableCache = new HashSet<>();
+        try {
+            final  DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir);
+            for (Path file : stream) {
+                if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jwo")) {
+                    try {
+                        this.currentAvailableCache.add(this.loadPlaylist(file.toFile()));
+                    } catch (IllegalArgumentException | ClassNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
     }
     
     /**
@@ -84,7 +107,7 @@ public class Controller {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void renamePlaylist(final Playlist playlist, final String newName) throws FileNotFoundException, IOException {
+    public void renamePlaylist(final Playlist playlist, final String newName) throws FileNotFoundException, IOException {       //TODO check method utility
         final String oldName = playlist.getName();
         this.playlistManager.renamePlaylist(playlist, newName);
         final Path filePath = Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + oldName);
@@ -92,19 +115,14 @@ public class Controller {
         Files.delete(filePath);
     }
     
-    private void loadPlaylist(final File playlist) throws IllegalArgumentException, ClassNotFoundException, IOException {
+    private Playlist loadPlaylist(final File playlist) throws IllegalArgumentException, ClassNotFoundException, IOException {
         if (!this.isAPlaylist(playlist)) {
             throw new IllegalArgumentException("File not recognized");
         }
         try (final ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(
                 new FileInputStream(playlist)))) {
             final Playlist extractedPlaylist = (Playlist) ois.readObject();
-            this.currentAvailableCache.add(extractedPlaylist);     
-            try {
-                this.playlistManager.setAvailablePlaylists(this.currentAvailableCache);
-            } catch (IllegalArgumentException e) {
-                this.renamePlaylist(extractedPlaylist, extractedPlaylist.getName() + "");
-            }
+            return extractedPlaylist;
         }
     }
     
@@ -143,7 +161,6 @@ public class Controller {
     }
     
     private boolean isDefaultSaveDirectoryPresent() {
-        //inspired by Oracle Java tutorials.
         final Path userHomeDir  = Paths.get(System.getProperty(HOME));
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(userHomeDir)) {
             for (Path file : stream) {

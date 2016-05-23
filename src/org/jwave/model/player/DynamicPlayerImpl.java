@@ -1,8 +1,6 @@
 package org.jwave.model.player;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import org.jwave.controller.player.FileSystemHandler;
 
@@ -66,7 +64,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public void cue(final int millis) {
         if (millis > this.getLength()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Out of song length");
         }
         this.setPaused(true);
         this.player.cue(millis);

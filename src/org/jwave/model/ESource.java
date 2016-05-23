@@ -1,4 +1,4 @@
-package org.jwave.controller.player;
+package org.jwave.model;
 
 //Inspired by prof.Viroli's slides
 /**

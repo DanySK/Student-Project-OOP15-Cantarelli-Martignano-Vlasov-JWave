@@ -2,7 +2,7 @@ package org.jwave.model.player;
 
 import java.util.Optional;
 
-import org.jwave.controller.player.EObserver;
+import org.jwave.model.EObserver;
 
 /**
  * A PlaylistNavigator contains a strategy for scrolling a playlist, depending on a {@link}PlayMode.

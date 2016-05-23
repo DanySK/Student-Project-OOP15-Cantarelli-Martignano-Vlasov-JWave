@@ -1,8 +1,6 @@
 package org.jwave.model.player;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -18,11 +16,8 @@ public interface PlaylistManager {
      * 
      * @param audioFile
      *          the audioFile to be loaded.
-     *           
-     * @throws IllegalArgumentException
-     *          when trying to open a non audio file.
      */
-    void addAudioFile(File audioFile) throws IllegalArgumentException;
+    void addAudioFile(File audioFile);
     
     /**
      * Creates a new playlist and adds it to the collection of available playlists.

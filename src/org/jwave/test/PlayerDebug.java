@@ -124,7 +124,7 @@ public final class PlayerDebug {
                 }
             case 14:
                 System.out.println("Refreshing available playlists");
-                manager.refreshAvailableCache();
+                manager.reloadAvailableCache();
                 break;
             case 15:
                 System.out.println("Does nothing");

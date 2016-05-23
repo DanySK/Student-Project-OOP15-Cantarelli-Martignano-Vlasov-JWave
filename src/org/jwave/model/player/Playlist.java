@@ -2,7 +2,7 @@ package org.jwave.model.player;
 
 import java.util.Optional;
 
-import org.jwave.controller.player.ESource;
+import org.jwave.model.ESource;
 
 /**
  * A playlist is a collection of {@link}Song.

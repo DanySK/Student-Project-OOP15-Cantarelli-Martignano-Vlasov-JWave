@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.jwave.controller.player.EObserver;
+import org.jwave.model.EObserver;
 
 /**
  * This is an implementation of {@link}Playlist that can be serialized.

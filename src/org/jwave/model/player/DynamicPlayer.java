@@ -27,12 +27,9 @@ public interface DynamicPlayer {
      * 
      * @param millis
      *          the point of the file where the cursor has to be moved.
-     *          
-     * @throws IllegalArgumentException
-     *          when passing an index outside length borders.
      *                   
      */
-    void cue(int millis) throws IllegalArgumentException;
+    void cue(int millis);
     
     /**
      * @return
@@ -53,12 +50,27 @@ public interface DynamicPlayer {
      */
     Optional<Song> getLoaded();
    
+    /**
+     * 
+     * @return
+     *          whether the player is playing sound.
+     */
+    boolean isPlaying();
     
-    public boolean isPlaying();
+    /**
+     * 
+     * @return
+     *          whether the player is paused.
+     */
+    boolean isPaused();
     
-    public boolean isPaused();
-    
-    public boolean hasStarted();
+    /**
+     * 
+     * @return
+     *          whether the player has started.
+     * 
+     */
+    boolean hasStarted();
     
     
     /**
