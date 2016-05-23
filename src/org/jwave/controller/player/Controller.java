@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.jwave.model.player.Playlist;
+import org.jwave.model.player.PlaylistImpl;
 
 public class Controller {
 
@@ -163,5 +164,6 @@ public class Controller {
     
     private Playlist loadDefaultPlaylist() {
         //TODO implementation
+        return new PlaylistImpl("default");
     }
 }

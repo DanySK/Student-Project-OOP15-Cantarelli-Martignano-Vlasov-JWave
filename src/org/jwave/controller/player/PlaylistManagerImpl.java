@@ -1,19 +1,6 @@
 package org.jwave.controller.player;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
@@ -27,7 +14,6 @@ import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistNavigator;
 import org.jwave.model.player.ShuffleNavigator;
-import org.jwave.model.player.Song;
 import org.jwave.model.player.SongImpl;
 
 /**
@@ -46,8 +32,8 @@ final class PlaylistManagerImpl implements PlaylistManager {
      * Creates a new PlaylistManagerImpl.
      */
     public PlaylistManagerImpl(final Playlist defaultQueue) {
-        this.availablePlaylists = new HashSet<>();
         this.defaultQueue = defaultQueue;
+        this.availablePlaylists = new HashSet<>();
         this.currentIndexLoaded = Optional.empty();
         this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension(), 0);
         this.setQueue(this.defaultQueue);
@@ -74,7 +60,7 @@ final class PlaylistManagerImpl implements PlaylistManager {
     public void deletePlaylist(final Playlist playlist) throws IllegalArgumentException {
         this.availablePlaylists.remove(playlist);
     }
-    
+
     @Override
     public void reset() {
         if (!this.defaultQueue.isEmpty()) {
@@ -82,7 +68,23 @@ final class PlaylistManagerImpl implements PlaylistManager {
         }   
         this.setQueue(this.defaultQueue);
     }
+    
+    @Override
+    public Playlist selectPlaylist(final String name) {
+        return this.availablePlaylists.stream()
+                .filter(p -> p.getName().equals(name))
+                .findAny()
+                .get();
+    }
 
+    @Override
+    public void renamePlaylist(final Playlist playlist, final String newName) throws IllegalArgumentException {
+        if (this.isNameAlreadyPresent(newName)) {
+            throw new IllegalArgumentException("Cannot have two playlists with the same name.");
+        }
+        playlist.setName(newName);
+    }
+    
     @Override
     public Optional<Integer> getCurrentLoadedIndex() {
         return this.currentIndexLoaded;
@@ -104,20 +106,14 @@ final class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public Playlist selectPlaylist(final String name) {
-        return this.availablePlaylists.stream()
-                .filter(p -> p.getName().equals(name))
-                .findAny()
-                .get();
+    public PlayMode getPlayMode() {
+        return this.playMode;
     }
 
     @Override
-    public void renamePlaylist(final Playlist playlist, final String newName) throws IllegalArgumentException {
-        if (this.isNameAlreadyPresent(newName)) {
-            throw new IllegalArgumentException("Cannot have two playlists with the same name.");
-        }
-        playlist.setName(newName);
-    }    
+    public void setPlayMode(final PlayMode newPlayMode) {
+        this.playMode = newPlayMode;
+    }
     
     @Override
     public void setQueue(final Playlist playlist) {
@@ -163,15 +159,5 @@ final class PlaylistManagerImpl implements PlaylistManager {
 
     private boolean isNameAlreadyPresent(final String name) {
         return this.availablePlaylists.stream().anyMatch(p -> p.getName().equals(name));
-    }
-
-    @Override
-    public PlayMode getPlayMode() {
-        return this.playMode;
-    }
-
-    @Override
-    public void setPlayMode(final PlayMode newPlayMode) {
-        this.playMode = newPlayMode;
     }
 }
