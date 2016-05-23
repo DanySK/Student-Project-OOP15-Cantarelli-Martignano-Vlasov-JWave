@@ -1,15 +1,10 @@
-package org.jwave.controller.player;
+package org.jwave.model.player;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-
-import org.jwave.model.player.PlayMode;
-import org.jwave.model.player.Playlist;
-import org.jwave.model.player.PlaylistNavigator;
-import org.jwave.model.player.Song;
 
 /**
  * Interface that models the concept of playlist manager.

@@ -1,4 +1,4 @@
-package org.jwave.controller.player;
+package org.jwave.model.player;
 
 import java.io.File;
 import java.util.Collection;
@@ -6,20 +6,10 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.jwave.model.player.LoopAllNavigator;
-import org.jwave.model.player.LoopOneNavigator;
-import org.jwave.model.player.NoLoopNavigator;
-import org.jwave.model.player.PlayMode;
-import org.jwave.model.player.Playlist;
-import org.jwave.model.player.PlaylistImpl;
-import org.jwave.model.player.PlaylistNavigator;
-import org.jwave.model.player.ShuffleNavigator;
-import org.jwave.model.player.SongImpl;
-
 /**
- * This is an implementation of {@link}Playlist.
+ * This is an implementation of {@link Playlist}.
  */
-final class PlaylistManagerImpl implements PlaylistManager {
+public class PlaylistManagerImpl implements PlaylistManager {
     
     private Set<Playlist> availablePlaylists;   
     private Playlist defaultQueue;
@@ -30,9 +20,12 @@ final class PlaylistManagerImpl implements PlaylistManager {
     
     /**
      * Creates a new PlaylistManagerImpl.
+     * 
+     * @param newDefaultQueue
+     *          the default playlist.
      */
-    public PlaylistManagerImpl(final Playlist defaultQueue) {
-        this.defaultQueue = defaultQueue;
+    public PlaylistManagerImpl(final Playlist newDefaultQueue) {
+        this.defaultQueue = newDefaultQueue;
         this.availablePlaylists = new HashSet<>();
         this.currentIndexLoaded = Optional.empty();
         this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension(), 0);

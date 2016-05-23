@@ -1,9 +1,6 @@
-package org.jwave.controller.player;
+package org.jwave.model.player;
 
 import java.util.Optional;
-
-import org.jwave.model.player.PlayMode;
-import org.jwave.model.player.Song;
 
 /**
  * This interface represents a dynamic player.
@@ -55,6 +52,13 @@ public interface DynamicPlayer {
      *          the song loaded in the dynamic player.
      */
     Optional<Song> getLoaded();
+   
+    
+    public boolean isPlaying();
+    
+    public boolean isPaused();
+    
+    public boolean hasStarted();
     
     
     /**

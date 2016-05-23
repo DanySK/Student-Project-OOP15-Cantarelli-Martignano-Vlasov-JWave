@@ -1,11 +1,10 @@
-package org.jwave.controller.player;
+package org.jwave.model.player;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.jwave.model.player.PlayMode;
-import org.jwave.model.player.Song;
+import org.jwave.controller.player.FileSystemHandler;
 
 import ddf.minim.AudioOutput;
 import ddf.minim.AudioPlayer;
@@ -16,34 +15,28 @@ import ddf.minim.ugens.Gain;
 /**
  * This class is an implementation of {@link}DynamicPlayer.
  */
-final class DynamicPlayerImpl implements DynamicPlayer {
+public class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_DEPTH = 16;
-    
-    private Set<EObserver<? super Optional<PlayMode>, ? super Optional<Song>>> set;
     
     private Minim minim; 
     private FilePlayer player;
     private Gain volumeControl;
     private AudioOutput out;
-    private PlayMode currentPlayMode;
     private boolean started;
     private boolean paused;
-    private ClockAgent agent;
+    private Optional<Song> loaded;
     
     /**
      * Creates a new DynamicPlayerImpl.
      */
     public DynamicPlayerImpl() { 
         this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
-        this.currentPlayMode = PlayMode.NO_LOOP;
         this.volumeControl = new Gain();
         this.started = false;
         this.paused = false;
-        this.agent = new ClockAgent("Playback");
-        this.set = new HashSet<>();
-        this.agent.startClockAgent();
+        this.loaded = Optional.empty();
     }
     
     
@@ -119,71 +112,23 @@ final class DynamicPlayerImpl implements DynamicPlayer {
         this.paused = value;
     }
     
-    private boolean isPlaying() {
+    @Override
+    public boolean isPlaying() {
         return this.player.isPlaying();
     }
     
-    private boolean isPaused() {
+    @Override
+    public boolean isPaused() {
         return this.paused;
     }
     
-    private boolean hasStarted() {
+    @Override
+    public boolean hasStarted() {
         return this.started;
     }
     
-    private void checkInReproduction() {
-        if (this.isPlayerPresent() && !this.isPlaying() && this.hasStarted() && !this.isPaused()) {
-            this.setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue()
-                    .selectSong(AudioSystem.getAudioSystem().getPlaylistManager().getPlaylistNavigator().next()));
-            this.play();
-        }
-    }
-    
-    private boolean isPlayerPresent() {
-        return this.player != null;
-    }
-    
-    private final class ClockAgent implements Runnable {
-
-        private Thread t;
-        private String name;
-        private volatile boolean stopped;
-        
-        ClockAgent(final String threadName) {
-            this.stopped = false;
-            this.name = threadName;
-            this.t = new Thread(this, this.name);
-//            this.t.start();
-        }
-        
-        @Override
-        public void run() {
-            System.out.println("Running thread" + this.name);
-            while (!this.isStopped()) {
-                try {
-                    DynamicPlayerImpl.this.checkInReproduction();
-                    Thread.sleep(10L);
-                } catch (InterruptedException e) {
-                    System.out.println("Thread interrupted");
-                }
-            }
-        }
-        
-        public void startClockAgent() {
-            this.setStopped(false);
-            this.t.start();
-        }
-        
-        public void stopClockAgent() {
-            this.setStopped(true);
-        }
-        
-        private boolean isStopped() {
-            return this.stopped;
-        }
-        
-        private void setStopped(final boolean value) {
-            this.stopped = value;
-        }
+    @Override
+    public Optional<Song> getLoaded() {
+        return this.loaded;
     }
 }
