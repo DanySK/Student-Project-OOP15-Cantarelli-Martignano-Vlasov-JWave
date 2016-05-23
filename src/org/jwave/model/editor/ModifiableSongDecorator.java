@@ -36,7 +36,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		return this.cuts.get(this.cuts.size() - 1).getTo();
 	}
 	
-	private CutImpl generateCutFromSelection(int from, int to) {
+	private CutImpl generateCutFromSelection(int from, int to, int at) {
 		int copiedCutLength = to - from;
 		ArrayList<Pair<Integer, Integer>> copiedSegments = new ArrayList<>();
 		
@@ -93,27 +93,30 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 			}
 		}
 		
-		return new CutImpl(from + 1, from + copiedCutLength, copiedSegments);
+		return new CutImpl(at + 1, at + copiedCutLength, copiedSegments);
 	}	
 
 	@Override
 	public void pasteSelectionAt(int from, int to, int at) {
 		int cutToDivideIndex = 0;
 		CutImpl cutToDivide = null;
-		CutImpl cutToInsert = generateCutFromSelection(from, to);
+		CutImpl cutToInsert = generateCutFromSelection(from, to, at);
 		
 		for (int i = 0; i < cuts.size(); i++) {
-			if (cuts.get(i).getFrom() <= from && cuts.get(i).getTo() >= from) {
+			if (cuts.get(i).getFrom() <= at && cuts.get(i).getTo() >= at) {
 				cutToDivideIndex = i;
 				cutToDivide = cuts.get(cutToDivideIndex);
 			}
 		}
 		
-		int leftHalfLength = from - cutToDivide.getFrom();
+		int leftHalfLength = at - cutToDivide.getFrom();
 		int rightHalfLength = cutToDivide.getLength() - leftHalfLength;
 		int halfPoint = cutToDivide.getFrom() + leftHalfLength;
 		ArrayList<Pair<Integer, Integer>> leftSegments = new ArrayList<>();
 		ArrayList<Pair<Integer, Integer>> rightSegments = new ArrayList<>();
+		
+		System.out.println(leftHalfLength);
+		System.out.println(rightHalfLength);
 		
 		int i = 0;
 		int segmentCounter = 0;

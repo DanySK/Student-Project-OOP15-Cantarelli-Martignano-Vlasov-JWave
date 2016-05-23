@@ -13,12 +13,12 @@ public class EditorDebug {
 		
 		songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));
 		
-//		songEditor.setSelectionFrom(1000);
-//		songEditor.setSelectionTo(300000);
-//		songEditor.copySelection();
-//		songEditor.deselectSelection();
-//		songEditor.setSelectionFrom(300000);
-//		songEditor.pasteCopiedSelection();
+		songEditor.setSelectionFrom(50000);
+		songEditor.setSelectionTo(100000);
+		songEditor.copySelection();
+		songEditor.deselectSelection();
+		songEditor.setSelectionFrom(300000);
+		songEditor.pasteCopiedSelection();
 		
 //		songEditor.setSelectionTo(35000);
 		
