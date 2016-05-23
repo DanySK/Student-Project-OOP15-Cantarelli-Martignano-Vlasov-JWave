@@ -44,7 +44,19 @@ public interface PlaylistManager {
      */
     void deletePlaylist(Playlist playlist);
     
+    /**
+     * 
+     * @return
+     *          the next song in the playing queue.
+     */
+    Song next();
     
+    /**
+     * 
+     * @return
+     *          the previous song in the playing queue.
+     */
+    Song prev();
     
     /**
      * Resets the playlist manager so the default playlist will be cleaned and it will become 

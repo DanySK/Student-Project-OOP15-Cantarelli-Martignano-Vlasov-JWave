@@ -19,8 +19,6 @@ public class PlaylistImpl implements Playlist, Serializable {
      * 
      */
     private static final long serialVersionUID = 4440054649095302226L;
-    //to be checked if it is possible to avoid song duplication with a different implementation
-//    private Set<Song> s = new HashSet<>();
     private Set<EObserver<? super Optional<Integer>, ? super Optional<Integer>>> set;
     
     private List<Song> list;

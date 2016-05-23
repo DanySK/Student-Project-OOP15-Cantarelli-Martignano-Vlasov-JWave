@@ -139,10 +139,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
                break;
        }
     }
-    
-    private PlaylistNavigator getPlaylistNavigator() { 
-        return this.navigator;
-     }
 
     @Override
     public void setAvailablePlaylists(final Collection<? extends Playlist> playlists) {
@@ -152,5 +148,15 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     private boolean isNameAlreadyPresent(final String name) {
         return this.availablePlaylists.stream().anyMatch(p -> p.getName().equals(name));
+    }
+
+    @Override
+    public Song next() {
+        return this.loadedPlaylist.selectSong(this.navigator.next());
+    }
+
+    @Override
+    public Song prev() {
+        return this.loadedPlaylist.selectSong(this.navigator.prev());
     }
 }
