@@ -55,7 +55,7 @@ public class EditorImpl implements Editor {
 		
 		// default initial cut, entire original song in a single cut
 		editCuts.clear();
-		editCuts.add(new CutImpl(0, lengthOfSong, new ArrayList<Pair<Integer, Integer>>(Arrays.asList(new Pair<>(new Integer(0), new Integer(lengthOfSong))))));
+		editCuts.add(new CutImpl(0, lengthOfSong, new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, lengthOfSong)))));
 	
 		System.out.println("Song loaded.");
 	}
