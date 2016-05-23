@@ -65,7 +65,7 @@ public class Player implements Initializable {
         File file = fileChooser.showOpenDialog(FXGUI.getFXGUI().getPrimaryStage());
 
         if (file != null) {
-            AudioSystem.getAudioSystem().getPlaylistManager().openAudioFile(file);
+            AudioSystem.getAudioSystem().getPlaylistManager().addAudioFile(file);
             AudioSystem.getAudioSystem().getDynamicPlayer()
                     .setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(0));
         }

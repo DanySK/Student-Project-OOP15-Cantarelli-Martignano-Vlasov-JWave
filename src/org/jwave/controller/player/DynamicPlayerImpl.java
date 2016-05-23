@@ -91,29 +91,9 @@ final class DynamicPlayerImpl implements DynamicPlayer {
     }
 
     @Override
-    public PlayMode getPlayMode() {
-        return this.currentPlayMode;
-    }
-    
-    /**
-     * 
-     * @return
-     *          the SINGLETON instance of DynamicPlayerImpl.
-     */
-    public static DynamicPlayer getDynamicPlayer() {
-        return SINGLETON;
-    }
-
-    @Override
     public void setVolume(final int amount) {
         //TODO add limit to the amount value
         this.volumeControl.setValue(amount);
-    }
-
-    @Override
-    public void setPlayMode(final PlayMode playMode) {
-        this.currentPlayMode = playMode;
-        this.notifyEObservers(Optional.of(playMode), Optional.empty());
     }
 
     @Override
@@ -133,7 +113,6 @@ final class DynamicPlayerImpl implements DynamicPlayer {
         this.player.patch(this.volumeControl);
         this.volumeControl.patch(this.out);
         sampleRateRetriever.close();
-        this.notifyEObservers(Optional.empty(), Optional.of(song));
     }
     
     private void setPaused(final boolean value) {
@@ -206,30 +185,5 @@ final class DynamicPlayerImpl implements DynamicPlayer {
         private void setStopped(final boolean value) {
             this.stopped = value;
         }
-    }
-
-    @Override
-    public void addEObserver(final EObserver<? super Optional<PlayMode>, ? super Optional<Song>> obs) {
-        this.set.add(obs);
-    }
-
-
-    @Override
-    public void notifyEObservers(final Optional<PlayMode> arg1, final Optional<Song> arg2) {
-        this.set.forEach(obs -> obs.update(this, arg1, arg2));
-    }
-
-
-    @Override
-    public void notifyEObservers(final Optional<PlayMode> arg) {
-        this.set.forEach(obs -> obs.update(this, arg));
-    }
-
-
-    @Override
-    public void clearObservers() {
-        if (!this.set.isEmpty()) {
-            this.set = new HashSet<>();
-        }    
     }
 }

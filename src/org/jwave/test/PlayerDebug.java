@@ -111,7 +111,7 @@ public final class PlayerDebug {
             case 12:
                 System.out.println("Enter song path");
                 Path path = Paths.get(in.next());
-                manager.openAudioFile(path.toFile());
+                manager.addAudioFile(path.toFile());
                 break;
             case 13:
                 System.out.println("Enter name of the playlist you want to delete");
@@ -124,7 +124,7 @@ public final class PlayerDebug {
                 }
             case 14:
                 System.out.println("Refreshing available playlists");
-                manager.refreshAvailablePlaylists();
+                manager.refreshAvailableCache();
                 break;
             case 15:
                 System.out.println("Does nothing");
