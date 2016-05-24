@@ -155,7 +155,7 @@ public class EditorImpl implements Editor {
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	public List<Float> getWaveform(int from, int to, int samples) {
-		return this.song.getWaveform(from, to, samples);
+		return this.song.getAggregatedWaveform(from, to, samples);
 	}	
 	
 	public void printWaveform() {
@@ -164,7 +164,7 @@ public class EditorImpl implements Editor {
 		if (this.isSongLoaded()) {
 			System.out.println("asdasdas");
 			
-			List<Float> results = this.song.getWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
+			List<Float> results = this.song.getAggregatedWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
 			
 			System.out.println(results.size());
 			
@@ -172,6 +172,11 @@ public class EditorImpl implements Editor {
 				System.out.println(i / 8 + ", " + results.get(i) + ", " + results.get(i + 1) + ", " + results.get(i + 2) + ", " + results.get(i + 3));
 			}
 		}		
+	}
+	
+	@Override
+	public void exportSong(String exportPath) {
+		this.song.exportSong(exportPath);
 	}
 	
 	@Override

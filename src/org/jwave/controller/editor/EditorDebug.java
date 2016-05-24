@@ -1,9 +1,14 @@
 package org.jwave.controller.editor;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
 import org.jwave.model.player.SongImpl;
+
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 
 public class EditorDebug {
 	public static void main(String[] args) {
@@ -47,7 +52,12 @@ public class EditorDebug {
 			
 			switch (menuSelection) {
 				case 1:
-					songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));
+					try {
+						songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				case 2:
 					songEditor.printSongDebug();
@@ -70,7 +80,7 @@ public class EditorDebug {
 					songEditor.pasteCopiedSelection();
 					break;
 				case 8:
-//					songEditor.exportSong("/Users/alexvlasov/Downloads/hello.wav");
+					songEditor.exportSong("/Users/alexvlasov/Downloads/hello.wav");
 					break;
 				case 9:
 					songEditor.cutSelection();

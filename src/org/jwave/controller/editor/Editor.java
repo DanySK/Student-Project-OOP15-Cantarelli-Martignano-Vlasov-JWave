@@ -199,6 +199,15 @@ public interface Editor {
 	void printWaveform();
 	
     /**
+     * Exports the modified song to the absolute path provided.
+     * 
+     * @param exportPath
+     * 			absolute path of .wav file where song will be saved.
+     * 
+     */	
+	void exportSong(String exportPath);	
+	
+    /**
      * Temporary debug method for printing information relative to the current
      * state of the modified song, including cuts, segments and cursors.
      * 

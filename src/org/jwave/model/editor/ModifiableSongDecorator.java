@@ -1,8 +1,17 @@
 package org.jwave.model.editor;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
 import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.player.MetaDataV2;
@@ -10,6 +19,8 @@ import org.jwave.model.player.Song;
 
 import ddf.minim.AudioSample;
 import ddf.minim.Minim;
+import ddf.minim.analysis.FFT;
+import ddf.minim.javasound.FloatSampleBuffer;
 
 public class ModifiableSongDecorator extends SongDecorator implements ModifiableSong {
 	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
@@ -566,6 +577,128 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 		}
 
 		return waveformValues;
+	}
+	
+	@Override
+	public void exportSong(String exportPath) {
+		String exportName = exportPath;
+		AudioFileFormat.Type type = AudioFileFormat.Type.WAVE;
+		AudioFormat format = songSample.getFormat();
+		
+		ArrayList<FloatBuffer> buffers;
+		float[][] spectra;
+		int bufferSize = 2048;
+		FloatBuffer left;
+		FloatBuffer right;		
+		
+		buffers = new ArrayList<FloatBuffer>(20);
+		left = FloatBuffer.allocate(bufferSize * 10);
+		if (format.getChannels() == Minim.STEREO) {
+		  right = FloatBuffer.allocate(bufferSize * 10);
+		} else {
+		  right = null;
+		}		
+		
+		float[] rightChannel = songSample.getChannel(AudioSample.RIGHT);
+		float[] leftChannel = songSample.getChannel(AudioSample.LEFT);
+		
+		int fftSize = 1024;
+		float[] fftSamplesLeft = new float[fftSize];
+		float[] fftSamplesRight = new float[fftSize];
+		  
+		FFT fft = new FFT(fftSize, songSample.sampleRate());
+		  
+		int totalChunks = (leftChannel.length / fftSize) + 1;
+		
+		spectra = new float[totalChunks][fftSize / 2];
+		
+		for (int chunkIdx = 0; chunkIdx < totalChunks; ++chunkIdx) {
+			int chunkStartIndex = chunkIdx * fftSize;
+			int chunkSize = Math.min(leftChannel.length - chunkStartIndex, fftSize);
+			
+			System.arraycopy(leftChannel, chunkStartIndex, fftSamplesLeft, 0, chunkSize);
+			System.arraycopy(rightChannel, chunkStartIndex, fftSamplesRight, 0, chunkSize);
+			
+			if (chunkSize < fftSize) {
+				for (int i = chunkSize; i < fftSamplesLeft.length - 1; i++) {
+					fftSamplesLeft[i] = (float) 0.0;
+				}
+				
+				for (int i = chunkSize; i < fftSamplesRight.length - 1; i++) {
+					fftSamplesRight[i] = (float) 0.0;
+				}
+			}
+			
+			fft.forward(fftSamplesLeft);
+			fft.forward(fftSamplesRight);
+			
+			for (int i = 0; i < 512; ++i) {				
+				spectra[chunkIdx][i] = fft.getBand(i);
+			}
+			
+			left.put(fftSamplesLeft);
+			right.put(fftSamplesRight);
+			
+			if (!left.hasRemaining()) {
+				buffers.add(left);
+				buffers.add(right);
+				left = FloatBuffer.allocate(left.capacity());
+				right = FloatBuffer.allocate(right.capacity());				
+			}
+		}
+		
+		float lengthOfBuffers = (float) this.getLength() / (float) buffers.size();
+		int channels = format.getChannels();
+		int length = left.capacity();
+		int totalSamples = (((int) (this.cuts.get(this.cuts.size() - 1).getTo() / lengthOfBuffers)) / channels) * length;
+		
+		FloatSampleBuffer fsb = new FloatSampleBuffer(channels, totalSamples, format.getSampleRate());
+		
+		int l = 0;
+		for (int i = 0; i < this.cuts.size(); i++) {
+			for (int j = 0; j < this.cuts.get(i).getSegments().size(); j++) {
+				int startIndex = (int) ((this.cuts.get(i).getSegment(j).getFrom()) / lengthOfBuffers);
+				
+				if (startIndex % 2 != 0) { // to correctly set as there are two channels
+					startIndex++;
+				}
+				
+				for (int k = startIndex; k < (int) ((cuts.get(i).getSegment(j).getTo()) / lengthOfBuffers) - 1; k += 2) {
+					int offset = (l / 2) * length;
+					FloatBuffer fbL = (FloatBuffer) buffers.get(k);
+					FloatBuffer fbR = (FloatBuffer) buffers.get(k + 1);
+					fbL.rewind(); // perche' rewind?
+					fbL.get(fsb.getChannel(0), offset, length); // come fa la get su fbL ad influenzare fsb?				
+					fbR.rewind();
+					fbR.get(fsb.getChannel(1), offset, length);
+					l += 2;
+				}
+			}
+		}
+		
+		int sampleFrames = fsb.getByteArrayBufferSize(format) / format.getFrameSize();
+		ByteArrayInputStream bais = new ByteArrayInputStream(fsb.convertToByteArray(format));
+		AudioInputStream ais = new AudioInputStream(bais, format, sampleFrames);
+		
+		if (AudioSystem.isFileTypeSupported(type, ais)) {
+			File out = new File(exportName);
+			
+		    try {
+		      AudioSystem.write(ais, type, out);
+		    } catch (IOException e) {
+		    	System.out.println("AudioRecorder.save: Error attempting to save buffer to " + exportName + "\n" + e.getMessage());
+		    }
+		    
+		    if (out.length() == 0) {
+		    	System.out.println("AudioRecorder.save: Error attempting to save buffer to " + exportName + ", the output file is empty.");
+		    }
+		} else {
+			System.out.println("AudioRecorder.save: Can't write " + type.toString() + " using format " + format.toString() + ".");
+		} 
+			  
+		System.out.println("Song exported.");
+		  
+		songSample.close(); 		
 	}	
 	
 	@Override

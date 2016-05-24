@@ -126,6 +126,15 @@ public interface ModifiableSong extends Song {
 	List<Float> getAggregatedWaveform(int from, int to, int samples);	
 	
     /**
+     * Exports the modified song to the absolute path provided.
+     * 
+     * @param exportPath
+     * 			absolute path of .wav file where song will be saved.
+     * 
+     */	
+	void exportSong(String exportPath);
+	
+    /**
      * Temporary debug method for printing a text representation of all the
      * current cuts and segments of a modified song.
      * 
