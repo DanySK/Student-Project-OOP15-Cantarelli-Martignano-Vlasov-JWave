@@ -55,6 +55,25 @@ public interface ModifiableSong extends Song {
      * 			end (in ms) of segment to remove.
      */	
 	void deleteSelection(int from, int to);
+	
+    /**
+     * Checks if asked for sample size in a given interval would end up being
+     * at maximum resolution, in which case the number of values given for
+     * each sample would be only two (amplitude of the left channel and the
+     * right channel). Otherwise the values per sample group (no longer single
+     * samples) would be 8.
+     * 
+     * @param from
+     * 			from what position (in ms) to check resolution.
+     * @param to
+     * 			to what position (in ms) to check resolution.
+     * @param samples
+     * 			number of segments divide interval in.
+     *          
+     * @return
+     * 			true if resulting resolution is maximal, false otherwise.
+     */	
+	boolean isMaxResolution(int from, int to, int samples);		
 
     /**
      * Returns a list of values that represent the waveform of the currently
