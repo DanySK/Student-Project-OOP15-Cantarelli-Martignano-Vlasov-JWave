@@ -28,4 +28,11 @@ public interface Song {
      *          all metadata available for the song.
      */
     MetaDataV1 getMetaData();
+    
+    /**
+     * 
+     * @return
+     *          second version of metadata.
+     */
+    MetaDataV2 getMetaDataV2();
 }

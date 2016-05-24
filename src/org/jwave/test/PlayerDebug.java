@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import org.jwave.controller.player.AudioSystem;
+import javax.sound.sampled.AudioSystem;
+
+import org.jwave.controller.player.Controller;
 import org.jwave.controller.player.PlaylistNotFoundException;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.PlayMode;
@@ -29,8 +31,9 @@ public final class PlayerDebug {
      */
     
     public static void main(final String... args) {
-        final DynamicPlayer player = AudioSystem.getAudioSystem().getDynamicPlayer();
-        final PlaylistManager manager = AudioSystem.getAudioSystem().getPlaylistManager();
+        final Controller c = new Controller();
+        final DynamicPlayer player = c.getDynamicPlayer();
+        final PlaylistManager manager = c.getPlaylistManager();
         final Scanner in = new Scanner(System.in);
         in.useDelimiter("\n");
         int command = 0;
@@ -81,12 +84,12 @@ public final class PlayerDebug {
                 System.out.println("position = " + player.getPosition());
                 break;
             case 7:
-                System.out.println("current PlayMode = " + player.getPlayMode());                
+                System.out.println("current PlayMode = " + manager.getPlayMode());                
                 break;
             case 8:
                 System.out.println("Enter new PlayMode");       //TODO complete option
                 PlayMode mode = PlayMode.valueOf(in.next());
-                player.setPlayMode(mode);
+                manager.setPlayMode(mode);
                 break;
             case 9:
                 System.out.println("Enter the amount of volume to be set");
@@ -101,12 +104,7 @@ public final class PlayerDebug {
             case 11:    //playlist manager options
                 System.out.println("Enter new playlist name");
                 String name = in.next();
-                try {
-                    manager.createNewPlaylist(name);
-                } catch (IOException e2) {
-                    // TODO Auto-generated catch block
-                    e2.printStackTrace();
-                }
+                manager.createNewPlaylist(name);
                 break;
             case 12:
                 System.out.println("Enter song path");
@@ -118,13 +116,13 @@ public final class PlayerDebug {
                 name = in.next();
                 try {
                     manager.deletePlaylist(manager.selectPlaylist(name));
-                } catch (IllegalArgumentException | PlaylistNotFoundException e1) {
+                } catch (IllegalArgumentException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
             case 14:
                 System.out.println("Refreshing available playlists");
-                manager.reloadAvailableCache();
+                c.reloadAvailableCache();
                 break;
             case 15:
                 System.out.println("Does nothing");
@@ -144,7 +142,7 @@ public final class PlayerDebug {
                 manager.reset();
                 break;
             case 18:
-                System.out.println("Current loaded :" + manager.getCurrentLoaded().get().getName());
+                System.out.println("Current loaded :" + player.getLoaded().get().getName());
                 break;
             case 19:
                 System.out.println("Current loaded index = " + manager.getCurrentLoadedIndex().get());
@@ -157,29 +155,15 @@ public final class PlayerDebug {
                 manager.getDefaultQueue().printPlaylist();
                 name = in.next();
                 Playlist p;
-                try {
-                    p = manager.selectPlaylist(name);
-                    System.out.println("Enter new playlist name");
-                    name = in.next();
-                    manager.renamePlaylist(p, name);
-                } catch (PlaylistNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                p = manager.selectPlaylist(name);
+                System.out.println("Enter new playlist name");
+                name = in.next();
+                manager.renamePlaylist(p, name);
                 break;
             case 22:
                 System.out.println("Enter the value of mnetadata you want to retrieve");
                 name = in.next();
-                System.out.println(manager.getCurrentLoaded().get().getMetaData().retrieve(name));
+                System.out.println(player.getLoaded().get().getMetaData().retrieve(name));
                 break;
             default:
                 System.out.println("No known command selected");
