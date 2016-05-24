@@ -55,6 +55,30 @@ public interface ModifiableSong extends Song {
      * 			end (in ms) of segment to remove.
      */	
 	void deleteSelection(int from, int to);
+
+    /**
+     * Returns a list of values that represent the waveform of the currently
+     * loaded, and possibly modified, song. This method allows the caller to
+     * specify what segment of the song to get the waveform of, and the amount
+     * of samples to divide that segment into.
+     * 
+     * The values returned are returned in groups of 2 values for each sample:
+     * one for the left channel and one for the right channel. These values
+     * represent the amplitude of the sound wave in the respective positions.
+     * 
+     * All values are normalized in a -1 to 1 range.
+     * 
+     * @param from
+     * 			from what position (in ms) to get the waveform.
+     * @param to
+     * 			to what position (in ms) to get the waveform.
+     * @param samples
+     * 			number of sets of values to retrieve for the asked for interval.
+     * @return
+     * 			a list of numbers representing the waveform of the modified song,
+     * 			in sets of 2.
+     */
+	List<Float> getSimpleWaveform(int from, int to, int samples);		
 	
     /**
      * Returns a list of values that represent the waveform of the currently
@@ -80,7 +104,7 @@ public interface ModifiableSong extends Song {
      * 			a list of numbers representing the waveform of the modified song,
      * 			in sets of 8.
      */
-	List<Float> getWaveform(int from, int to, int samples);	
+	List<Float> getAggregatedWaveform(int from, int to, int samples);	
 	
     /**
      * Temporary debug method for printing a text representation of all the

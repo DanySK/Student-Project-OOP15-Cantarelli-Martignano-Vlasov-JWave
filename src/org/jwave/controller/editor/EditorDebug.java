@@ -11,7 +11,12 @@ public class EditorDebug {
 		int menuSelection;
 		Scanner reader = new Scanner(System.in);
 		
-		songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));
+		try {
+			songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		songEditor.setSelectionFrom(50000);
 		songEditor.setSelectionTo(100000);

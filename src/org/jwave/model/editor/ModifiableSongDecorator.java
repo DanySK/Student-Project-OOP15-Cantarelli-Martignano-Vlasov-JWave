@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jwave.controller.player.FileSystemHandler;
+import org.jwave.model.player.MetaDataV2;
 import org.jwave.model.player.Song;
 
 import ddf.minim.AudioSample;
@@ -402,5 +403,5 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 				System.out.println("    Segment " + j + ": from " + cuts.get(i).getSegment(j).getFrom() + "ms to " + cuts.get(i).getSegment(j).getTo() + "ms");
 			}
 		}
-	}	
+	}
 }
