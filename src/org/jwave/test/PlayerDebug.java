@@ -11,6 +11,7 @@ import javax.sound.sampled.AudioSystem;
 import org.jwave.controller.player.Controller;
 import org.jwave.controller.player.PlaylistNotFoundException;
 import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.MetaData;
 import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistManager;
@@ -163,7 +164,7 @@ public final class PlayerDebug {
             case 22:
                 System.out.println("Enter the value of mnetadata you want to retrieve");
                 name = in.next();
-                System.out.println(player.getLoaded().get().getMetaData().retrieve(name));
+                System.out.println(player.getLoaded().get().getMetaDataV2().retrieve(MetaData.valueOf(name)));
                 break;
             default:
                 System.out.println("No known command selected");

@@ -129,8 +129,10 @@ public interface MetaDataV1 {
     /**
      * 
      * @param metaDataValue
+     *          the value to be retrieved.
      * 
      * @return
+     *          a metadata value.
      */
     String retrieve(String metaDataValue);
 }
