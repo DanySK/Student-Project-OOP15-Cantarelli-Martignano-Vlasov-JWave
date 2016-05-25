@@ -18,7 +18,7 @@ public class SongImpl implements Song, Serializable {
      */
     private static final long serialVersionUID = 9045721077357297256L;
     private File decorated;
-    private MetaDataV1 metaData;
+//    private MetaDataV1 metaData;
     private MetaDataV2 metaData2;
     
     /**
@@ -35,9 +35,9 @@ public class SongImpl implements Song, Serializable {
      * @throws InvalidDataException 
      * @throws UnsupportedTagException 
      */
-    public SongImpl(final File audioFile) throws UnsupportedTagException, InvalidDataException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
+    public SongImpl(final File audioFile) {
         this.decorated = audioFile;     
-        this.metaData = new MetaDataImpl(this.decorated.getAbsolutePath());
+//        this.metaData = new MetaDataImpl(this.decorated.getAbsolutePath());
         this.metaData2 = new MetaDataV2Impl(this.decorated.getAbsolutePath());
         
     }
@@ -52,10 +52,10 @@ public class SongImpl implements Song, Serializable {
         return this.decorated.getAbsolutePath();
     }
 
-    @Override
-    public MetaDataV1 getMetaData() {
-        return this.metaData;
-    }
+//    @Override
+//    public MetaDataV1 getMetaData() {
+//        return this.metaData;
+//    }
 
     @Override
     public MetaDataV2 getMetaDataV2() {

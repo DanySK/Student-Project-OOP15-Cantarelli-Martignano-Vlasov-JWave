@@ -1,15 +1,10 @@
 package org.jwave.model.player;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.UnsupportedTagException;
 
 /**
  * This is an implementation of {@link Playlist}.
@@ -39,8 +34,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public void addAudioFile(final File audioFile) throws UnsupportedTagException, InvalidDataException, 
-    IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
+    public void addAudioFile(final File audioFile) {
         this.defaultQueue.addSong(new SongImpl(audioFile));
     }  
     
@@ -112,6 +106,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     @Override
     public void setPlayMode(final PlayMode newPlayMode) {
         this.playMode = newPlayMode;
+        this.setNavigator(newPlayMode);
     }
     
     @Override

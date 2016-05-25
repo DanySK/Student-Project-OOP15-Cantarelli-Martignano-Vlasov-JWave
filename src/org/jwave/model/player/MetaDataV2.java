@@ -1,5 +1,12 @@
 package org.jwave.model.player;
 
+import java.io.RandomAccessFile;
+import java.util.Optional;
+
+/**
+ * This interface models metadata in a more detailed way, letting user to set them.
+ *
+ */
 public interface MetaDataV2 {
     
     /**
@@ -11,6 +18,13 @@ public interface MetaDataV2 {
      *          a String specifing the meta data value.
      */
     String retrieve(MetaData metaDataValue);
+    
+    /**
+     * 
+     * @return
+     *          An Optional containing the album artwork, if present.
+     */
+    Optional<RandomAccessFile> getAlbumArtwork();
     
     /**
      * Sets a value for a meta data.

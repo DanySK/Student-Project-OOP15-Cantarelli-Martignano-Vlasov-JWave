@@ -30,8 +30,7 @@ public interface PlaylistManager {
      * @throws InvalidDataException 
      * @throws UnsupportedTagException 
      */
-    void addAudioFile(File audioFile) throws UnsupportedTagException, InvalidDataException, 
-    IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException;
+    void addAudioFile(File audioFile);
     
     /**
      * Creates a new playlist and adds it to the collection of available playlists.
