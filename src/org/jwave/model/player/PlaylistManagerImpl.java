@@ -28,8 +28,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.defaultQueue = newDefaultQueue;
         this.availablePlaylists = new HashSet<>();
         this.currentIndexLoaded = Optional.empty();
+        this.setQueue(newDefaultQueue);
         this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension(), 0);
-        this.setQueue(this.defaultQueue);
         this.playMode = PlayMode.NO_LOOP;
     }
 
@@ -106,11 +106,14 @@ public class PlaylistManagerImpl implements PlaylistManager {
     @Override
     public void setPlayMode(final PlayMode newPlayMode) {
         this.playMode = newPlayMode;
+        this.setNavigator(newPlayMode);
     }
     
     @Override
     public void setQueue(final Playlist playlist) {
-        this.loadedPlaylist.clearObservers();
+        if (this.loadedPlaylist != null) {
+            this.loadedPlaylist.clearObservers();
+        }
         this.loadedPlaylist = playlist;
         this.loadedPlaylist.addEObserver(this.navigator);
     }

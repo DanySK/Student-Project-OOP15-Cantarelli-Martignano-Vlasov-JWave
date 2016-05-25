@@ -22,12 +22,12 @@ public interface Song {
      */
     String getAbsolutePath();
     
-    /**
-     * 
-     * @return
-     *          all metadata available for the song.
-     */
-    MetaDataV1 getMetaData();
+//    /**
+//     * 
+//     * @return
+//     *          all metadata available for the song.
+//     */
+//    MetaDataV1 getMetaData();
     
     /**
      * 
