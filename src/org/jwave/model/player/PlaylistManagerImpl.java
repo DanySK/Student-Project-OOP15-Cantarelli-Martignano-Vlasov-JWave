@@ -6,6 +6,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.jwave.model.playlist.strategies.LoopAllNavigator;
+import org.jwave.model.playlist.strategies.LoopOneNavigator;
+import org.jwave.model.playlist.strategies.NoLoopNavigator;
+import org.jwave.model.playlist.strategies.PlaylistNavigator;
+import org.jwave.model.playlist.strategies.ShuffleNavigator;
+
 /**
  * This is an implementation of {@link Playlist}.
  */

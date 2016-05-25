@@ -1,4 +1,4 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist.strategies;
 
 import java.util.Optional;
 
@@ -25,6 +25,26 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
     public PlaylistNavigatorImpl(final int initDimension, final int initCurrentIndex) {
         this.playlistDimension = initDimension;
         this.currentIndex = initCurrentIndex;
+    }
+    
+    /**
+     * Creates a new PlaylistNavigatorImpl.
+     * 
+     * @param initDimension
+     *          initial playlist dimension.
+     *          
+     */
+    public PlaylistNavigatorImpl(final int initDimension) {
+        this(initDimension, 0);
+    }
+    
+    /**
+     * Creates a new PlaylistNavigatorImpl.
+     * 
+     *          
+     */
+    public PlaylistNavigatorImpl() {
+        this(0, 0);
     }
     
     /**
