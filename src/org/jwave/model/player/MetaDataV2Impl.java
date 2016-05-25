@@ -2,6 +2,7 @@ package org.jwave.model.player;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -25,7 +26,12 @@ public class MetaDataV2Impl implements MetaDataV2 {
     IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         this.song = new Mp3File(absolutePath);
         this.datas = new EnumMap<>(MetaData.class);
+        this.id3v2Tag = Optional.empty();
+        this.id3v1Tag = Optional.empty();
         this.fillWithTags();
+//        System.out.println("id3v1 tags :" + this.song.hasId3v1Tag());
+//        System.out.println("id3v2 tags :" + this.song.hasId3v2Tag());
+        System.out.println(this.datas.entrySet());
     }
 
     @Override
@@ -43,11 +49,17 @@ public class MetaDataV2Impl implements MetaDataV2 {
         
         final List<MetaData> l = Arrays.asList(MetaData.values());
         String value;
-        
-        if (this.id3v1Tag.isPresent()) {
+        if (this.song.hasId3v2Tag()) {
+            this.id3v2Tag = Optional.of(this.song.getId3v2Tag());
             for (MetaData d : l) {
-                if (d.getName().equals("ID3v1")) {
-                    value = (String) ID3v1.class.getMethod("get" + d.getName()).invoke(this.id3v1Tag.get());
+                if (d.getTagType().equals("ID3v2")) {
+                    Method m = ID3v2.class.getMethod("get" + d.getName());
+                    try {
+                        value = (String) m.invoke(this.id3v2Tag.get());
+                    } catch (ClassCastException ce) {
+                        value = m.invoke(this.id3v2Tag.get()).toString();
+                    }
+//                    value = m.invoke(this.id3v2Tag.get()).toString();
                 } else {
                     value = "Not available";
                 }
@@ -55,10 +67,12 @@ public class MetaDataV2Impl implements MetaDataV2 {
             }
             return;
         }
-        if (this.id3v2Tag.isPresent()) {
+        if (this.song.hasId3v1Tag()) {
+            this.id3v1Tag = Optional.of(this.song.getId3v1Tag());
             for (MetaData d : l) {
-                if (d.getName().equals("ID3v2")) {
-                    value = (String) ID3v1.class.getMethod("get" + d.getName()).invoke(this.id3v2Tag.get());
+                if (d.getTagType().equals("ID3v1")) {
+                    Method m = ID3v1.class.getMethod("get" + d.getName());
+                    value = (String) m.invoke(this.id3v1Tag.get());
                 } else {
                     value = "Not available";
                 }
@@ -66,6 +80,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
             }
             return;
         }
+        //case there is no tag available
         for (MetaData d : l) {
             this.datas.put(d, "Not available");
         }

@@ -1,10 +1,15 @@
 package org.jwave.model.player;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import com.mpatric.mp3agic.InvalidDataException;
+import com.mpatric.mp3agic.UnsupportedTagException;
 
 /**
  * This is an implementation of {@link Playlist}.
@@ -28,13 +33,14 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.defaultQueue = newDefaultQueue;
         this.availablePlaylists = new HashSet<>();
         this.currentIndexLoaded = Optional.empty();
+        this.setQueue(newDefaultQueue);
         this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension(), 0);
-        this.setQueue(this.defaultQueue);
         this.playMode = PlayMode.NO_LOOP;
     }
 
     @Override
-    public void addAudioFile(final File audioFile) {
+    public void addAudioFile(final File audioFile) throws UnsupportedTagException, InvalidDataException, 
+    IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
         this.defaultQueue.addSong(new SongImpl(audioFile));
     }  
     
@@ -110,7 +116,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
     
     @Override
     public void setQueue(final Playlist playlist) {
-        this.loadedPlaylist.clearObservers();
+        if (this.loadedPlaylist != null) {
+            this.loadedPlaylist.clearObservers();
+        }
         this.loadedPlaylist = playlist;
         this.loadedPlaylist.addEObserver(this.navigator);
     }

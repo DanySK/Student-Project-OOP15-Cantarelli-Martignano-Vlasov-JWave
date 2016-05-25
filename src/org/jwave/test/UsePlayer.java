@@ -38,7 +38,9 @@ public final class UsePlayer {
         final Controller c = new Controller();
         final DynamicPlayer player = c.getDynamicPlayer();
         final PlaylistManager manager = c.getPlaylistManager();
-        player.setPlayer(new SongImpl(new File("/home/canta/Music/03. The Gift Of Music.mp3")));
-//        System.out.println(player.getLoaded().get().getMetaDataV2().retrieve(MetaData.ALBUM));
+        player.setPlayer(new SongImpl(new File("/home/canta/Music/05-infected_mushroom-feelings.mp3")));
+//        System.out.println(player.getLoaded().get().getMetaDataV2().retrieve(MetaData.ALBUM_ARTIST));
+//        System.out.println(player.getLoaded().get().getMetaData().getAlbum());
+//        System.out.println(player.getLoaded().get().getMetaData().getAuthor());
     }
 }

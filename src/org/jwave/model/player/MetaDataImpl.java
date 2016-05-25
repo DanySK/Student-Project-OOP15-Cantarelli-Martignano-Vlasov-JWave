@@ -48,7 +48,7 @@ public class MetaDataImpl implements MetaDataV1, Serializable {
                 value = (String) m.invoke(tmpData);
                 this.data.put(name, value);
             } catch (Exception e) {
-                System.out.println("Problem while loading metadata");
+                this.data.put(name, "Not available");
             }
         });
         this.metaDataLoader.close();

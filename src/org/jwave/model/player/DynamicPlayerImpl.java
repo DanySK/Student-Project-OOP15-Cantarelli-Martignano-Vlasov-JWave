@@ -104,6 +104,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.player.patch(this.volumeControl);
         this.volumeControl.patch(this.out);
         sampleRateRetriever.close();
+        this.loaded = Optional.of(song);
     }
     
     private void setPaused(final boolean value) {
