@@ -123,7 +123,7 @@ public interface ModifiableSong extends Song {
      * 			a list of numbers representing the waveform of the modified song,
      * 			in sets of 8.
      */
-	List<Float> getAggregatedWaveform(int from, int to, int samples);	
+	List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples);	
 	
     /**
      * Exports the modified song to the absolute path provided.
