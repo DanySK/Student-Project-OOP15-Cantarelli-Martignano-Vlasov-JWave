@@ -261,9 +261,9 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 	@Override
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<Float> getSimpleWaveform(int from, int to, int samples) throws IllegalArgumentException {
+	public List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples) throws IllegalArgumentException {
 		if (this.isMaxResolution(from, to, samples)) {
-			List<Float> waveformValues = new ArrayList<Float>();
+			List<SimpleSampleInfo> waveformValues = new ArrayList<SimpleSampleInfo>();
 				
 			float lengthOfChunks;
 			
@@ -347,15 +347,7 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 						}
 					}
 	
-					/*
-					 * first the left channel
-					 */
-					waveformValues.add(samplesLeft[0]);
-					
-					/*
-					 * then the right channel
-					 */
-					waveformValues.add(samplesRight[0]);					
+					waveformValues.add(new SimpleSampleInfoImpl(samplesLeft[0], samplesRight[0]));					
 				}
 				
 				if (j + 1 >= this.cuts.get(i).getSegments().size()) {

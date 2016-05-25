@@ -16,7 +16,7 @@ public interface SimpleSampleInfo {
      * 			the amplitude (normalized -1 to 1) for this sample
      * 			in the left channel.
      */		
-	int getLeftChannel();
+	float getLeftChannel();
 	
     /**
      * Gets the amplitude for this sample in the right channel.
@@ -25,5 +25,5 @@ public interface SimpleSampleInfo {
      * 			the amplitude (normalized -1 to 1) for this sample
      * 			in the right channel.
      */			
-	int getRightChannel();
+	float getRightChannel();
 }

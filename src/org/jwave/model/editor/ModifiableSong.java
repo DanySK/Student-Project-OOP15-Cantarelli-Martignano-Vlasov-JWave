@@ -97,7 +97,7 @@ public interface ModifiableSong extends Song {
      * 			a list of numbers representing the waveform of the modified song,
      * 			in sets of 2.
      */
-	List<Float> getSimpleWaveform(int from, int to, int samples);		
+	List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples);		
 	
     /**
      * Returns a list of values that represent the waveform of the currently
