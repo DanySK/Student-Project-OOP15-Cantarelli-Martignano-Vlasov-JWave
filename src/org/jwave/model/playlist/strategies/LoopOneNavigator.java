@@ -1,4 +1,4 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist.strategies;
 
 /**
  * A LoopOne navigator follows the LOOP_ONE {@link}PlayMode policy.

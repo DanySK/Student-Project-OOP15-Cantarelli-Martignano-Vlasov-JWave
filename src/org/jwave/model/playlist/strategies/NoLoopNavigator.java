@@ -1,4 +1,4 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist.strategies;
 
 /**
  * A NoLoop navigator follows the NO_LOOP {@link}PlayMode policy.
