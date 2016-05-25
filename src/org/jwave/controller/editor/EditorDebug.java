@@ -1,14 +1,9 @@
 package org.jwave.controller.editor;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
 import org.jwave.model.player.SongImpl;
-
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.UnsupportedTagException;
 
 public class EditorDebug {
 	public static void main(String[] args) {
