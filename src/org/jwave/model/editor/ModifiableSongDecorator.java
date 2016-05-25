@@ -367,8 +367,8 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 	@Override
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<Float> getAggregatedWaveform(int from, int to, int samples) {
-		List<Float> waveformValues = new ArrayList<Float>();
+	public List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples) {
+		List<GroupedSampleInfo> waveformValues = new ArrayList<GroupedSampleInfo>();
 			
 		float lengthOfChunks;
 		
@@ -457,60 +457,52 @@ public class ModifiableSongDecorator extends SongDecorator implements Modifiable
 				/*
 				 * first we do the left channel
 				 */
-				float highest = 0;
-				float lowest = 0;
-				float quadraticTotalPositive = 0;
-				float quadraticTotalNegative = 0;
+				float leftHighest = 0;
+				float leftLowest = 0;
+				float leftQuadraticTotalPositive = 0;
+				float leftQuadraticTotalNegative = 0;
 				
 				for (int k = 0; k < samplesLeft.length; k++) {
 					if (samplesLeft[k] > 0) {
-						quadraticTotalPositive += Math.pow(samplesLeft[k], 2);
+						leftQuadraticTotalPositive += Math.pow(samplesLeft[k], 2);
 						
-						if (samplesLeft[k] > highest) {
-							highest = samplesLeft[k];
+						if (samplesLeft[k] > leftHighest) {
+							leftHighest = samplesLeft[k];
 						}							
 					} else if (samplesLeft[k] < 0) {
-						quadraticTotalNegative += Math.pow(samplesLeft[k], 2);
+						leftQuadraticTotalNegative += Math.pow(samplesLeft[k], 2);
 						
-						if (samplesLeft[k] < lowest) {
-							lowest = samplesLeft[k];
+						if (samplesLeft[k] < leftLowest) {
+							leftLowest = samplesLeft[k];
 						}
 					}
-				}
-				
-				waveformValues.add(highest);
-				waveformValues.add(lowest);
-				waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesLeft.length)));
-				waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)));
+				}				
 				
 				/*
 				 * then we do the right channel
 				 */
-				highest = 0;
-				lowest = 0;
-				quadraticTotalPositive = 0;
-				quadraticTotalNegative = 0;
+				float rightHighest = 0;
+				float rightLowest = 0;
+				float rightQuadraticTotalPositive = 0;
+				float rightQuadraticTotalNegative = 0;
 				
 				for (int k = 0; k < samplesRight.length; k++) {
 					if (samplesRight[k] > 0) {
-						quadraticTotalPositive += Math.pow(samplesRight[k], 2);
+						rightQuadraticTotalPositive += Math.pow(samplesRight[k], 2);
 						
-						if (samplesRight[k] > highest) {
-							highest = samplesRight[k];
+						if (samplesRight[k] > rightHighest) {
+							rightHighest = samplesRight[k];
 						}							
 					} else if (samplesRight[k] < 0) {
-						quadraticTotalNegative += Math.pow(samplesRight[k], 2);
+						rightQuadraticTotalNegative += Math.pow(samplesRight[k], 2);
 						
-						if (samplesRight[k] < lowest) {
-							lowest = samplesRight[k];
+						if (samplesRight[k] < rightLowest) {
+							rightLowest = samplesRight[k];
 						}
 					}
 				}
 				
-				waveformValues.add(highest);
-				waveformValues.add(lowest);
-				waveformValues.add((float) Math.sqrt(quadraticTotalPositive * ((float) 1 / (float) samplesRight.length)));
-				waveformValues.add(-1 * (float) Math.sqrt(quadraticTotalNegative * ((float) 1 / (float) samplesRight.length)));					
+				waveformValues.add(new GroupedSampleInfoImpl(leftHighest, leftLowest, (float) Math.sqrt(leftQuadraticTotalPositive * ((float) 1 / (float) samplesLeft.length)), -1 * (float) Math.sqrt(leftQuadraticTotalNegative * ((float) 1 / (float) samplesLeft.length)), rightHighest, rightLowest, (float) Math.sqrt(rightQuadraticTotalPositive * ((float) 1 / (float) samplesRight.length)), -1 * (float) Math.sqrt(rightQuadraticTotalNegative * ((float) 1 / (float) samplesRight.length))));					
 			}
 			
 			if (j + 1 >= this.cuts.get(i).getSegments().size()) {
