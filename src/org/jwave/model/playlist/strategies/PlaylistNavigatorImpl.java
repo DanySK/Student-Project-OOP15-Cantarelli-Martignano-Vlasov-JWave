@@ -28,6 +28,26 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
     }
     
     /**
+     * Creates a new PlaylistNavigatorImpl.
+     * 
+     * @param initDimension
+     *          initial playlist dimension.
+     *          
+     */
+    public PlaylistNavigatorImpl(final int initDimension) {
+        this(initDimension, 0);
+    }
+    
+    /**
+     * Creates a new PlaylistNavigatorImpl.
+     * 
+     *          
+     */
+    public PlaylistNavigatorImpl() {
+        this(0, 0);
+    }
+    
+    /**
      * @return 
      *          the next index that has to be selected in playlist.
      */
