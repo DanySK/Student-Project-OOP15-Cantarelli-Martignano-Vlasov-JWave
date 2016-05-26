@@ -56,7 +56,15 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 
 	@Override
 	public int getPosition() {
-		return this.decoratedDynamicPlayer.getPosition();
+		int currentPosition = this.cuts.get(this.currentCutIndex).getFrom();
+		
+		for (int i = 0; i < this.currentSegmentIndex; i++) {
+			currentPosition += this.cuts.get(this.currentCutIndex).getSegment(i).getLength();
+		}
+		
+		currentPosition += this.getSongPosition() - this.cuts.get(this.currentCutIndex).getSegment(this.currentSegmentIndex).getFrom();
+		
+		return currentPosition;
 	}
 
 	@Override
