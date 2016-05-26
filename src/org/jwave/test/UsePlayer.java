@@ -25,7 +25,9 @@ public final class UsePlayer {
         final Controller c = new Controller();
         final DynamicPlayer player = c.getDynamicPlayer();
 //        final PlaylistManager manager = c.getPlaylistManager();
-        player.setPlayer(new SongImpl(new File("/home/canta/Music/02. Cornfield Chase.mp3")));
+//        player.setPlayer(new SongImpl(new File("/home/canta/Music/02. Cornfield Chase.mp3")));
+//        player.setPlayer(new SongImpl(new File("/home/canta/Music/DREAM OF LOVE.wav")));
+//        player.play();
 //        System.out.println("has album image " + player.getLoaded().get().getMetaDataV2().getAlbumArtwork().isPresent());
     }
 }
