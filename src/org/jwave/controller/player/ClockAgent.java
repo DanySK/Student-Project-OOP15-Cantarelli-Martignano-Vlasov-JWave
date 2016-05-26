@@ -3,6 +3,10 @@ package org.jwave.controller.player;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.PlaylistManager;
 
+/**
+ * This class is a clock for {@link DynamicPlayer}, determining controls at a specified interval. 
+ *
+ */
 public class ClockAgent implements Runnable {
     
     private Thread t;
@@ -11,6 +15,18 @@ public class ClockAgent implements Runnable {
     private PlaylistManager playlistManager;
     private volatile boolean stopped;
     
+    /**
+     * Creates a new instance of ClockAgent.
+     * 
+     * @param player
+     *          the player this clock agent has to control.
+     *          
+     * @param manager
+     *          the manager this clock agent has to maintain referenced.
+     *          
+     * @param threadName
+     *          name of the thread.
+     */
     public ClockAgent(final DynamicPlayer player, final PlaylistManager manager, final String threadName) {
         this.dynPlayer = player;
         this.playlistManager = manager;
@@ -21,7 +37,7 @@ public class ClockAgent implements Runnable {
     
     @Override
     public void run() {
-        System.out.println("Running thread" + this.name);
+//        System.out.println("Running thread" + this.name);
         while (!this.isStopped()) {
             try {
                 this.checkInReproduction();

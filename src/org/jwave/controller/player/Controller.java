@@ -29,9 +29,17 @@ import org.jwave.model.player.PlaylistManagerImpl;
  */
 public class Controller {
 
+    /**
+     * Default directory for saving playlists.
+     */
+    public static final String SAVE_DIR_NAME = "JWavePlaylists";
+    /**
+     * The name of the directory where album arts are stored.
+     */
+    public static final String COVERART_DIR_NAME = "CoverArts";
+    
     private static final String HOME = "user.home";
     private static final String SEPARATOR = "file.separator";
-    private static final String SAVE_DIR_NAME = "JWavePlaylists";
     private static final String DEF_PLAYLIST_NAME = "default";
     
     private Collection<Playlist> currentAvailableCache;
@@ -160,9 +168,8 @@ public class Controller {
     }
     
     private void createSaveDir() {
-        final Path saveDirPath = Paths.get(this.getDefaultSavePath());
         try {
-            Files.createDirectory(saveDirPath);
+            Files.createDirectories(Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + COVERART_DIR_NAME));
         } catch (IOException e) {
             System.err.println("Cannot create default save directory.");
         }

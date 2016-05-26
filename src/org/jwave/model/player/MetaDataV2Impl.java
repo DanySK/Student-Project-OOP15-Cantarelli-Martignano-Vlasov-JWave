@@ -1,6 +1,6 @@
 package org.jwave.model.player;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.jwave.controller.player.Controller;
 
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
@@ -23,7 +25,7 @@ import com.mpatric.mp3agic.UnsupportedTagException;
  *
  */
 public class MetaDataV2Impl implements MetaDataV2 {
-    
+
     private static final String ID3V1 = "ID3v1";
     private static final String ID3V2 = "ID3v2";
 
@@ -41,6 +43,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
      */
     public MetaDataV2Impl(final String absolutePath)  {
         this.datas = new EnumMap<>(MetaData.class);
+        this.albumImage = Optional.empty();
         try {
             this.song = new Mp3File(absolutePath);
             this.fillWithTags();
@@ -48,8 +51,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
                 | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             this.fillWithEmptyValues();
         }
-        this.loadAlbumArtwork();
-        System.out.println(this.datas.entrySet());
+//        System.out.println(this.datas.entrySet());
     }
 
     @Override
@@ -71,7 +73,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
         if (this.song.hasId3v2Tag()) {
             this.id3v2Tag = this.song.getId3v2Tag();
             this.fill(this.id3v2Tag, ID3V2);
-            return;
+            this.loadAlbumArtwork();
         }
         this.fillWithEmptyValues();
     }
@@ -79,24 +81,22 @@ public class MetaDataV2Impl implements MetaDataV2 {
     private void loadAlbumArtwork() {
         //code inspired by
         //https://github.com/mpatric/mp3agic-examples/blob/master/src/main/java/com/mpatric/mp3agic/example/Example.java
-        if (this.song.hasId3v2Tag()) {
-            final byte[] imageData = this.id3v2Tag.getAlbumImage();
-            if (imageData != null) {
+        final byte[] imageData = this.id3v2Tag.getAlbumImage();
+        if (imageData != null) {
 //                final String mimeType = this.id3v2Tag.getAlbumImageMimeType();
 //                System.out.println("Mime type: " + mimeType);
-                // Write image to file - can determine appropriate file extension from the mime type
-                try {
-                    this.albumImage = Optional.of(new RandomAccessFile("album-artwork", "rw"));
-                    this.albumImage.get().write(imageData);
-                    this.albumImage.get().close();
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-               
+            // Write image to file - can determine appropriate file extension from the mime type
+            try {
+                final File tmp = new File(System.getProperty("user.home") + System.getProperty("file.separator") 
+                + Controller.SAVE_DIR_NAME + System.getProperty("file.separator") + Controller.COVERART_DIR_NAME 
+                +  System.getProperty("file.separator") + "arturo");    //TODO finish implementation.
+                this.albumImage = Optional.of(new RandomAccessFile(tmp, "rw"));
+                this.albumImage.get().write(imageData);
+                this.albumImage.get().close(); //verify if this method causes impossibility to read the file.
+            } catch (IOException e) {
+                System.out.println("Catched IOException");
+                this.albumImage = Optional.empty();     //TODO check if there is a better way to manage exception
+                e.printStackTrace();
             }
         }
     }
@@ -105,14 +105,6 @@ public class MetaDataV2Impl implements MetaDataV2 {
     public Optional<RandomAccessFile> getAlbumArtwork() {
         return this.albumImage;
     }
-    
-//    private void setTag(final String tagName, final String newValue) {
-//        
-//    }
-//    
-//    private void setTag(final int newValue) {
-//        
-//    }
     
     private <T extends ID3v1> void fill(final T tag, final String tagType) throws NoSuchMethodException, SecurityException, 
     IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -134,10 +126,18 @@ public class MetaDataV2Impl implements MetaDataV2 {
     
     private void fillWithEmptyValues() {
         final List<MetaData> l = Arrays.asList(MetaData.values()).stream()
-                .filter(t -> this.datas.get(t) == null)
+                .filter(t -> !this.datas.containsKey(t) || this.datas.get(t) == null)
                 .collect(Collectors.toList());
         for (MetaData d : l) {
-            this.datas.put(d, "Not available");
+            this.datas.put(d, "");
         }
     }
+    
+//  private void setTag(final String tagName, final String newValue) {
+//  
+//}
+//
+//private void setTag(final int newValue) {
+//  
+//}
 }
