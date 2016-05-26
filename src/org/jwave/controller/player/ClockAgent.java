@@ -64,6 +64,16 @@ public class ClockAgent implements Runnable {
     }
     
     /**
+     * Sets the {@link DynamicPlayer} referenced by this agent.
+     * 
+     * @param player
+     *          the player to be referenced by this agent.
+     */
+    public void setPlayer(final DynamicPlayer player) {
+        this.dynPlayer = player;
+    }
+    
+    /**
      * Stops the clock agent thread.
      */
     public void stopClockAgent() {

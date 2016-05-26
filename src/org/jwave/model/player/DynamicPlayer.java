@@ -49,7 +49,7 @@ public interface DynamicPlayer {
      *          the song loaded in the dynamic player.
      */
     Optional<Song> getLoaded();
-   
+    
     /**
      * 
      * @return
