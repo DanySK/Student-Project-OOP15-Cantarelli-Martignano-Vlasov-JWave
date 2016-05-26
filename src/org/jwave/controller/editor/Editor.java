@@ -2,6 +2,7 @@ package org.jwave.controller.editor;
 
 import java.util.List;
 
+import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.player.Song;
 
 /**
@@ -189,7 +190,7 @@ public interface Editor {
      * 			a list of numbers representing the waveform of the modified song,
      * 			in sets of 8.
      */
-	List<Float> getWaveform(int from, int to, int samples);	
+	List<GroupedSampleInfo> getWaveform(int from, int to, int samples);	
 	
     /**
      * Temporary debug method for printing a text representation of the
