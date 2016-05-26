@@ -1,6 +1,6 @@
 package org.jwave.model.player;
 
-import java.io.RandomAccessFile;
+import java.io.InputStream;
 import java.util.Optional;
 
 /**
@@ -24,7 +24,7 @@ public interface MetaDataV2 {
      * @return
      *          An Optional containing the album artwork, if present.
      */
-    Optional<RandomAccessFile> getAlbumArtwork();
+    Optional<InputStream> getAlbumArtwork();
     
     /**
      * Sets a value for a meta data.
