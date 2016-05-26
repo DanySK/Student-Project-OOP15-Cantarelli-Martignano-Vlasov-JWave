@@ -22,10 +22,15 @@ public class EditorImpl implements Editor {
 		
 		this.song = null;
 	}
+	
+	@Override
+	public ModifiableSongImpl getSong() {
+		return new ModifiableSongImpl(this.song);
+	}
 
 	@Override
 	public void loadSongToEdit(Song song) {
-		this.song = new ModifiableSongImpl(song);		
+		this.song = new ModifiableSongImpl(song);
 	}
 
 	@Override
@@ -176,8 +181,8 @@ public class EditorImpl implements Editor {
 	
 	@Override
 	public void printSongDebug() {
-		System.out.println("Current selection: from " + getSelectionFrom() + "ms to " + getSelectionTo() + "ms");
-		System.out.println("Copied selection: from " + getCopiedFrom() + "ms to " + getCopiedTo() + "ms");
+//		System.out.println("Current selection: from " + getSelectionFrom() + "ms to " + getSelectionTo() + "ms");
+//		System.out.println("Copied selection: from " + getCopiedFrom() + "ms to " + getCopiedTo() + "ms");
 		
 		this.song.printAllCuts();
 	}	

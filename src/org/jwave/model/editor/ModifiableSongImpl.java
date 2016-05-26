@@ -24,17 +24,22 @@ import ddf.minim.javasound.FloatSampleBuffer;
 public class ModifiableSongImpl extends SongDecorator implements ModifiableSong {
 	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
 	
-	private final List<CutImpl> cuts;
+	private final List<Cut> cuts;
 	
 	private AudioSample songSample;
 	
 	public ModifiableSongImpl(Song decoratedSong) {
 		super(decoratedSong);
 		
-		this.songSample = minim.loadSample(this.getAbsolutePath(), 2048);
+		this.songSample = minim.loadSample(decoratedSong.getAbsolutePath(), 2048);
 		
-		this.cuts = new ArrayList<>();
-		this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
+		if (decoratedSong instanceof ModifiableSong) {
+			ModifiableSong modifiableSong = (ModifiableSong) decoratedSong;
+			this.cuts = new ArrayList<>(modifiableSong.getCuts());
+		} else {
+			this.cuts = new ArrayList<>();
+			this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
+		}		
 	}
 
 	@Override
@@ -110,8 +115,8 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 	@Override
 	public void pasteSelectionAt(int from, int to, int at) {
 		int cutToDivideIndex = 0;
-		CutImpl cutToDivide = null;
-		CutImpl cutToInsert = generateCutFromSelection(from, to, at);
+		Cut cutToDivide = null;
+		Cut cutToInsert = generateCutFromSelection(from, to, at);
 		
 		for (int i = 0; i < cuts.size(); i++) {
 			if (cuts.get(i).getFrom() <= at && cuts.get(i).getTo() >= at) {
@@ -168,7 +173,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		int selectionLength = to - from;
 		
 		int firstCutToDivideIndex = 0;
-		CutImpl firstCutToDivide = null;
+		Cut firstCutToDivide = null;
 		
 		for (i = 0; i < cuts.size(); i++) {
 			if (cuts.get(i).getFrom() <= from && cuts.get(i).getTo() >= from) {
@@ -191,7 +196,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		leftSegments.add(new SegmentImpl(firstCutToDivide.getSegment(i).getFrom(), firstCutToDivide.getSegment(i).getFrom() + (newFirstCutLength - segmentCounter)));			
 		
 		int secondCutToDivideIndex = 0;
-		CutImpl secondCutToDivide = null;
+		Cut secondCutToDivide = null;
 		
 		for (i = 0; i < cuts.size(); i++) {
 			if (cuts.get(i).getFrom() <= to && cuts.get(i).getTo() >= to) {
@@ -637,6 +642,11 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		  
 		songSample.close(); 		
 	}	
+	
+	@Override
+	public List<Cut> getCuts() {
+		return new ArrayList<Cut>(this.cuts);
+	}
 	
 	@Override
 	public void printAllCuts() {

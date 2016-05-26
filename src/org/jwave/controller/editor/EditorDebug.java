@@ -3,6 +3,14 @@ package org.jwave.controller.editor;
 import java.io.File;
 import java.util.Scanner;
 
+import org.jwave.controller.player.ClockAgent;
+import org.jwave.controller.player.Controller;
+import org.jwave.model.editor.DynamicEditorPlayerImpl;
+import org.jwave.model.editor.ModifiableSongImpl;
+import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.DynamicPlayerImpl;
+import org.jwave.model.player.PlaylistImpl;
+import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.SongImpl;
 
 public class EditorDebug {
@@ -11,6 +19,11 @@ public class EditorDebug {
 		int menuSelection;
 		Scanner reader = new Scanner(System.in);
 		
+		Controller ctrl = new Controller();		
+//		DynamicPlayer player = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
+//		ctrl.setDynamicPlayer(player);
+		DynamicPlayer player = ctrl.getDynamicPlayer();
+		
 		try {
 			songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));
 		} catch (Exception e) {
@@ -18,12 +31,12 @@ public class EditorDebug {
 			e.printStackTrace();
 		}
 		
-		songEditor.setSelectionFrom(50000);
-		songEditor.setSelectionTo(100000);
-		songEditor.copySelection();
-		songEditor.deselectSelection();
-		songEditor.setSelectionFrom(300000);
-		songEditor.pasteCopiedSelection();
+//		songEditor.setSelectionFrom(50000);
+//		songEditor.setSelectionTo(100000);
+//		songEditor.copySelection();
+//		songEditor.deselectSelection();
+//		songEditor.setSelectionFrom(300000);
+//		songEditor.pasteCopiedSelection();
 		
 //		songEditor.setSelectionTo(35000);
 		
@@ -36,10 +49,10 @@ public class EditorDebug {
 			System.out.println("6. Copy selection");
 			System.out.println("7. Paste selection");
 			System.out.println("8. Export song");
-			System.out.println("9. Cut selection");
-//			System.out.println("9. Play song");
+			System.out.println("9. Cut selection");			
 			System.out.println("10. Export song MP3");
 			System.out.println("11. Waveform debug");
+			System.out.println("12. Play song");
 			System.out.println("0. Exit");				
 						
 			System.out.println("Select option: ");
@@ -85,6 +98,10 @@ public class EditorDebug {
 					break;
 				case 11:
 					songEditor.printWaveform();
+					break;
+				case 12:
+					player.setPlayer(songEditor.getSong());
+					player.play();
 					break;
 				default:
 					break;

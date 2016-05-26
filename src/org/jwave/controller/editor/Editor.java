@@ -3,6 +3,7 @@ package org.jwave.controller.editor;
 import java.util.List;
 
 import org.jwave.model.editor.GroupedSampleInfo;
+import org.jwave.model.editor.ModifiableSong;
 import org.jwave.model.player.Song;
 
 /**
@@ -22,6 +23,14 @@ public interface Editor {
      * 			the song to load.
      */
 	void loadSongToEdit(Song song);
+	
+	/**
+	 * Gets the loaded song.
+	 * 
+	 * @return
+	 * 			the currently loaded ModifiableSong
+	 */
+	ModifiableSong getSong();
 	
     /**
      * Checks if a song has been loaded.

@@ -135,6 +135,15 @@ public interface ModifiableSong extends Song {
 	void exportSong(String exportPath);
 	
     /**
+     * Returns a defensive copy of all the songs cuts.
+     * 
+     * @return
+     * 			a defensive copy of the list of all the songs cuts.
+     * 
+     */	
+	List<Cut> getCuts();
+	
+    /**
      * Temporary debug method for printing a text representation of all the
      * current cuts and segments of a modified song.
      * 
