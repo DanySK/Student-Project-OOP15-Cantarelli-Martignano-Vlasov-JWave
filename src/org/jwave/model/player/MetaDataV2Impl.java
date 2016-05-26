@@ -10,6 +10,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v2;
@@ -22,6 +23,9 @@ import com.mpatric.mp3agic.UnsupportedTagException;
  *
  */
 public class MetaDataV2Impl implements MetaDataV2 {
+    
+    private static final String ID3V1 = "ID3v1";
+    private static final String ID3V2 = "ID3v2";
 
     private Mp3File song;
     private ID3v1 id3v1Tag;
@@ -45,7 +49,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
             this.fillWithEmptyValues();
         }
         this.loadAlbumArtwork();
-//        System.out.println(this.datas.entrySet());
+        System.out.println(this.datas.entrySet());
     }
 
     @Override
@@ -55,54 +59,23 @@ public class MetaDataV2Impl implements MetaDataV2 {
 
     @Override
     public void setData(final MetaData metaDataValue, final String newValue) {
-        // TODO Auto-generated method stub 
+        this.datas.put(metaDataValue, newValue);
+//        this.setTag();
     }
    
     private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        final List<MetaData> l = Arrays.asList(MetaData.values());
-        String value;
-        if (this.song.hasId3v2Tag()) {
-            this.id3v2Tag = this.song.getId3v2Tag();
-            for (MetaData d : l) {
-                if (d.getTagType().equals("ID3v2")) {
-                    Method m = ID3v2.class.getMethod("get" + d.getName());
-                    try {
-                        value = (String) m.invoke(this.id3v2Tag);
-                        this.datas.put(d, value);
-                    } catch (ClassCastException ce) {
-                        value = m.invoke(this.id3v2Tag).toString();
-                        this.datas.put(d, value);
-                    }
-                }
-            }
-        }
         if (this.song.hasId3v1Tag()) {
             this.id3v1Tag = this.song.getId3v1Tag();
-            for (MetaData d : l) {
-                if (d.getTagType().equals("ID3v1")) {
-                    Method m = ID3v1.class.getMethod("get" + d.getName());
-                    try {
-                        value = (String) m.invoke(this.id3v1Tag);
-                        this.datas.put(d, value);
-                    } catch (ClassCastException ce) {
-                        value = m.invoke(this.id3v1Tag).toString();
-                        this.datas.put(d, value);
-                    }
-                }
-            }
+            this.fill(this.id3v1Tag, ID3V1);
+        }
+        if (this.song.hasId3v2Tag()) {
+            this.id3v2Tag = this.song.getId3v2Tag();
+            this.fill(this.id3v2Tag, ID3V2);
             return;
         }
-        //case no data is available
         this.fillWithEmptyValues();
     }
-    
-    private void fillWithEmptyValues() {
-        final List<MetaData> l = Arrays.asList(MetaData.values());
-        for (MetaData d : l) {
-            this.datas.put(d, "Not available");
-        }
-    }
-    
+
     private void loadAlbumArtwork() {
         //code inspired by
         //https://github.com/mpatric/mp3agic-examples/blob/master/src/main/java/com/mpatric/mp3agic/example/Example.java
@@ -131,5 +104,40 @@ public class MetaDataV2Impl implements MetaDataV2 {
     @Override
     public Optional<RandomAccessFile> getAlbumArtwork() {
         return this.albumImage;
+    }
+    
+//    private void setTag(final String tagName, final String newValue) {
+//        
+//    }
+//    
+//    private void setTag(final int newValue) {
+//        
+//    }
+    
+    private <T extends ID3v1> void fill(final T tag, final String tagType) throws NoSuchMethodException, SecurityException, 
+    IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final List<MetaData> l = Arrays.asList(MetaData.values()).stream()
+        .filter(t -> t.getTagType().equals(tagType))
+        .collect(Collectors.toList());
+        String value;
+        for (MetaData d : l) {
+            Method m = tag.getClass().getMethod("get" + d.getName());
+            try {
+                value = (String) m.invoke(tag);
+                this.datas.put(d, value);
+            } catch (ClassCastException ce) {
+                value = m.invoke(tag).toString();
+                this.datas.put(d, value);
+            }
+        }
+    }
+    
+    private void fillWithEmptyValues() {
+        final List<MetaData> l = Arrays.asList(MetaData.values()).stream()
+                .filter(t -> this.datas.get(t) == null)
+                .collect(Collectors.toList());
+        for (MetaData d : l) {
+            this.datas.put(d, "Not available");
+        }
     }
 }

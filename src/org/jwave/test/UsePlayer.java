@@ -26,6 +26,6 @@ public final class UsePlayer {
         final DynamicPlayer player = c.getDynamicPlayer();
 //        final PlaylistManager manager = c.getPlaylistManager();
         player.setPlayer(new SongImpl(new File("/home/canta/Music/02. Cornfield Chase.mp3")));
-        System.out.println("has album image " + player.getLoaded().get().getMetaDataV2().getAlbumArtwork().isPresent());
+//        System.out.println("has album image " + player.getLoaded().get().getMetaDataV2().getAlbumArtwork().isPresent());
     }
 }
