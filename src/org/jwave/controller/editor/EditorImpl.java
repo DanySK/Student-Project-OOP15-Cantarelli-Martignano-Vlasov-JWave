@@ -2,7 +2,8 @@ package org.jwave.controller.editor;
 
 import java.util.List;
 
-import org.jwave.model.editor.ModifiableSongDecorator;
+import org.jwave.model.editor.GroupedSampleInfo;
+import org.jwave.model.editor.ModifiableSongImpl;
 import org.jwave.model.player.Song;
 
 public class EditorImpl implements Editor {
@@ -11,7 +12,7 @@ public class EditorImpl implements Editor {
 	private int copiedFrom;
 	private int copiedTo;
 	
-	private ModifiableSongDecorator song;	
+	private ModifiableSongImpl song;	
 	
 	public EditorImpl() {
 		this.selectionFrom = -1;
@@ -24,7 +25,7 @@ public class EditorImpl implements Editor {
 
 	@Override
 	public void loadSongToEdit(Song song) {
-		this.song = new ModifiableSongDecorator(song);		
+		this.song = new ModifiableSongImpl(song);		
 	}
 
 	@Override
@@ -154,19 +155,13 @@ public class EditorImpl implements Editor {
 	@Override
 	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<Float> getWaveform(int from, int to, int samples) {
+	public List<GroupedSampleInfo> getWaveform(int from, int to, int samples) {
 		return this.song.getAggregatedWaveform(from, to, samples);
 	}	
 	
 	public void printWaveform() {
-		System.out.println("asdasdas");
-		
 		if (this.isSongLoaded()) {
-			System.out.println("asdasdas");
-			
-			List<Float> results = this.song.getAggregatedWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
-			
-			System.out.println(results.size());
+			List<GroupedSampleInfo> results = this.song.getAggregatedWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
 			
 			for (int i = 0; i < results.size(); i += 8) {
 				System.out.println(i / 8 + ", " + results.get(i) + ", " + results.get(i + 1) + ", " + results.get(i + 2) + ", " + results.get(i + 3));

@@ -21,14 +21,14 @@ import ddf.minim.Minim;
 import ddf.minim.analysis.FFT;
 import ddf.minim.javasound.FloatSampleBuffer;
 
-public class ModifiableSongDecorator extends SongDecorator implements ModifiableSong {
+public class ModifiableSongImpl extends SongDecorator implements ModifiableSong {
 	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
 	
 	private final List<CutImpl> cuts;
 	
 	private AudioSample songSample;
 	
-	public ModifiableSongDecorator(Song decoratedSong) {
+	public ModifiableSongImpl(Song decoratedSong) {
 		super(decoratedSong);
 		
 		this.songSample = minim.loadSample(this.getAbsolutePath(), 2048);
