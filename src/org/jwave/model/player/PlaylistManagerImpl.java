@@ -6,11 +6,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.jwave.model.playlist.strategies.LoopAllNavigator;
-import org.jwave.model.playlist.strategies.LoopOneNavigator;
-import org.jwave.model.playlist.strategies.NoLoopNavigator;
 import org.jwave.model.playlist.strategies.PlaylistNavigator;
-import org.jwave.model.playlist.strategies.ShuffleNavigator;
+import org.jwave.model.playlist.strategies.PlaylistNavigatorFactory;
 
 /**
  * This is an implementation of {@link Playlist}.
@@ -23,6 +20,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     private Optional<Integer> currentIndexLoaded;
     private PlaylistNavigator navigator;
     private PlayMode playMode;
+    private PlaylistNavigatorFactory navFactory;
     
     /**
      * Creates a new PlaylistManagerImpl.
@@ -31,12 +29,15 @@ public class PlaylistManagerImpl implements PlaylistManager {
      *          the default playlist.
      */
     public PlaylistManagerImpl(final Playlist newDefaultQueue) {
+        this.navFactory = new PlaylistNavigatorFactory();
         this.defaultQueue = newDefaultQueue;
         this.availablePlaylists = new HashSet<>();
         this.currentIndexLoaded = Optional.empty();
-        this.setQueue(newDefaultQueue);
-        this.navigator = new NoLoopNavigator(this.loadedPlaylist.getDimension(), 0);
+        this.defaultQueue = newDefaultQueue;
+        this.loadedPlaylist = this.defaultQueue;
         this.playMode = PlayMode.NO_LOOP;
+        this.navigator = this.navFactory.createNavigator(this.playMode, this.loadedPlaylist.getDimension(), 0);
+        this.loadedPlaylist.addEObserver(this.navigator);
     }
 
     @Override
@@ -124,29 +125,13 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.loadedPlaylist.addEObserver(this.navigator);
     }
     
-    private void setNavigator(final PlayMode mode) {    //TODO create a simple factory
+    private void setNavigator(final PlayMode mode) {  
         final int dimension = this.loadedPlaylist.getDimension();
         int index = 0; 
         if (this.currentIndexLoaded.isPresent()) {
             index = this.getCurrentLoadedIndex().get();
         }
-       switch (mode) {
-           case NO_LOOP:        
-               this.navigator = new NoLoopNavigator(dimension, index);
-               break;
-           case LOOP_ONE:       
-               this.navigator = new LoopOneNavigator(index);
-               break;
-           case LOOP_ALL:       
-               this.navigator = new LoopAllNavigator(dimension, index);
-               break;
-           case SHUFFLE:        
-               this.navigator = new ShuffleNavigator(dimension, index);
-               break;
-           default:             
-               this.navigator = new NoLoopNavigator(dimension, index);
-               break;
-       }
+        this.navigator = this.navFactory.createNavigator(mode, dimension, index);
     }
 
     @Override
