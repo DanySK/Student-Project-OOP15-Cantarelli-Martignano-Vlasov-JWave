@@ -100,7 +100,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.player = new FilePlayer(this.minim.loadFileStream(song.getAbsolutePath(), BUFFER_SIZE, false));
         this.player.pause();
         
-        this.out = this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRateRetriever.sampleRate(), OUT_BIT_DEPTH);
+        this.out = this.createAudioOut(sampleRateRetriever.sampleRate());
         this.player.patch(this.volumeControl);
         this.volumeControl.patch(this.out);
         sampleRateRetriever.close();
@@ -129,5 +129,10 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public Optional<Song> getLoaded() {
         return this.loaded;
+    }
+    
+    //method created to verify that ther are no error due to output creation.
+    private AudioOutput createAudioOut(final float sampleRate) {
+        return this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRate, OUT_BIT_DEPTH);
     }
 }
