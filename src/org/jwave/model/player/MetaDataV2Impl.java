@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v1Tag;
 import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
@@ -117,20 +118,26 @@ public class MetaDataV2Impl implements MetaDataV2 {
         }
     }
     
-    private void setTag(final MetaData tag, final String newValue) throws IllegalAccessException, 
+    private <T extends ID3v1> void setTag(final MetaData tag, final String newValue) throws IllegalAccessException, 
     IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-          if (tag.getTagType().equals(ID3V1)) {
-              if (this.id3v1Tag == null) {
-                  this.id3v1Tag = new ID3v1Tag();
-              }
-              try {
-                  int numberValue = Integer.parseInt(newValue);
-                  this.fillTag(this.id3v1Tag, tag.getName(), numberValue);
-              } catch (NumberFormatException ne) {
-                  this.fillTag(this.id3v1Tag, tag.getName(), newValue);
-              }
-          }
-          //TODO repeat procedure with id3v2
+        T metaDataVersion = null;
+        if (tag.getTagType().equals(ID3V1)) {
+            if (this.id3v1Tag == null) {
+                this.id3v1Tag = new ID3v1Tag();
+            }
+            metaDataVersion = (T) this.id3v1Tag;        //TODO check if it can be done better.
+        } else {
+            if (this.id3v2Tag == null) {
+                this.id3v2Tag = new ID3v24Tag();
+            }
+            metaDataVersion = (T) this.id3v2Tag;
+        }
+        try {
+            int numberValue = Integer.parseInt(newValue);
+            this.fillTag(metaDataVersion, tag.getName(), numberValue);
+        }   catch (NumberFormatException ne) {
+            this.fillTag(metaDataVersion, tag.getName(), newValue);
+        }
     }
 
     private <T extends ID3v1> void fillTag(final T tag, final String methodName, final String newValue) 
