@@ -59,7 +59,12 @@ public class EditorImpl implements Editor {
 	@Override
 	public void setSelectionFrom(int ms) throws IllegalArgumentException {
 		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
-			this.selectionFrom = ms;
+			if (this.getSelectionTo() > -1 && ms > this.getSelectionTo()) {
+				this.selectionFrom = this.getSelectionTo();
+				this.selectionTo = ms;
+			} else {
+				this.selectionFrom = ms;
+			}			
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -68,7 +73,12 @@ public class EditorImpl implements Editor {
 	@Override
 	public void setSelectionTo(int ms) throws IllegalArgumentException {
 		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
-			this.selectionTo = ms;
+			if (this.getSelectionFrom() > -1 && ms < this.getSelectionFrom()) {
+				this.selectionTo = this.getSelectionFrom();
+				this.selectionFrom = ms;
+			} else {
+				this.selectionTo = ms;
+			}			
 		} else {
 			throw new IllegalArgumentException();
 		}
