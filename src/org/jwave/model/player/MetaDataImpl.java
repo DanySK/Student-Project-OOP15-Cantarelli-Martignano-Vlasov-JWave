@@ -26,7 +26,6 @@ public class MetaDataImpl implements MetaDataV1, Serializable {
     
     private transient Minim minim;
     private transient AudioPlayer metaDataLoader;
-    
     private Map<String, String> data;
     
     /**

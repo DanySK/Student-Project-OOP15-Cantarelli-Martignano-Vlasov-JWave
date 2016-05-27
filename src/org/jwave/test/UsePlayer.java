@@ -34,15 +34,15 @@ public final class UsePlayer {
 //        player.setPlayer(new SongImpl(new File("/home/canta/Music/DREAM OF LOVE.wav")));
 //        player.play();
 //        System.out.println("has album image " + player.getLoaded().get().getMetaDataV2().getAlbumArtwork().isPresent());
-        System.out.println(player.getLoaded().get().getMetaDataV2().retrieve(MetaData.ALBUM));
+        System.out.println(player.getLoaded().get().getMetaData().retrieve(MetaData.ALBUM));
         try {
-            player.getLoaded().get().getMetaDataV2().setData(MetaData.ALBUM, "Mastrota Lord of the Steel");
-            player.getLoaded().get().getMetaDataV2().writeMetaDataToFile();
+            player.getLoaded().get().getMetaData().setData(MetaData.ALBUM, "Mastrota Lord of the Steel");
+            player.getLoaded().get().getMetaData().writeMetaDataToFile();
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException | NotSupportedException | IOException e) {
             System.err.println("Problem encountered while writing metadata.");
             e.printStackTrace();
         } 
-        System.out.println(player.getLoaded().get().getMetaDataV2().retrieve(MetaData.ALBUM));
+        System.out.println(player.getLoaded().get().getMetaData().retrieve(MetaData.ALBUM));
     }
 }

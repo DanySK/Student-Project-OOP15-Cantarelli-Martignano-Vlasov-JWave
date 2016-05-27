@@ -11,7 +11,7 @@ import com.mpatric.mp3agic.NotSupportedException;
  * This interface models metadata in a more detailed way, letting user to set them.
  *
  */
-public interface MetaDataV2 {
+public interface MetaDataRetriever {
     
     /**
      * 

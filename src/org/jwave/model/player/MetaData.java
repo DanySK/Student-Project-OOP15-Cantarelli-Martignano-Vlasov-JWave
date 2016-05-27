@@ -6,7 +6,6 @@ package org.jwave.model.player;
  */
 public enum MetaData {
 
-    //ID3v1
     /**
      * Album of the song.
      */
@@ -52,7 +51,6 @@ public enum MetaData {
      */
     YEAR("Year", "ID3v1"),
     
-    //ID3v2
     /**
      * Album artist.
      */
@@ -95,20 +93,16 @@ public enum MetaData {
     
     private final String name;
     private final String tagType;
-//    private final String getter;
-//    private final String setter;
     
     MetaData(final String newName, final String tagTypeArg) {
         this.name = newName;
         this.tagType = tagTypeArg;
-//        this.getter = "get" + this.name();
-//        this.setter = "set" + this.name();
     }
     
     /**
      * 
      * @return
-     *          Enum name.
+     *          enum name.
      */
     public String getName() {
         return this.name;

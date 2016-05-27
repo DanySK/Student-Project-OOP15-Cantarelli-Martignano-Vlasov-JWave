@@ -19,6 +19,7 @@ public class PlaylistImpl implements Playlist, Serializable {
      * 
      */
     private static final long serialVersionUID = 4440054649095302226L;
+    
     private Set<EObserver<? super Optional<Integer>, ? super Optional<Integer>>> set;
     
     private List<Song> list;
@@ -58,10 +59,9 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
 
     @Override
-    public void removeFromPlaylist(final Song... songNames) {
-        for (Song s : songNames) {
-            this.list.remove(s);
-        }
+    public void removeFromPlaylist(final Song songToBeRemoved) {
+        this.checkSongPresence(songToBeRemoved);
+        this.list.remove(songToBeRemoved);
         this.notifyEObservers(Optional.of(this.getDimension()));
     }
 
@@ -72,9 +72,6 @@ public class PlaylistImpl implements Playlist, Serializable {
 
     @Override
     public synchronized Song selectSong(final String name) throws IllegalArgumentException  {
-        if (!this.list.contains(name)) {
-            throw new IllegalArgumentException("Song not found");
-        }
         final Song out = this.list.stream()
                                 .filter(s -> s.getName().equals(name))
                                 .findFirst().get();
@@ -125,7 +122,8 @@ public class PlaylistImpl implements Playlist, Serializable {
 
     @Override
     public int indexOf(final Song song) {
-       return this.list.indexOf(song);
+        this.checkSongPresence(song);
+        return this.list.indexOf(song);
     }
 
     @Override
@@ -153,5 +151,11 @@ public class PlaylistImpl implements Playlist, Serializable {
     @Override
     public void clear() {
         this.list = new LinkedList<>();
+    }
+    
+    private void checkSongPresence(final Song song) {
+        if (!this.list.contains(song)) {
+            throw new IllegalArgumentException("Song not found");
+        }
     }
 }

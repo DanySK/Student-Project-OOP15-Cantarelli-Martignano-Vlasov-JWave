@@ -29,7 +29,7 @@ import com.mpatric.mp3agic.UnsupportedTagException;
  * This class is an implementation of MetaDataV2.
  *
  */
-public class MetaDataV2Impl implements MetaDataV2 {
+public class MetaDataRetrieverImpl implements MetaDataRetriever {
 
     private static final String ID3V1 = "ID3v1";
     private static final String ID3V2 = "ID3v2";
@@ -39,7 +39,6 @@ public class MetaDataV2Impl implements MetaDataV2 {
     private ID3v1 id3v1Tag;
     private ID3v2 id3v2Tag;
     private Map<MetaData, String> datas;
-//    private Optional<RandomAccessFile> albumImage;
     
     /**
      * Creates a new instance of the MetaDataV2Impl.
@@ -47,20 +46,16 @@ public class MetaDataV2Impl implements MetaDataV2 {
      * @param absolutePath
      *          path of the file that has to 
      */
-    public MetaDataV2Impl(final String absolutePath)  {
-        this.filePath = Paths.get(absolutePath);
+    public MetaDataRetrieverImpl(final Path absolutePath)  {
+        this.filePath = absolutePath;
         this.datas = new EnumMap<>(MetaData.class);
-//        this.albumImage = Optional.empty();
         try {
-            this.song = new Mp3File(absolutePath);
+            this.song = new Mp3File(absolutePath.toString());
             this.fillWithTags();
         } catch (UnsupportedTagException | InvalidDataException | IOException | IllegalAccessException 
                 | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             this.fillWithEmptyValues();
         }
-//        System.out.println(this.datas.entrySet());
-//        System.out.println(this.song.getFilename());
-//        System.out.println(this.filePath);
     }
 
     @Override
@@ -83,7 +78,8 @@ public class MetaDataV2Impl implements MetaDataV2 {
         Files.delete(Paths.get(outPath));
     }
    
-    private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, 
+    NoSuchMethodException, SecurityException {
         if (this.song.hasId3v1Tag()) {
             this.id3v1Tag = this.song.getId3v1Tag();
             this.fill(this.id3v1Tag, ID3V1);
@@ -91,7 +87,6 @@ public class MetaDataV2Impl implements MetaDataV2 {
         if (this.song.hasId3v2Tag()) {
             this.id3v2Tag = this.song.getId3v2Tag();
             this.fill(this.id3v2Tag, ID3V2);
-//            this.loadAlbumArtwork();
         }
         this.fillWithEmptyValues();
     }
@@ -108,8 +103,8 @@ public class MetaDataV2Impl implements MetaDataV2 {
         return Optional.empty();
     }
     
-    private <T extends ID3v1> void fill(final T tag, final String tagType) throws NoSuchMethodException, SecurityException, 
-    IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private <T extends ID3v1> void fill(final T tag, final String tagType) throws NoSuchMethodException, 
+    SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final List<MetaData> l = Arrays.asList(MetaData.values()).stream()
         .filter(t -> t.getTagType().equals(tagType))
         .collect(Collectors.toList());
@@ -139,7 +134,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
     private <T extends ID3v1> void setTag(final MetaData tag, final String newValue) throws IllegalAccessException, 
     IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         T metaDataVersion = null;
-        if (tag.getTagType().equals(ID3V1)) {
+        if (tag.getTagType().equals(ID3V1)) {   //TODO refactoring if possible.
             if (this.id3v1Tag == null) {
                 this.id3v1Tag = new ID3v1Tag();
             }

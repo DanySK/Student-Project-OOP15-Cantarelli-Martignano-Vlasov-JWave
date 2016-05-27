@@ -17,6 +17,8 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_DEPTH = 16;
+    private static final int LOWER_VOLUME_BOUND = -60;
+    private static final int UPPER_VOLUME_BOUND = 20;
     
     private Minim minim; 
     private FilePlayer player;
@@ -39,7 +41,8 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     
     
     @Override
-    public void play() {
+    public void play() throws IllegalStateException {
+        this.checkPlayerLoaded();
         this.player.play();
         if (this.isPaused()) {
             this.setPaused(false);
@@ -50,22 +53,22 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
 
     @Override
-    public void pause() {
+    public void pause() throws IllegalStateException {
+        this.checkPlayerLoaded();
         this.setPaused(true);
         this.player.pause();
     }
 
     @Override
     public void stop() {
+        this.checkPlayerLoaded();
         this.pause();
         this.player.rewind();
     }
 
     @Override
     public void cue(final int millis) {
-        if (millis > this.getLength()) {
-            throw new IllegalArgumentException("Out of song length");
-        }
+        this.checkPlayerLoaded();
         this.setPaused(true);
         this.player.cue(millis);
         this.setPaused(false);
@@ -73,17 +76,21 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public int getLength() {
+        this.checkPlayerLoaded();
         return this.player.length();
     }
 
     @Override
     public int getPosition() {
-        return this.player.position();
+       this.checkPlayerLoaded();
+       return this.player.position();
     }
 
     @Override
     public void setVolume(final int amount) {
-        //TODO add limit to the amount value
+        if (amount < LOWER_VOLUME_BOUND || amount > UPPER_VOLUME_BOUND) {
+            throw new IllegalArgumentException("Value not allowed");
+        }
         this.volumeControl.setValue(amount);
     }
 
@@ -131,8 +138,14 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         return this.loaded;
     }
     
-    //method created to verify that ther are no error due to output creation.
+    //method created to verify that there are no error due to output creation.
     private AudioOutput createAudioOut(final float sampleRate) {
         return this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRate, OUT_BIT_DEPTH);
+    }
+    
+    private void checkPlayerLoaded() {
+        if (this.player == null) {
+            throw new IllegalStateException("No song has been loaded");
+        }
     }
 }

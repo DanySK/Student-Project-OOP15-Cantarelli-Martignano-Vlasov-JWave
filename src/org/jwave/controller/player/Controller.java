@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
@@ -33,15 +34,6 @@ public class Controller {
      * Default directory for saving playlists.
      */
     public static final String SAVE_DIR_NAME = "JWavePlaylists";
-    /**
-     * The name of the directory where album arts are stored.
-     */
-    public static final String COVERART_DIR_NAME = "CoverArts";
-    
-    /**
-     * The name of the directory where temporary modified files are stored.
-     */
-    public static final String TMP_DIR_NAME = "tmp";
     
     private static final String HOME = "user.home";
     private static final String SEPARATOR = "file.separator";
@@ -62,7 +54,7 @@ public class Controller {
         this.currentAvailableCache = new HashSet<>();
         this.clockAgent = new ClockAgent(this.player, this.playlistManager, "Clock_Agent");
         this.clockAgent.startClockAgent();
-        this.reloadAvailableCache();
+        this.reloadAvailablePlaylists();
     }
     
 //    /**
@@ -88,21 +80,19 @@ public class Controller {
     }
 
     /**
-     * Refreshes the collection of available playlists.
+     * 
+     * @return
+     *          A collection containing all the available playlists.
      */
-    public void reloadAvailableCache() {   
+    public Collection<Playlist> reloadAvailablePlaylists() {   
         final Path defaultDir = Paths.get(this.getDefaultSavePath());
-        this.currentAvailableCache = new HashSet<>();
-        try {
-            final  DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir);
-            for (Path file : stream) {
-                if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jwo")) {
-                    this.currentAvailableCache.add(this.loadPlaylist(file.toFile()));
-                }
+        final Set<Playlist> out = new HashSet<>();
+        final  DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir);
+        for (Path file : stream) {
+            if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jwo")) {
+                out.add(this.loadPlaylist(file.toFile()));
             }
-        } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
-            System.out.println("Error while loading playlist.");
-        } 
+        }
     }
     
 //    /**
@@ -174,7 +164,7 @@ public class Controller {
     
     private void createSaveDir() {
         try {
-            Files.createDirectories(Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + TMP_DIR_NAME));
+            Files.createDirectory(Paths.get(this.getDefaultSavePath()));
         } catch (IOException e) {
             System.err.println("Cannot create default save directory.");
         }

@@ -1,13 +1,8 @@
 package org.jwave.model.player;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Optional;
-
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.UnsupportedTagException;
 
 /**
  * Interface that models the concept of playlist manager.
@@ -21,14 +16,6 @@ public interface PlaylistManager {
      * 
      * @param audioFile
      *          the audioFile to be loaded.
-     * @throws IOException 
-     * @throws SecurityException 
-     * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
-     * @throws InvalidDataException 
-     * @throws UnsupportedTagException 
      */
     void addAudioFile(File audioFile);
     

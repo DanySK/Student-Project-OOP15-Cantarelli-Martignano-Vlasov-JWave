@@ -34,10 +34,10 @@ public interface Playlist extends ESource<Optional<Integer>, Optional<Integer>> 
     /**
      * Removes songs from the playlist.
      * 
-     * @param songNames
+     * @param songToBeRemoved
      *          the songs to be removed.
      */
-    void removeFromPlaylist(Song... songNames);
+    void removeFromPlaylist(Song songToBeRemoved);
     
     /**
      * 

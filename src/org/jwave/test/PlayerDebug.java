@@ -123,7 +123,7 @@ public final class PlayerDebug {
                 }
             case 14:
                 System.out.println("Refreshing available playlists");
-                c.reloadAvailableCache();
+                c.reloadAvailablePlaylists();
                 break;
             case 15:
                 System.out.println("Does nothing");
@@ -164,7 +164,7 @@ public final class PlayerDebug {
             case 22:
                 System.out.println("Enter the value of mnetadata you want to retrieve");
                 name = in.next();
-                System.out.println(player.getLoaded().get().getMetaDataV2().retrieve(MetaData.valueOf(name)));
+                System.out.println(player.getLoaded().get().getMetaData().retrieve(MetaData.valueOf(name)));
                 break;
             default:
                 System.out.println("No known command selected");
