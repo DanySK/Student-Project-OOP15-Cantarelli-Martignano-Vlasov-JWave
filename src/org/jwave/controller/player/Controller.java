@@ -38,6 +38,11 @@ public class Controller {
      */
     public static final String COVERART_DIR_NAME = "CoverArts";
     
+    /**
+     * The name of the directory where temporary modified files are stored.
+     */
+    public static final String TMP_DIR_NAME = "tmp";
+    
     private static final String HOME = "user.home";
     private static final String SEPARATOR = "file.separator";
     private static final String DEF_PLAYLIST_NAME = "default";
@@ -169,7 +174,7 @@ public class Controller {
     
     private void createSaveDir() {
         try {
-            Files.createDirectories(Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + COVERART_DIR_NAME));
+            Files.createDirectories(Paths.get(this.getDefaultSavePath() + System.getProperty(SEPARATOR) + TMP_DIR_NAME));
         } catch (IOException e) {
             System.err.println("Cannot create default save directory.");
         }

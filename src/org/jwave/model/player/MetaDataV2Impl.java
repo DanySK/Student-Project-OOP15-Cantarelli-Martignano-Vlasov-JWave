@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -18,6 +22,7 @@ import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
+import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
 /**
@@ -29,6 +34,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
     private static final String ID3V1 = "ID3v1";
     private static final String ID3V2 = "ID3v2";
 
+    private Path filePath;
     private Mp3File song;
     private ID3v1 id3v1Tag;
     private ID3v2 id3v2Tag;
@@ -42,6 +48,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
      *          path of the file that has to 
      */
     public MetaDataV2Impl(final String absolutePath)  {
+        this.filePath = Paths.get(absolutePath);
         this.datas = new EnumMap<>(MetaData.class);
 //        this.albumImage = Optional.empty();
         try {
@@ -52,6 +59,8 @@ public class MetaDataV2Impl implements MetaDataV2 {
             this.fillWithEmptyValues();
         }
 //        System.out.println(this.datas.entrySet());
+//        System.out.println(this.song.getFilename());
+//        System.out.println(this.filePath);
     }
 
     @Override
@@ -67,8 +76,11 @@ public class MetaDataV2Impl implements MetaDataV2 {
     }
     
     @Override
-    public void overWriteOriginalFile() {
-        
+    public void overWriteOriginalFile() throws NotSupportedException, IOException {
+        final String outPath = this.song.getFilename() + "~";
+        this.song.save(outPath);
+        Files.copy(Paths.get(outPath), this.filePath, StandardCopyOption.REPLACE_EXISTING);
+        Files.delete(Paths.get(outPath));
     }
    
     private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {

@@ -1,8 +1,11 @@
 package org.jwave.model.player;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+
+import com.mpatric.mp3agic.NotSupportedException;
 
 /**
  * This interface models metadata in a more detailed way, letting user to set them.
@@ -46,6 +49,8 @@ public interface MetaDataV2 {
     
     /**
      * This method write effectively the new metaData into the file.
+     * @throws IOException 
+     * @throws NotSupportedException 
      */
-    void overWriteOriginalFile(); 
+    void overWriteOriginalFile() throws NotSupportedException, IOException; 
 }
