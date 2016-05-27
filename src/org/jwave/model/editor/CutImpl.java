@@ -8,7 +8,7 @@ public class CutImpl implements Cut {
 	private int to;
 	private final List<Segment> segments;
 	
-	public CutImpl(int from, int to, ArrayList<Segment> segments) {
+	public CutImpl(int from, int to, List<Segment> segments) {
 		this.from = from;
 		this.to = to;
 		this.segments = new ArrayList<>(segments);
@@ -41,11 +41,11 @@ public class CutImpl implements Cut {
 	
 	@Override
 	public Segment getSegment(int i) {
-		return this.segments.get(i);
+		return new SegmentImpl(this.segments.get(i).getFrom(), this.segments.get(i).getTo());
 	}
 	
 	@Override
 	public List<Segment> getSegments() {
-		return this.segments;
+		return new ArrayList<>(this.segments);
 	}
 }

@@ -31,12 +31,12 @@ public class EditorDebug {
 			e.printStackTrace();
 		}
 		
-//		songEditor.setSelectionFrom(50000);
-//		songEditor.setSelectionTo(100000);
-//		songEditor.copySelection();
-//		songEditor.deselectSelection();
-//		songEditor.setSelectionFrom(300000);
-//		songEditor.pasteCopiedSelection();
+		songEditor.setSelectionFrom(50000);
+		songEditor.setSelectionTo(60000);
+		songEditor.copySelection();
+		songEditor.deselectSelection();
+		songEditor.setSelectionFrom(5000);
+		songEditor.pasteCopiedSelection();
 		
 //		songEditor.setSelectionTo(35000);
 		
