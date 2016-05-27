@@ -36,8 +36,8 @@ public final class UsePlayer {
 //        System.out.println("has album image " + player.getLoaded().get().getMetaDataV2().getAlbumArtwork().isPresent());
         System.out.println(player.getLoaded().get().getMetaDataV2().retrieve(MetaData.ALBUM));
         try {
-            player.getLoaded().get().getMetaDataV2().setData(MetaData.ALBUM, "Mastrota Adventures");
-            player.getLoaded().get().getMetaDataV2().overWriteOriginalFile();
+            player.getLoaded().get().getMetaDataV2().setData(MetaData.ALBUM, "Mastrota Lord of the Steel");
+            player.getLoaded().get().getMetaDataV2().writeMetaDataToFile();
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException | NotSupportedException | IOException e) {
             System.err.println("Problem encountered while writing metadata.");
