@@ -76,7 +76,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
     }
     
     @Override
-    public void overWriteOriginalFile() throws NotSupportedException, IOException {
+    public void writeMetaDataToFile() throws NotSupportedException, IOException {
         final String outPath = this.song.getFilename() + "~";
         this.song.save(outPath);
         Files.copy(Paths.get(outPath), this.filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -135,6 +135,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
         }
     }
     
+    @SuppressWarnings("unchecked")       //TODO check if it can be avoided.
     private <T extends ID3v1> void setTag(final MetaData tag, final String newValue) throws IllegalAccessException, 
     IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         T metaDataVersion = null;
@@ -142,7 +143,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
             if (this.id3v1Tag == null) {
                 this.id3v1Tag = new ID3v1Tag();
             }
-            metaDataVersion = (T) this.id3v1Tag;        //TODO check if it can be done better.
+            metaDataVersion = (T) this.id3v1Tag;       
         } else {
             if (this.id3v2Tag == null) {
                 this.id3v2Tag = new ID3v24Tag();
