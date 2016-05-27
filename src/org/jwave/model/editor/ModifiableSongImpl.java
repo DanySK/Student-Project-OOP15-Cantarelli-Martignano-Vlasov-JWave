@@ -13,7 +13,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.player.Song;
 
 import ddf.minim.AudioSample;
@@ -22,16 +21,13 @@ import ddf.minim.analysis.FFT;
 import ddf.minim.javasound.FloatSampleBuffer;
 
 public class ModifiableSongImpl extends SongDecorator implements ModifiableSong {
-	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
-	
 	private final List<Cut> cuts;
-	
 	private AudioSample songSample;
 	
-	public ModifiableSongImpl(Song decoratedSong) {
+	public ModifiableSongImpl(Song decoratedSong, AudioSample sampleReference) {
 		super(decoratedSong);
 		
-		this.songSample = minim.loadSample(decoratedSong.getAbsolutePath(), 2048);
+		this.songSample = sampleReference;
 		
 		if (decoratedSong instanceof ModifiableSong) {
 			ModifiableSong modifiableSong = (ModifiableSong) decoratedSong;
