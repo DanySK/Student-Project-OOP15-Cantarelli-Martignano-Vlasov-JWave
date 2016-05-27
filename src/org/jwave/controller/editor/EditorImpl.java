@@ -121,21 +121,13 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public int getCopiedFrom() throws IllegalStateException {
-		if (this.isSomethingCopied()) {
-			return this.copiedFrom;
-		} else {
-			throw new IllegalStateException();
-		}	
+	public int getCopiedFrom() {
+		return this.copiedFrom;	
 	}
 
 	@Override
-	public int getCopiedTo() throws IllegalStateException {
-		if (this.isSomethingCopied()) {
-			return this.copiedTo;
-		} else {
-			throw new IllegalStateException();
-		}
+	public int getCopiedTo() {
+		return this.copiedTo;
 	}
 
 	@Override
