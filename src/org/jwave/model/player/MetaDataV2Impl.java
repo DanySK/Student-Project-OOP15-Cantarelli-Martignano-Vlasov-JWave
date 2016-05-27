@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.mpatric.mp3agic.ID3v1;
+import com.mpatric.mp3agic.ID3v1Tag;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -58,9 +59,10 @@ public class MetaDataV2Impl implements MetaDataV2 {
     }
 
     @Override
-    public void setData(final MetaData metaDataValue, final String newValue) {
+    public void setData(final MetaData metaDataValue, final String newValue) throws IllegalAccessException, 
+    IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         this.datas.put(metaDataValue, newValue);
-//        this.setTag();
+        this.setTag(metaDataValue, newValue);
     }
    
     private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
@@ -75,32 +77,7 @@ public class MetaDataV2Impl implements MetaDataV2 {
         }
         this.fillWithEmptyValues();
     }
-
-//    private void loadAlbumArtwork() {
-//        //code inspired by
-//        //https://github.com/mpatric/mp3agic-examples/blob/master/src/main/java/com/mpatric/mp3agic/example/Example.java
-//        final byte[] imageData = this.id3v2Tag.getAlbumImage();
-//        if (imageData != null) {
-//                final String mimeType = this.id3v2Tag.getAlbumImageMimeType();
-//                System.out.println("Mime type: " + mimeType);
-//            // Write image to file - can determine appropriate file extension from the mime type
-//            try {
-//                final File tmp = new File(System.getProperty("user.home") + System.getProperty("file.separator") 
-//                + Controller.SAVE_DIR_NAME + System.getProperty("file.separator") + Controller.COVERART_DIR_NAME 
-//                +  System.getProperty("file.separator") + "arturo");    //TODO finish implementation.
-//                this.albumImage = Optional.of(new RandomAccessFile(tmp, "rw"));
-//                this.albumImage.get().write(imageData);
-//                this.albumImage.get().close(); //verify if this method causes impossibility to read the file.
-//            } catch (IOException e) {
-//                System.out.println("Catched IOException");
-//                this.albumImage = Optional.empty();     //TODO check if there is a better way to manage exception
-//                e.printStackTrace();
-//            }
-//        }
-//    }
     
-    
-
     @Override
     public Optional<InputStream> getAlbumArtwork() {
         if (this.song.hasId3v2Tag()) {
@@ -140,11 +117,31 @@ public class MetaDataV2Impl implements MetaDataV2 {
         }
     }
     
-//  private void setTag(final String tagName, final String newValue) {
-//  
-//}
-//
-//private void setTag(final int newValue) {
-//  
-//}
+    private void setTag(final MetaData tag, final String newValue) throws IllegalAccessException, 
+    IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+          if (tag.getTagType().equals(ID3V1)) {
+              if (this.id3v1Tag == null) {
+                  this.id3v1Tag = new ID3v1Tag();
+              }
+              try {
+                  int numberValue = Integer.parseInt(newValue);
+                  this.fillTag(this.id3v1Tag, tag.getName(), numberValue);
+              } catch (NumberFormatException ne) {
+                  this.fillTag(this.id3v1Tag, tag.getName(), newValue);
+              }
+          }
+          //TODO repeat procedure with id3v2
+    }
+
+    private <T extends ID3v1> void fillTag(final T tag, final String methodName, final String newValue) 
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, 
+            NoSuchMethodException, SecurityException {  
+        tag.getClass().getMethod("set" + methodName, String.class).invoke(tag, newValue);
+    }
+    
+    private <T extends ID3v1> void fillTag(final T tag, final String methodName, final int newValue) 
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, 
+            SecurityException {  
+        tag.getClass().getMethod("set" + methodName, Integer.class).invoke(tag, newValue);
+    }
 }

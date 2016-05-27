@@ -1,6 +1,7 @@
 package org.jwave.model.player;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 /**
@@ -34,7 +35,12 @@ public interface MetaDataV2 {
      *          
      * @param newValue
      *          the new value to be set.         
+     * @throws SecurityException 
+     * @throws NoSuchMethodException 
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
      */
-    void setData(MetaData metaDataValue, String newValue);
-    
+    void setData(MetaData metaDataValue, String newValue) throws IllegalAccessException, IllegalArgumentException, 
+    InvocationTargetException, NoSuchMethodException, SecurityException;
 }
