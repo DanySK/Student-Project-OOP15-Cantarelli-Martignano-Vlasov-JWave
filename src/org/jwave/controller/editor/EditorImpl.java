@@ -45,6 +45,15 @@ public class EditorImpl implements Editor {
 		this.songSample = minim.loadSample(song.getAbsolutePath(), 2048);
 		this.song = new ModifiableSongImpl(song, this.songSample);		
 	}
+	
+	@Override
+	public void resetSong() throws IllegalStateException {
+		if (this.isSongLoaded()) {
+			this.song.resetModifications();
+		} else {
+			throw new IllegalStateException();
+		}
+	}
 
 	@Override
 	public boolean isSongLoaded() {

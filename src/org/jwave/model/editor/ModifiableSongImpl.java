@@ -37,6 +37,12 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 			this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
 		}		
 	}
+	
+	@Override
+	public void resetModifications() {
+		this.cuts.clear();
+		this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
+	}
 
 	@Override
 	public int getLength() {
@@ -105,7 +111,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 			}
 		}
 		
-		return new CutImpl(at + 1, at + copiedCutLength, copiedSegments);
+		return new CutImpl(at + 1, at + copiedCutLength + 1, copiedSegments);
 	}	
 
 	@Override
@@ -127,8 +133,8 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		ArrayList<Segment> leftSegments = new ArrayList<>();
 		ArrayList<Segment> rightSegments = new ArrayList<>();
 		
-		System.out.println(leftHalfLength);
-		System.out.println(rightHalfLength);
+//		System.out.println(leftHalfLength);
+//		System.out.println(rightHalfLength);
 		
 		int i = 0;
 		int segmentCounter = 0;
@@ -147,7 +153,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		}
 		
 		CutImpl leftCut = new CutImpl(cutToDivide.getFrom(), halfPoint, leftSegments);
-		CutImpl rightCut = new CutImpl(cutToInsert.getTo() + 1, cutToInsert.getTo() + rightHalfLength, rightSegments);			
+		CutImpl rightCut = new CutImpl(cutToInsert.getTo() + 1, cutToInsert.getTo() + rightHalfLength + 1, rightSegments);			
 		
 		// shift all cuts after cut that was divided
 		cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
@@ -155,6 +161,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		for (i = cuts.size() - 1; i > cutToDivideIndex + 1; i--) {
 			cuts.set(i, cuts.get(i - 2));
 			cuts.get(i).setFrom(cuts.get(i).getFrom() + 1);
+			cuts.get(i).setTo(cuts.get(i).getTo() + 1);
 		}
 		
 		// finally set all three cuts to the new ones
@@ -278,7 +285,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 	
 			int totalChunks = (leftChannel.length / sampleSize) + 1;
 			
-			System.out.println(leftChannel.length);
+//			System.out.println(leftChannel.length);
 			  
 			lengthOfChunks = (float) this.getLength() / (float) totalChunks;
 			
@@ -385,7 +392,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 
 		int totalChunks = (leftChannel.length / sampleSize) + 1;
 		
-		System.out.println(leftChannel.length);
+//		System.out.println(leftChannel.length);
 		  
 		lengthOfChunks = (float) this.getLength() / (float) totalChunks;
 		
@@ -642,6 +649,11 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 	@Override
 	public List<Cut> getCuts() {
 		return new ArrayList<Cut>(this.cuts);
+	}
+	
+	@Override
+	public Cut getCut(int i) {
+		return new CutImpl(this.cuts.get(i).getFrom(), this.cuts.get(i).getTo(), this.cuts.get(i).getSegments());
 	}
 	
 	@Override
