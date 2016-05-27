@@ -43,4 +43,9 @@ public interface MetaDataV2 {
      */
     void setData(MetaData metaDataValue, String newValue) throws IllegalAccessException, IllegalArgumentException, 
     InvocationTargetException, NoSuchMethodException, SecurityException;
+    
+    /**
+     * This method write effectively the new metaData into the file.
+     */
+    void overWriteOriginalFile(); 
 }

@@ -65,6 +65,11 @@ public class MetaDataV2Impl implements MetaDataV2 {
         this.datas.put(metaDataValue, newValue);
         this.setTag(metaDataValue, newValue);
     }
+    
+    @Override
+    public void overWriteOriginalFile() {
+        
+    }
    
     private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         if (this.song.hasId3v1Tag()) {
