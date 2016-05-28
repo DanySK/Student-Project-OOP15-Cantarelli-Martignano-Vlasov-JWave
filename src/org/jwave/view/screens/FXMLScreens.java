@@ -11,12 +11,12 @@ public enum FXMLScreens {
     /**
      * Main view of the Player.
      */
-    PLAYER("/view/screens/Player.fxml", "/view/screens/Player.css"),
+    PLAYER("/org/jwave/view/screens/Player.fxml", "/org/jwave/view/screens/Player.css"),
     
     /**
      * Main view of the Editor.
      */
-    EDITOR("/view/screens/Editor.fxml", "/view/screens/Editor.css");
+    EDITOR("/org/jwave/view/screens/Editor.fxml", "/org/jwave/view/screens/Editor.css");
 
     private final String resourcePath;
     private final String cssPath;
