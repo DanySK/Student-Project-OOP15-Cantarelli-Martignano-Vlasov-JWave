@@ -137,6 +137,7 @@ public class EditorImpl implements Editor {
 		if (isSomethingSelected()) {
 			this.copiedFrom = this.selectionFrom;
 			this.copiedTo = this.selectionTo;
+			this.song.resetPreviousCopy();
 		} else {
 			throw new IllegalStateException();
 		}
@@ -192,8 +193,8 @@ public class EditorImpl implements Editor {
 		if (this.isSongLoaded()) {
 			List<GroupedSampleInfo> results = this.song.getAggregatedWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
 			
-			for (int i = 0; i < results.size(); i += 8) {
-				System.out.println(i / 8 + ", " + results.get(i) + ", " + results.get(i + 1) + ", " + results.get(i + 2) + ", " + results.get(i + 3));
+			for (int i = 0; i < results.size(); i++) {
+				System.out.println(i + ", " + results.get(i).getLeftChannelMax() + ", " + results.get(i).getLeftChannelMin() + ", " + results.get(i).getRightChannelMax() + ", " + results.get(i).getRightChannelMin());
 			}
 		}		
 	}
