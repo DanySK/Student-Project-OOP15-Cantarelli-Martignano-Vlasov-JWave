@@ -8,7 +8,7 @@ import java.util.Random;
  * This is an implementation of PlaylistSurfer that follows the shuffle {@link}PlayMode policy.
  *
  */
-public final class ShuffleNavigator extends PlaylistNavigatorImpl {
+public final class ShuffleNavigator extends AbstractPlaylistNavigator {
     
     private Random seed;
     private List<Integer> shuffledList;

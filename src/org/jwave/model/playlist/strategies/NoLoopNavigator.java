@@ -4,7 +4,7 @@ package org.jwave.model.playlist.strategies;
  * A NoLoop navigator follows the NO_LOOP {@link}PlayMode policy.
  *
  */
-public class NoLoopNavigator extends PlaylistNavigatorImpl {
+public class NoLoopNavigator extends AbstractPlaylistNavigator {
 
     /**
      * Creates a new NoLoop Navigator.

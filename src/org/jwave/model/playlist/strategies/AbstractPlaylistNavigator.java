@@ -6,7 +6,7 @@ import org.jwave.model.ESource;
  * This is an implementation of {@link}PlaylistNavigator.
  *
  */
-public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
+public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
 
     private int playlistDimension;
     private Integer currentIndex;
@@ -20,7 +20,7 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
      * @param initCurrentIndex
      *          the current song index.
      */
-    public PlaylistNavigatorImpl(final int initDimension, final int initCurrentIndex) {
+    public AbstractPlaylistNavigator(final int initDimension, final int initCurrentIndex) {
         this.playlistDimension = initDimension;
         this.currentIndex = initCurrentIndex;
     }
@@ -32,7 +32,7 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
      *          initial playlist dimension.
      *          
      */
-    public PlaylistNavigatorImpl(final int initDimension) {
+    public AbstractPlaylistNavigator(final int initDimension) {
         this(initDimension, 0);
     }
     
@@ -41,7 +41,7 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
      * 
      *          
      */
-    public PlaylistNavigatorImpl() {
+    public AbstractPlaylistNavigator() {
         this(0, 0);
     }
     

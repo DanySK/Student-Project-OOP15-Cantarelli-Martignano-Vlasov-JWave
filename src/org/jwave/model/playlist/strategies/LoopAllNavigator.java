@@ -4,7 +4,7 @@ package org.jwave.model.playlist.strategies;
  * 
  *A LoopOne navigator follows the LOOP_ALL {@link}PlayMode policy.
  */
-public class LoopAllNavigator extends PlaylistNavigatorImpl {
+public class LoopAllNavigator extends AbstractPlaylistNavigator {
 
     /**
      * Creates a new instance of this navigator.

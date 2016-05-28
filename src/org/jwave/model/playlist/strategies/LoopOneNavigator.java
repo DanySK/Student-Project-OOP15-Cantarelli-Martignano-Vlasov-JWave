@@ -4,7 +4,7 @@ package org.jwave.model.playlist.strategies;
  * A LoopOne navigator follows the LOOP_ONE {@link}PlayMode policy.
  * 
  */
-public class LoopOneNavigator extends PlaylistNavigatorImpl {
+public class LoopOneNavigator extends AbstractPlaylistNavigator {
 
     private int repeatedSongIndex;
     
