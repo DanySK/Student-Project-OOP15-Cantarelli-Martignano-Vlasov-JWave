@@ -101,7 +101,7 @@ public class TestEditorImpl {
 		songEditor.setSelectionTo(100000);
 		songEditor.cutSelection();
 		
-		assertTrue(songEditor.getSong().getCuts().size() == 7);	
+		assertTrue(songEditor.getSong().getCuts().size() == 3);	
 		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 270000);
 	}
 	

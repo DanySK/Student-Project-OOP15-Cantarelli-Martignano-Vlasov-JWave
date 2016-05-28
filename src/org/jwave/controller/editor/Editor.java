@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.editor.ModifiableSong;
+import org.jwave.model.editor.SimpleSampleInfo;
 import org.jwave.model.player.Song;
 
 /**
@@ -182,6 +183,47 @@ public interface Editor {
 	void cutSelection();
 	
     /**
+     * Checks if the gathering the asked for amount of samples for the given
+     * interval from the currently loaded song would result in groups of
+     * samples or single samples.
+     * 
+     * @param from
+     * 			from what position (in ms) to check resolution.
+     * @param to
+     * 			to what position (in ms) to check resolution.
+     * @param samples
+     * 			number of segments divide interval in.
+     *          
+     * @return
+     * 			true if resulting resolution is maximal, false otherwise.
+     */		
+	boolean isMaxResolution(int from, int to, int samples);
+	
+    /**
+     * Returns a list of values that represent the waveform of the currently
+     * loaded, and possibly modified, song. This method allows the caller to
+     * specify what segment of the song to get the waveform of, and the amount
+     * of samples to divide that segment into.
+     * 
+     * The values returned are returned in groups of 2 values for each sample:
+     * one for the left channel and one for the right channel. These values
+     * represent the amplitude of the sound wave in the respective positions.
+     * 
+     * All values are normalized in a -1 to 1 range.
+     * 
+     * @param from
+     * 			from what position (in ms) to get the waveform.
+     * @param to
+     * 			to what position (in ms) to get the waveform.
+     * @param samples
+     * 			number of sets of values to retrieve for the asked for interval.
+     * @return
+     * 			a list of numbers representing the waveform of the modified song,
+     * 			in sets of 2.
+     */
+	List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples);	
+	
+    /**
      * Returns a list of values that represent the waveform of the currently
      * loaded, and possibly modified, song. This method allows the caller to
      * specify what segment of the song to get the waveform of, and the amount
@@ -205,7 +247,7 @@ public interface Editor {
      * 			a list of numbers representing the waveform of the modified song,
      * 			in sets of 8.
      */
-	List<GroupedSampleInfo> getWaveform(int from, int to, int samples);	
+	List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples);	
 	
     /**
      * Temporary debug method for printing a text representation of the

@@ -5,6 +5,7 @@ import java.util.List;
 import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.editor.ModifiableSongImpl;
+import org.jwave.model.editor.SimpleSampleInfo;
 import org.jwave.model.player.Song;
 
 import ddf.minim.AudioSample;
@@ -183,9 +184,17 @@ public class EditorImpl implements Editor {
 	}
 	
 	@Override
-	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<GroupedSampleInfo> getWaveform(int from, int to, int samples) {
+	public boolean isMaxResolution(int from, int to, int samples) {
+		return this.song.isMaxResolution(from, to, samples);
+	}
+	
+	@Override
+	public List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples) {
+		return this.song.getSimpleWaveform(from, to, samples);
+	}
+	
+	@Override
+	public List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples) {
 		return this.song.getAggregatedWaveform(from, to, samples);
 	}	
 	
