@@ -20,7 +20,7 @@ public class PlaylistImpl implements Playlist, Serializable {
      */
     private static final long serialVersionUID = 4440054649095302226L;
     
-    private Set<EObserver<? super Optional<Integer>, ? super Optional<Integer>>> set;
+    private Set<EObserver<? super Optional<Integer>>> set;
     
     private List<Song> list;
     private String playlistName;
@@ -111,13 +111,8 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
 
     @Override
-    public void addEObserver(final EObserver<? super Optional<Integer>, ? super Optional<Integer>> obs) {
+    public void addEObserver(final EObserver<? super Optional<Integer>> obs) {
         this.set.add(obs);
-    }
-
-    @Override
-    public void notifyEObservers(final Optional<Integer> arg1, final Optional<Integer> arg2) {
-        this.set.forEach(obs -> obs.update(this, arg1, arg2));
     }
 
     @Override

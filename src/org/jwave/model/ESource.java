@@ -6,10 +6,8 @@ package org.jwave.model;
  * 
  * @param <T>
  *              the first type parameter.
- * @param <Z>
- *              the second type parameter.
  */
-public interface ESource<T, Z> {
+public interface ESource<T> {
 
     /**
      * Adds an {@link}EObserver to this subject.
@@ -17,18 +15,7 @@ public interface ESource<T, Z> {
      * @param obs
      *          the observer to be added.
      */
-    void addEObserver(EObserver<? super T, ? super Z> obs);
-
-    /**
-     * Notifies all attached {@link}EObserver.
-     * 
-     * @param arg1
-     *          first source status change to be notified.
-     *          
-     * @param arg2
-     *          second source status change to be notified.
-     */
-    void notifyEObservers(T arg1, Z arg2);  
+    void addEObserver(EObserver<? super T> obs);  
     
     /**
      * Notifies all attached {@link}EObservers.
@@ -37,14 +24,6 @@ public interface ESource<T, Z> {
      *          the status change to be notified.
      */
     void notifyEObservers(T arg);
-    
-//    /**
-//     * Notifies all attached {@link}EObservers.
-//     * 
-//     * @param arg
-//     *          the status change to be notified.
-//     */
-//    void notifyEObserver(Z arg);
     
     /**
      * Removes all attached observers.

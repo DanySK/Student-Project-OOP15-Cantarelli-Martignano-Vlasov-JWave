@@ -98,18 +98,7 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
     }
     
     @Override
-    public void update(final ESource<? extends Optional<Integer>, ? extends Optional<Integer>> s, 
-            final Optional<Integer> arg1, final Optional<Integer> arg2) {
-        if (arg1.isPresent()) {
-            this.setPlaylistDimension(arg1.get());
-        }
-        if (arg2.isPresent()) {
-            throw new IllegalArgumentException();
-        }
-    }
-    
-    @Override
-    public void update(final ESource<? extends Optional<Integer>, ? extends Optional<Integer>> s, 
+    public void update(final ESource<? extends Optional<Integer>> s, 
             final Optional<Integer> arg) {
         if (arg.isPresent()) {
             this.setPlaylistDimension(arg.get());

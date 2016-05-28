@@ -8,7 +8,7 @@ import org.jwave.model.EObserver;
  * A PlaylistNavigator contains a strategy for scrolling a playlist, depending on a {@link}PlayMode.
  *
  */
-public interface PlaylistNavigator extends EObserver<Optional<Integer>, Optional<Integer>> {
+public interface PlaylistNavigator extends EObserver<Optional<Integer>> {
     
     /**
      * 
