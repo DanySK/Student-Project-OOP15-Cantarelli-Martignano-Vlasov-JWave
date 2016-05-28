@@ -20,9 +20,9 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     private static final int LOWER_VOLUME_BOUND = -60;
     private static final int UPPER_VOLUME_BOUND = 20;
     
-    private Minim minim; 
+    private final Minim minim; 
     private FilePlayer player;
-    private Gain volumeControl;
+    private final Gain volumeControl;
     private AudioOutput out;
     private boolean started;
     private boolean paused;
@@ -87,16 +87,36 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
 
     @Override
+    public Optional<Song> getLoaded() {
+        return this.loaded;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return this.player.isPlaying();
+    }
+    
+    @Override
+    public boolean isPaused() {
+        return this.paused;
+    }
+    
+    @Override
+    public boolean hasStarted() {
+        return this.started;
+    }
+
+    @Override
     public void setVolume(final int amount) {
         if (amount < LOWER_VOLUME_BOUND || amount > UPPER_VOLUME_BOUND) {
             throw new IllegalArgumentException("Value not allowed");
         }
         this.volumeControl.setValue(amount);
     }
-
+    
     @Override
-    public synchronized void setPlayer(final Song song) {
-        AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
+    public void setPlayer(final Song song) {
+        final AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
         if (this.player != null) {
             this.stop();
             this.player.unpatch(this.volumeControl);
@@ -118,27 +138,6 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.paused = value;
     }
     
-    @Override
-    public boolean isPlaying() {
-        return this.player.isPlaying();
-    }
-    
-    @Override
-    public boolean isPaused() {
-        return this.paused;
-    }
-    
-    @Override
-    public boolean hasStarted() {
-        return this.started;
-    }
-    
-    @Override
-    public Optional<Song> getLoaded() {
-        return this.loaded;
-    }
-    
-    //method created to verify that there are no error due to output creation.
     private AudioOutput createAudioOut(final float sampleRate) {
         return this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRate, OUT_BIT_DEPTH);
     }
