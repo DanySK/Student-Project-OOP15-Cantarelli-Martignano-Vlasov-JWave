@@ -6,13 +6,7 @@ import org.jwave.model.player.PlayMode;
  * This class is a playlist navigator factory.
  *
  */
-public class PlaylistNavigatorFactory {
-    
-    /**
-     * Creates a new instance of this factory.
-     */
-    public PlaylistNavigatorFactory() { }
-    
+public class PlaylistNavigatorFactory {    
     
     /**
      * Creates a new PlaylistNavigator.

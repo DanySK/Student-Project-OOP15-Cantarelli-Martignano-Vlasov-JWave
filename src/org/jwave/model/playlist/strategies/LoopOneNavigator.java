@@ -5,8 +5,6 @@ package org.jwave.model.playlist.strategies;
  * 
  */
 public class LoopOneNavigator extends AbstractPlaylistNavigator {
-
-    private int repeatedSongIndex;
     
     /**
      * Creates a new instance of this navigator.
@@ -16,17 +14,16 @@ public class LoopOneNavigator extends AbstractPlaylistNavigator {
      */
     public LoopOneNavigator(final int initRepeatedSongIndex) {
         super(0, initRepeatedSongIndex);
-        this.repeatedSongIndex = initRepeatedSongIndex;
     }
 
     @Override
     public int next() {
-        return this.repeatedSongIndex;
+        return this.getCurrentIndex();
     }
 
     @Override
     public int prev() {
-        return this.repeatedSongIndex;
+        return this.getCurrentIndex();
     }
 
 }
