@@ -24,6 +24,12 @@ public interface Editor {
      */
 	void loadSongToEdit(Song song);
 	
+    /**
+     * Resets the song, removing all modifications.
+     * 
+     */	
+	void resetSong();
+	
 	/**
 	 * Gets the loaded song.
 	 * 

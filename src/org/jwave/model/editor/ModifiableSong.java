@@ -15,6 +15,12 @@ import org.jwave.model.player.Song;
  */
 public interface ModifiableSong extends Song {
     /**
+     * Resets the state of the current modifiable song, reseting all cuts
+     * and segments.
+     */	
+	void resetModifications();
+	
+    /**
      * Gets the length of the original, non-modified song.
      *          
      * @return
@@ -142,6 +148,18 @@ public interface ModifiableSong extends Song {
      * 
      */	
 	List<Cut> getCuts();
+	
+    /**
+     * Returns a defensive copy a single cut.
+     * 
+     * @param i
+     * 			the index of the cut to get.
+     * 
+     * @return
+     * 			a defensive copy the cut.
+     * 
+     */	
+	Cut getCut(int i);	
 	
     /**
      * Temporary debug method for printing a text representation of all the

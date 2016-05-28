@@ -12,6 +12,7 @@ public class ClockAgent implements Runnable {
     private Thread t;
     private String name;
     private DynamicPlayer dynPlayer;
+    private DynamicPlayer dynEditorPlayer;
     private PlaylistManager playlistManager;
     private volatile boolean stopped;
     
@@ -21,14 +22,18 @@ public class ClockAgent implements Runnable {
      * @param player
      *          the player this clock agent has to control.
      *          
+     * @param editorPlayer
+     * 			the editor player this clock agent has to control.
+     *          
      * @param manager
      *          the manager this clock agent has to maintain referenced.
      *          
      * @param threadName
      *          name of the thread.
      */
-    public ClockAgent(final DynamicPlayer player, final PlaylistManager manager, final String threadName) {
+    public ClockAgent(final DynamicPlayer player, final DynamicPlayer editorPlayer, final PlaylistManager manager, final String threadName) {
         this.dynPlayer = player;
+        this.dynEditorPlayer = editorPlayer;
         this.playlistManager = manager;
         this.stopped = false;
         this.name = threadName;
@@ -52,6 +57,10 @@ public class ClockAgent implements Runnable {
         if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() && !this.dynPlayer.isPaused()) {
             this.dynPlayer.setPlayer(this.playlistManager.next());
             this.dynPlayer.play();
+        }
+        
+        if (this.dynEditorPlayer.getLoaded().isPresent()) {
+        	this.dynEditorPlayer.isPlaying();
         }
     }
     

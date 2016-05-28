@@ -2,11 +2,19 @@ package org.jwave.controller.editor;
 
 import java.util.List;
 
+import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.editor.ModifiableSongImpl;
 import org.jwave.model.player.Song;
 
+import ddf.minim.AudioSample;
+import ddf.minim.Minim;
+
 public class EditorImpl implements Editor {
+	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
+	
+	private AudioSample songSample;
+	
 	private int selectionFrom;
 	private int selectionTo;
 	private int copiedFrom;
@@ -24,13 +32,27 @@ public class EditorImpl implements Editor {
 	}
 	
 	@Override
-	public ModifiableSongImpl getSong() {
-		return new ModifiableSongImpl(this.song);
+	public ModifiableSongImpl getSong() throws IllegalStateException {
+		if (this.isSongLoaded()) {
+			return new ModifiableSongImpl(this.song, this.songSample);
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override
 	public void loadSongToEdit(Song song) {
-		this.song = new ModifiableSongImpl(song);
+		this.songSample = minim.loadSample(song.getAbsolutePath(), 2048);
+		this.song = new ModifiableSongImpl(song, this.songSample);		
+	}
+	
+	@Override
+	public void resetSong() throws IllegalStateException {
+		if (this.isSongLoaded()) {
+			this.song.resetModifications();
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 
 	@Override
@@ -59,7 +81,12 @@ public class EditorImpl implements Editor {
 	@Override
 	public void setSelectionFrom(int ms) throws IllegalArgumentException {
 		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
-			this.selectionFrom = ms;
+			if (this.getSelectionTo() > -1 && ms > this.getSelectionTo()) {
+				this.selectionFrom = this.getSelectionTo();
+				this.selectionTo = ms;
+			} else {
+				this.selectionFrom = ms;
+			}			
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -68,7 +95,12 @@ public class EditorImpl implements Editor {
 	@Override
 	public void setSelectionTo(int ms) throws IllegalArgumentException {
 		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
-			this.selectionTo = ms;
+			if (this.getSelectionFrom() > -1 && ms < this.getSelectionFrom()) {
+				this.selectionTo = this.getSelectionFrom();
+				this.selectionFrom = ms;
+			} else {
+				this.selectionTo = ms;
+			}			
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -111,21 +143,13 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public int getCopiedFrom() throws IllegalStateException {
-		if (this.isSomethingCopied()) {
-			return this.copiedFrom;
-		} else {
-			throw new IllegalStateException();
-		}	
+	public int getCopiedFrom() {
+		return this.copiedFrom;	
 	}
 
 	@Override
-	public int getCopiedTo() throws IllegalStateException {
-		if (this.isSomethingCopied()) {
-			return this.copiedTo;
-		} else {
-			throw new IllegalStateException();
-		}
+	public int getCopiedTo() {
+		return this.copiedTo;
 	}
 
 	@Override
@@ -181,8 +205,8 @@ public class EditorImpl implements Editor {
 	
 	@Override
 	public void printSongDebug() {
-//		System.out.println("Current selection: from " + getSelectionFrom() + "ms to " + getSelectionTo() + "ms");
-//		System.out.println("Copied selection: from " + getCopiedFrom() + "ms to " + getCopiedTo() + "ms");
+		System.out.println("Current selection: from " + getSelectionFrom() + "ms to " + getSelectionTo() + "ms");
+		System.out.println("Copied selection: from " + getCopiedFrom() + "ms to " + getCopiedTo() + "ms");
 		
 		this.song.printAllCuts();
 	}	
