@@ -1,7 +1,5 @@
 package org.jwave.model.playlist.strategies;
 
-import java.util.Optional;
-
 import org.jwave.model.ESource;
 
 /**
@@ -98,11 +96,8 @@ public abstract class PlaylistNavigatorImpl implements PlaylistNavigator {
     }
     
     @Override
-    public void update(final ESource<? extends Optional<Integer>> s, 
-            final Optional<Integer> arg) {
-        if (arg.isPresent()) {
-            this.setPlaylistDimension(arg.get());
-        }
+    public void update(final ESource<? extends Integer> s, final Integer arg) {
+        this.setPlaylistDimension(arg);
     }
     
     @Override

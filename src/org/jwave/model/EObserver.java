@@ -12,11 +12,11 @@ public interface EObserver<T> {
     /**
      * Updates the observer status.
      * 
-     * @param s
+     * @param src
      *          the source that notifies this observer.
      *          
      * @param arg
      *          the notified status.
      */
-    void update(ESource<? extends T> s, T arg);
+    void update(ESource<? extends T> src, T arg);
 }

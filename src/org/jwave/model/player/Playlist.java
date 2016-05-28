@@ -8,7 +8,7 @@ import org.jwave.model.ESource;
  * A playlist is a collection of {@link}Song.
  *
  */
-public interface Playlist extends ESource<Optional<Integer>> {
+public interface Playlist extends ESource<Integer> {
     
     /**
      * Add a song to the playlist.
