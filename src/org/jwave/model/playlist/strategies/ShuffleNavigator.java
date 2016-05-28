@@ -14,6 +14,7 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
     
     private final Random seed;
     private final List<Integer> shuffledList;
+    private int shuffledIndex;
     
     /**
      * Creates a new instance of ShuffleNavigator.
@@ -28,26 +29,27 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
         super(playlistDimension, currentIndex);
         this.seed = new Random();
         this.shuffledList = new ArrayList<>();
+        this.shuffledIndex = 0;
     }
     
     @Override
     public int next() {        
-        if (this.getCurrentIndex().equals(this.shuffledList.size() - 1)) {
+        if (this.shuffledIndex == (this.shuffledList.size() - 1)) {
             this.shuffle();
         }
-        this.incIndex();
-        return this.getCurrentIndex();
+        this.shuffledIndex++;
+        return this.shuffledList.get(this.shuffledIndex);
     }
 
-    //check if it can be implemented better.
     @Override
     public int prev() {
-        if (this.getCurrentIndex().equals(0)) {
+        if (this.shuffledIndex == 0) {
             return 0;
         }
-        this.decIndex();
-        return this.getCurrentIndex();
+        this.shuffledIndex--;
+        return this.shuffledList.get(this.shuffledIndex);
     }
+ 
     
     private void shuffle() {
         final int dim = this.getPlaylistDimension();
