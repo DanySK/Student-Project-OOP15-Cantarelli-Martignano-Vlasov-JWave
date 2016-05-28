@@ -2,6 +2,7 @@ package org.jwave.model.player;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -10,7 +11,7 @@ import org.jwave.model.playlist.strategies.PlaylistNavigator;
 import org.jwave.model.playlist.strategies.PlaylistNavigatorFactory;
 
 /**
- * This is an implementation of {@link Playlist}.
+ * This is an implementation of {@link PlaylistManager}.
  */
 public class PlaylistManagerImpl implements PlaylistManager {
     
@@ -102,7 +103,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     
     @Override
     public Collection<Playlist> getAvailablePlaylists() {
-       return this.availablePlaylists;
+       return Collections.unmodifiableSet(this.availablePlaylists);
     }
 
     @Override

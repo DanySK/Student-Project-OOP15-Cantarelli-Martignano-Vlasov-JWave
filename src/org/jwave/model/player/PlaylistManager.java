@@ -5,9 +5,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
- * Interface that models the concept of playlist manager.
- * A playlist manager saves and loads playlists from the file system and contains the strategy
- * for navigate them.
+ * Interface that models the concept of playlist manager. A playlist manager manages playlists and contains the 
+ * strategy for navigating them.
  */
 public interface PlaylistManager {
     
@@ -81,14 +80,6 @@ public interface PlaylistManager {
     void renamePlaylist(Playlist playlist, String newName);
     
     /**
-     * Sets the available playlists.
-     * 
-     * @param playlists
-     *          the available playlists.
-     */
-    void setAvailablePlaylists(Collection<? extends Playlist> playlists);
-    
-    /**
      * 
      * @return
      *          the index of the song loaded in the connected {@link}DynamicPlayer.
@@ -121,6 +112,14 @@ public interface PlaylistManager {
      *          the current play mode (default is {@link Playmode.NO_LOOP})
      */
     PlayMode getPlayMode();
+    
+    /**
+     * Sets the available playlists.
+     * 
+     * @param playlists
+     *          the available playlists.
+     */
+    void setAvailablePlaylists(Collection<? extends Playlist> playlists);
     
     /**
      * 

@@ -33,7 +33,7 @@ public class PlaylistImpl implements Playlist, Serializable {
      *          the name of the playlist.
      */
     public PlaylistImpl(final String name) {
-        this.setName(name);
+        this.playlistName = name;
         this.list = new LinkedList<>();
         this.currentSelected = Optional.empty();
         this.set = new HashSet<>();
@@ -71,7 +71,7 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
 
     @Override
-    public synchronized Song selectSong(final String name) throws IllegalArgumentException  {
+    public Song selectSong(final String name) throws IllegalArgumentException  {
         final Song out = this.list.stream()
                                 .filter(s -> s.getName().equals(name))
                                 .findFirst().get();
