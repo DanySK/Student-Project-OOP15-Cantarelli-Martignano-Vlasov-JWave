@@ -147,11 +147,15 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     @Override
     public Song next() {
-        return this.loadedPlaylist.selectSong(this.navigator.next());
+        final int nextIndex = this.navigator.next();
+        this.navigator.setCurrentIndex(nextIndex);
+        return this.loadedPlaylist.selectSong(nextIndex);
     }
 
     @Override
     public Song prev() {
-        return this.loadedPlaylist.selectSong(this.navigator.prev());
+        final int prevIndex = this.navigator.prev();
+        this.navigator.setCurrentIndex(prevIndex);
+        return this.loadedPlaylist.selectSong(prevIndex);
     }
 }

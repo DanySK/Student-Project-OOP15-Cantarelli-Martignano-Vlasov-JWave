@@ -80,8 +80,8 @@ public class PlaylistImpl implements Playlist, Serializable {
     }
 
     @Override
-    public synchronized Song selectSong(final int index) throws IllegalArgumentException {
-        if (index > (this.getDimension() - 1)) {
+    public Song selectSong(final int index) throws IllegalArgumentException {
+        if ((index > (this.list.size() - 1)) || index < 0) {
             throw new IllegalArgumentException("Out of playlist borders.");
         }
         final Song out = this.list.get(index);
