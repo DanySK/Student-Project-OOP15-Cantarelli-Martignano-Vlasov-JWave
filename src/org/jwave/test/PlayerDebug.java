@@ -153,7 +153,7 @@ public final class PlayerDebug {
                 break;
             case 21:
                 System.out.println("Enter a name to select a playlist from the available ");
-                manager.getDefaultQueue().printPlaylist();
+                manager.getDefaultPlaylist().printPlaylist();
                 name = in.next();
                 Playlist p;
                 p = manager.selectPlaylist(name);

@@ -18,7 +18,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     private Set<Playlist> availablePlaylists;   
     private Playlist defaultQueue;
     private Playlist loadedPlaylist;
-    private Optional<Integer> currentIndexLoaded;
+    private Optional<Integer> currentIndex;
     private PlaylistNavigator navigator;
     private PlayMode playMode;
     private PlaylistNavigatorFactory navFactory;
@@ -33,7 +33,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.navFactory = new PlaylistNavigatorFactory();
         this.defaultQueue = newDefaultQueue;
         this.availablePlaylists = new HashSet<>();
-        this.currentIndexLoaded = Optional.empty();
+        this.currentIndex = Optional.empty();
         this.defaultQueue = newDefaultQueue;
         this.loadedPlaylist = this.defaultQueue;
         this.playMode = PlayMode.NO_LOOP;
@@ -61,13 +61,19 @@ public class PlaylistManagerImpl implements PlaylistManager {
     public void deletePlaylist(final Playlist playlist) throws IllegalArgumentException {
         this.availablePlaylists.remove(playlist);
     }
+    
+    @Override
+    public Song next() {
+        final int nextIndex = this.navigator.next();
+        this.navigator.setCurrentIndex(nextIndex);
+        return this.loadedPlaylist.selectSong(nextIndex);
+    }
 
     @Override
-    public void reset() {
-        if (!this.defaultQueue.isEmpty()) {
-            this.defaultQueue.clear();
-        }   
-        this.setQueue(this.defaultQueue);
+    public Song prev() {
+        final int prevIndex = this.navigator.prev();
+        this.navigator.setCurrentIndex(prevIndex);
+        return this.loadedPlaylist.selectSong(prevIndex);
     }
     
     @Override
@@ -87,17 +93,20 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
     
     @Override
-    public Optional<Integer> getCurrentLoadedIndex() {
-        return this.currentIndexLoaded;
+    public void reset() {
+        if (!this.defaultQueue.isEmpty()) {
+            this.defaultQueue.clear();
+        }   
+        this.setQueue(this.defaultQueue);
     }
-
+   
     @Override
     public Playlist getPlayingQueue() {
         return this.loadedPlaylist;
     }
 
     @Override
-    public Playlist getDefaultQueue() {
+    public Playlist getDefaultPlaylist() {
         return this.defaultQueue;
     }
     
@@ -109,6 +118,12 @@ public class PlaylistManagerImpl implements PlaylistManager {
     @Override
     public PlayMode getPlayMode() {
         return this.playMode;
+    }
+
+    @Override
+    public void setAvailablePlaylists(final Collection<? extends Playlist> playlists) {
+        this.availablePlaylists = new HashSet<>();
+        this.availablePlaylists.addAll(playlists);
     }
 
     @Override
@@ -126,36 +141,16 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.loadedPlaylist.addEObserver(this.navigator);
     }
     
-    private void setNavigator(final PlayMode mode) {  
-        final int dimension = this.loadedPlaylist.getDimension();
-        int index = 0; 
-        if (this.currentIndexLoaded.isPresent()) {
-            index = this.getCurrentLoadedIndex().get();
-        }
-        this.navigator = this.navFactory.createNavigator(mode, dimension, index);
-    }
-
-    @Override
-    public void setAvailablePlaylists(final Collection<? extends Playlist> playlists) {
-        this.availablePlaylists = new HashSet<>();
-        this.availablePlaylists.addAll(playlists);
-    }
-
     private boolean isNameAlreadyPresent(final String name) {
         return this.availablePlaylists.stream().anyMatch(p -> p.getName().equals(name));
     }
-
-    @Override
-    public Song next() {
-        final int nextIndex = this.navigator.next();
-        this.navigator.setCurrentIndex(nextIndex);
-        return this.loadedPlaylist.selectSong(nextIndex);
-    }
-
-    @Override
-    public Song prev() {
-        final int prevIndex = this.navigator.prev();
-        this.navigator.setCurrentIndex(prevIndex);
-        return this.loadedPlaylist.selectSong(prevIndex);
+    
+    private void setNavigator(final PlayMode mode) {  
+        final int dimension = this.loadedPlaylist.getDimension();
+        int index = 0; 
+        if (this.currentIndex.isPresent()) {
+            index = this.currentIndex.get();
+        }
+        this.navigator = this.navFactory.createNavigator(mode, dimension, index);
     }
 }
