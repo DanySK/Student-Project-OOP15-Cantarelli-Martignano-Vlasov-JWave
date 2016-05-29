@@ -20,7 +20,6 @@ public class LoopOneNavigator extends AbstractPlaylistNavigator {
 
     @Override
     public Optional<Integer> next() {
-        this.checkCurrentIndex();
         return this.getCurrentIndex();
     }
 
