@@ -1,17 +1,35 @@
 package org.jwave.controller;
 
-/**
- * Starting point of the application.
- * @author Alessandro Martignano
- */
-public final class Main {
-    
-    private Main() { }
-    
-    /**
-     * @param args args
-     */
-    public static void main(final String[] args) {
-        new JWaveApp();
+import java.util.Stack;
+import org.jwave.view.FXEnvironment;
+import org.jwave.view.screens.PlayerScreenController;
+import com.sun.javafx.application.PlatformImpl;
+import javafx.application.Platform;
+import javafx.stage.Stage;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        
+        PlatformImpl.startup(() -> { });
+        Controller controller = new Controller();
+        FXEnvironment environment = new FXEnvironment();
+        PlayerScreenController player = new PlayerScreenController(environment);
+        player.setObserver(controller);
+
+        Platform.runLater(() -> {
+            try {
+                Stage primaryStage = new Stage();
+                primaryStage.setTitle("JWave");
+                environment.start(primaryStage);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            player.show();
+        });
+        
     }
+
 }

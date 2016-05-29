@@ -5,6 +5,7 @@ import java.util.List;
 import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.editor.ModifiableSongImpl;
+import org.jwave.model.editor.SimpleSampleInfo;
 import org.jwave.model.player.Song;
 
 import ddf.minim.AudioSample;
@@ -137,6 +138,7 @@ public class EditorImpl implements Editor {
 		if (isSomethingSelected()) {
 			this.copiedFrom = this.selectionFrom;
 			this.copiedTo = this.selectionTo;
+			this.song.resetPreviousCopy();
 		} else {
 			throw new IllegalStateException();
 		}
@@ -182,9 +184,17 @@ public class EditorImpl implements Editor {
 	}
 	
 	@Override
-	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	public List<GroupedSampleInfo> getWaveform(int from, int to, int samples) {
+	public boolean isMaxResolution(int from, int to, int samples) {
+		return this.song.isMaxResolution(from, to, samples);
+	}
+	
+	@Override
+	public List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples) {
+		return this.song.getSimpleWaveform(from, to, samples);
+	}
+	
+	@Override
+	public List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples) {
 		return this.song.getAggregatedWaveform(from, to, samples);
 	}	
 	
@@ -192,8 +202,8 @@ public class EditorImpl implements Editor {
 		if (this.isSongLoaded()) {
 			List<GroupedSampleInfo> results = this.song.getAggregatedWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
 			
-			for (int i = 0; i < results.size(); i += 8) {
-				System.out.println(i / 8 + ", " + results.get(i) + ", " + results.get(i + 1) + ", " + results.get(i + 2) + ", " + results.get(i + 3));
+			for (int i = 0; i < results.size(); i++) {
+				System.out.println(i + ", " + results.get(i).getLeftChannelMax() + ", " + results.get(i).getLeftChannelMin() + ", " + results.get(i).getRightChannelMax() + ", " + results.get(i).getRightChannelMin());
 			}
 		}		
 	}

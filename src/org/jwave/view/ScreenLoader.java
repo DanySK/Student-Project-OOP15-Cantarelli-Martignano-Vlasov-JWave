@@ -2,12 +2,18 @@ package org.jwave.view;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jwave.controller.Main;
 import org.jwave.view.screens.FXMLScreens;
+import org.jwave.view.screens.ScreenController;
+
 
 /**
  * An utility class
@@ -23,20 +29,12 @@ import org.jwave.view.screens.FXMLScreens;
  * @author Alessandro Martignano
  *
  */
-public final class ScreenSwitcher {
+public final class ScreenLoader {
+
+    private final Map<FXMLScreens, Node> cache;
     
-    private static final Map<FXMLScreens, Node> CACHE = new HashMap<>();
-    private static ScreenContainer screenContainer;
-    
-    private ScreenSwitcher() { }
-    
-    /**
-     * Sets the main container in which load the nodes.
-     * 
-     * @param container Container of the loaded Node
-     */
-    public static void setMainContainer(final ScreenContainer container) {
-        screenContainer = container;
+    public ScreenLoader() {
+        this.cache = new HashMap<>();
     }
     
     /**
@@ -45,9 +43,17 @@ public final class ScreenSwitcher {
      * @param screen screen to be loaded
      * @throws IOException if the resource is not found
      */
-    public static void loadScreen(final FXMLScreens screen) throws IOException {
-        
-        screenContainer.setScreen(getScreen(screen));
+    public void loadScreen(final FXMLScreens screen, final Pane mainPane) throws IOException {
+
+        mainPane.getChildren().setAll(getLoadedNode(screen));
+
+    }
+    
+    public Node getLoadedNode(final FXMLScreens screen) throws IllegalStateException{
+        if(!this.cache.containsKey(screen))
+            throw new IllegalStateException();
+        else
+            return this.cache.get(screen);
     }
     
 
@@ -59,15 +65,15 @@ public final class ScreenSwitcher {
      * @return the Node loaded
      * @throws IOException if the resource is not found
      */
-    public static Node getScreen(final FXMLScreens screen) throws IOException {
+    public Node loadFXMLInCache(final FXMLScreens screen, Object controller) throws IOException {
 
-        if (CACHE.containsKey(screen)) {
+        if (cache.containsKey(screen)) {
             System.out.println(screen + " screen already cached!");
-            return CACHE.get(screen);
-        } else {
+            return cache.get(screen);
+        } else { 
             System.out.println(screen + " screen caching");
-            Node loadedNode = getReloadedScreen(screen);
-            CACHE.put(screen, loadedNode);
+            Node loadedNode = loadFXML(screen, controller);
+            cache.put(screen, loadedNode);
             return loadedNode;
         }
     }
@@ -79,9 +85,12 @@ public final class ScreenSwitcher {
      * @return the Node loaded
      * @throws IOException if the resource is not found
      */
-    public static Node getReloadedScreen(final FXMLScreens screen) throws IOException {
-
-            return FXMLLoader.load(ScreenSwitcher.class.getResource(screen.getPath()));
+    public Node loadFXML(final FXMLScreens screen, Object controller) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setController(controller);
+        loader.setLocation(Main.class.getResource(screen.getPath()));
+        return loader.load();
+        
     }
 
 }

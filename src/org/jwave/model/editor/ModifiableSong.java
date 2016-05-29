@@ -21,6 +21,12 @@ public interface ModifiableSong extends Song {
 	void resetModifications();
 	
     /**
+     * Forgets the segments relative to the last copy, to be called after
+     * a new copy, so that segments can be recached.
+     */		
+	void resetPreviousCopy();
+	
+    /**
      * Gets the length of the original, non-modified song.
      *          
      * @return
