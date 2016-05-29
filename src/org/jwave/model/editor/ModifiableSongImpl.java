@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -189,78 +190,103 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 	@Override
 	public void deleteSelection(int from, int to) {
 		int i;
-		int selectionLength = to - from;
-		
+		int selectionLength = to - from + 1; // plus one because algebraic subtraction forgets about one ms index
+
 		int firstCutToDivideIndex = 0;
-		Cut firstCutToDivide = null;
+		Optional<Cut> firstCutToDivide = Optional.empty();
+		
+		int secondCutToDivideIndex = 0;
+		Optional<Cut> secondCutToDivide = Optional.empty();
+		
+		int segmentCounter;
+		int newFirstCutLength = 0;
+		int newSecondCutLength = 0;
+		int secondCutFrom = 0;
+		ArrayList<Segment> leftSegments = new ArrayList<>();
+		ArrayList<Segment> rightSegments = new ArrayList<>();
+		
+		from = from - 1; // the actual "from" ms is getting cut
+		to = to + 1; // as is the actual "to" ms		
 		
 		for (i = 0; i < cuts.size(); i++) {
 			if (cuts.get(i).getFrom() <= from && cuts.get(i).getTo() >= from) {
 				firstCutToDivideIndex = i;
-				firstCutToDivide = cuts.get(firstCutToDivideIndex);
+				firstCutToDivide = Optional.of(cuts.get(firstCutToDivideIndex));
 			}
 		}
 		
-		int newFirstCutLength = from - firstCutToDivide.getFrom();
-		ArrayList<Segment> leftSegments = new ArrayList<>();
-		
-		i = 0;
-		int segmentCounter = 0;
-		while (segmentCounter + (firstCutToDivide.getSegment(i).getLength()) < newFirstCutLength) {
-			leftSegments.add(new SegmentImpl(firstCutToDivide.getSegment(i).getFrom(), firstCutToDivide.getSegment(i).getTo()));				
-			segmentCounter += (firstCutToDivide.getSegment(i).getLength());
-			i++;
+		if (firstCutToDivide.isPresent()) {
+			newFirstCutLength = from - firstCutToDivide.get().getFrom();
+			
+			i = 0;
+			segmentCounter = 0;
+			
+			while (segmentCounter + (firstCutToDivide.get().getSegment(i).getLength()) < newFirstCutLength) {
+				leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(), firstCutToDivide.get().getSegment(i).getTo()));				
+				segmentCounter += (firstCutToDivide.get().getSegment(i).getLength() + 1);
+				i++;
+			}
+			
+			leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(), firstCutToDivide.get().getSegment(i).getFrom() + (newFirstCutLength - segmentCounter)));			
 		}
-		
-		leftSegments.add(new SegmentImpl(firstCutToDivide.getSegment(i).getFrom(), firstCutToDivide.getSegment(i).getFrom() + (newFirstCutLength - segmentCounter)));			
-		
-		int secondCutToDivideIndex = 0;
-		Cut secondCutToDivide = null;
 		
 		for (i = 0; i < cuts.size(); i++) {
 			if (cuts.get(i).getFrom() <= to && cuts.get(i).getTo() >= to) {
 				secondCutToDivideIndex = i;
-				secondCutToDivide = cuts.get(secondCutToDivideIndex);
+				secondCutToDivide = Optional.of(cuts.get(secondCutToDivideIndex));
 			}
 		}
 		
-		int newSecondCutLength = to - secondCutToDivide.getFrom(); // length of part being cut away
-		ArrayList<Segment> rightSegments = new ArrayList<>();
-		
-		i = 0;
-		segmentCounter = 0;
-		
-		while (segmentCounter + (secondCutToDivide.getSegment(i).getLength()) < newSecondCutLength) {				
-			segmentCounter += (secondCutToDivide.getSegment(i).getLength());
-			i++;
-		}
-		
-		rightSegments.add(new SegmentImpl(secondCutToDivide.getSegment(i).getFrom() + (newSecondCutLength - segmentCounter), secondCutToDivide.getSegment(i).getTo()));
-		
-		for (i++; i < secondCutToDivide.getSegments().size(); i++) {
-			rightSegments.add(new SegmentImpl(secondCutToDivide.getSegment(i).getFrom(), secondCutToDivide.getSegment(i).getTo()));
-		}
-		
-		for (i = secondCutToDivideIndex - 1; i > firstCutToDivideIndex; i--) {
-			// remove all and any cuts between the two cuts
-			cuts.remove(i);
-		}
-		
-		// set new cuts only after building the new ones
-		if (firstCutToDivideIndex == secondCutToDivideIndex) {
-			cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
-		
-			// shift actual cuts down to account that single cut will become two cuts
-			for (i = cuts.size() - 1; i > firstCutToDivideIndex + 1; i--) {
-				cuts.set(i, cuts.get(i - 1));					
-			}
-		}
+		if (secondCutToDivide.isPresent()) {
+			newSecondCutLength = to - secondCutToDivide.get().getFrom(); // length of part being cut away			
 			
-		// particular logic dependant on whether or not first and second cut to divide are the same or not
-		int secondCutFrom = firstCutToDivideIndex != secondCutToDivideIndex ? secondCutToDivide.getFrom() - (selectionLength - (to - secondCutToDivide.getFrom())) : firstCutToDivide.getFrom() + newFirstCutLength;
+			i = 0;
+			segmentCounter = 0;
+			
+			while (segmentCounter + (secondCutToDivide.get().getSegment(i).getLength()) < newSecondCutLength) {				
+				segmentCounter += (secondCutToDivide.get().getSegment(i).getLength() + 1);
+				i++;
+			}
+			
+			rightSegments.add(new SegmentImpl(secondCutToDivide.get().getSegment(i).getFrom() + (newSecondCutLength - segmentCounter), secondCutToDivide.get().getSegment(i).getTo()));
+			
+			for (i++; i < secondCutToDivide.get().getSegments().size(); i++) {
+				rightSegments.add(new SegmentImpl(secondCutToDivide.get().getSegment(i).getFrom(), secondCutToDivide.get().getSegment(i).getTo()));
+			}
+			
+			// remove all and any cuts between the two cuts
+			for (i = secondCutToDivideIndex - 1; i > firstCutToDivideIndex; i--) {
+				cuts.remove(i);
+			}
+			
+			// set new cuts only after building the new ones
+			if (firstCutToDivideIndex == secondCutToDivideIndex) {
+				cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
+			
+				// shift actual cuts down to account that single cut will become two cuts
+				for (i = cuts.size() - 1; i > firstCutToDivideIndex + 1; i--) {
+					cuts.set(i, cuts.get(i - 1));					
+				}
+			}
+				
+			// particular logic dependant on whether or not first and second cut to divide are the same or not, and whether or not first cut exists
+			if (firstCutToDivide.isPresent()) {
+				secondCutFrom = (firstCutToDivideIndex != secondCutToDivideIndex) ? secondCutToDivide.get().getFrom() - ((selectionLength) - (to - secondCutToDivide.get().getFrom())) : firstCutToDivide.get().getFrom() + newFirstCutLength + 1;
+			} else {
+				secondCutFrom = 0;
+			}
+		}
 		
-		cuts.set(firstCutToDivideIndex + 1, new CutImpl(secondCutFrom + 1, secondCutToDivide.getTo() - selectionLength, rightSegments));
-		cuts.set(firstCutToDivideIndex, new CutImpl(firstCutToDivide.getFrom(), firstCutToDivide.getFrom() + newFirstCutLength, leftSegments));
+		if (firstCutToDivide.isPresent()) {
+			cuts.set(firstCutToDivideIndex, new CutImpl(firstCutToDivide.get().getFrom(), firstCutToDivide.get().getFrom() + newFirstCutLength, leftSegments));
+		} else {
+			cuts.remove(firstCutToDivideIndex);
+			firstCutToDivideIndex--;
+		}
+		
+		if (secondCutToDivide.isPresent()) {
+			cuts.set(firstCutToDivideIndex + 1, new CutImpl(secondCutFrom, secondCutToDivide.get().getTo() - selectionLength, rightSegments));			
+		}
 		
 		// shift cut from's and to's down to account for the gap
 		for (i = firstCutToDivideIndex + 2; i < cuts.size(); i++) {
