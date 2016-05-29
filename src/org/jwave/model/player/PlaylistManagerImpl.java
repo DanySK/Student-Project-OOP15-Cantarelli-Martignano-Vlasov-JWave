@@ -69,7 +69,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         }
         final Optional<Integer> nextIndex = this.navigator.next();
         if (nextIndex.isPresent()) {
-            return Optional.of(this.loadedPlaylist.getSong(nextIndex.get()));
+            return Optional.of(this.selectSongFromPlayingQueue(nextIndex.get()));
         }
         return Optional.empty();
     }
@@ -81,7 +81,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         }
         final Optional<Integer> prevIndex = this.navigator.prev();
         if (prevIndex.isPresent()) {
-            return Optional.of(this.loadedPlaylist.getSong(prevIndex.get()));
+            return Optional.of(this.selectSongFromPlayingQueue(prevIndex.get()));
         }
         return Optional.empty();
     }
@@ -158,6 +158,8 @@ public class PlaylistManagerImpl implements PlaylistManager {
     private void setNavigator(final PlayMode mode) {  
         final int dimension = this.loadedPlaylist.getDimension();
         this.navigator = this.navFactory.createNavigator(mode, dimension, this.currentIndex);
+        this.loadedPlaylist.clearObservers();
+        this.loadedPlaylist.addEObserver(this.navigator);
     }
 
     @Override

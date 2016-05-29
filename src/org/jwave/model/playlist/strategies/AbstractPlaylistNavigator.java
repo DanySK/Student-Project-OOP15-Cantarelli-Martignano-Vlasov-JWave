@@ -87,13 +87,4 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
     public void setCurrentIndex(final Optional<Integer> index) {
         this.currentIndex = index;
     }
-    
-    /**
-     * Checks the presence of the current index.
-     */
-    protected void checkCurrentIndex() {
-        if (!this.currentIndex.isPresent() && this.getPlaylistDimension() == 0) {
-            throw new IllegalStateException();
-        }
-    }
 }
