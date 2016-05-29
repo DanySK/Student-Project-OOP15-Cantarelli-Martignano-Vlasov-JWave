@@ -9,8 +9,8 @@ import org.jwave.model.player.PlaylistManager;
  */
 public class ClockAgent implements Runnable {
     
-    private Thread t;
-    private String name;
+    private final Thread t;
+    private final String name;
     private DynamicPlayer dynPlayer;
     private DynamicPlayer dynEditorPlayer;
     private PlaylistManager playlistManager;
@@ -54,10 +54,10 @@ public class ClockAgent implements Runnable {
     }
     
     private void checkInReproduction() {
-        if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() && !this.dynPlayer.isPaused()) {
-            this.dynPlayer.setPlayer(this.playlistManager.next());
-            this.dynPlayer.play();
-        }
+//        if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() && !this.dynPlayer.isPaused()) {
+//            this.dynPlayer.setPlayer(this.playlistManager.next());
+//            this.dynPlayer.play();
+//        }
         
         if (this.dynEditorPlayer.getLoaded().isPresent()) {
         	this.dynEditorPlayer.isPlaying();
