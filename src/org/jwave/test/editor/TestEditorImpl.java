@@ -13,7 +13,7 @@ import org.jwave.model.player.SongImpl;
 
 public class TestEditorImpl {
 	private static final Editor songEditor = new EditorImpl();
-	
+	s
     @BeforeClass
     public static void oneTimeSetUp() {
         songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));

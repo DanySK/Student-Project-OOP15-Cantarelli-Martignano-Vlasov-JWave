@@ -10,7 +10,7 @@ public class TestRunner {
       
       for (Failure failure : result.getFailures()) {
          System.out.println(failure.toString());
-      }
+      }s
       
       System.out.println(result.wasSuccessful());
    }
