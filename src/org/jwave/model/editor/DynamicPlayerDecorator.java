@@ -125,4 +125,14 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 		this.currentCutIndex = 0;
 		this.currentSegment = this.cuts.get(this.currentCutIndex).getSegment(this.currentSegmentIndex);
 	}
+	
+	@Override
+	public void clearPlayer() {
+		this.decoratedDynamicPlayer.clearPlayer();
+	}
+
+	@Override
+	public void releasePlayerResources() {
+		this.decoratedDynamicPlayer.releasePlayerResources();
+	}	
 }
