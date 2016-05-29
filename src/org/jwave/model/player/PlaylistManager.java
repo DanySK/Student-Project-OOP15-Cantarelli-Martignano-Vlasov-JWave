@@ -101,12 +101,12 @@ public interface PlaylistManager {
      */
     void reset();
     
-//    /**
-//     * 
-//     * @return
-//     *          the current loaded playlist.
-//     */
-//    Playlist getPlayingQueue();
+    /**
+     * 
+     * @return
+     *          the current loaded playlist.
+     */
+    Playlist getPlayingQueue();
     
     /**
      * 

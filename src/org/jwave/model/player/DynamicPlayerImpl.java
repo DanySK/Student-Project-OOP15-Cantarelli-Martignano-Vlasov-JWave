@@ -115,7 +115,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
     
     @Override
-    public void setPlayer(final Song song) {
+    public synchronized void setPlayer(final Song song) {
         final AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
         if (this.player != null) {
             this.stop();

@@ -24,10 +24,14 @@ public class LoopAllNavigator extends AbstractPlaylistNavigator {
     @Override
     public Optional<Integer> next() {
         if (this.getCurrentIndex().isPresent()) {
-            if (this.getCurrentIndex().equals(this.getPlaylistDimension() - 1)) {
-                this.setCurrentIndex(Optional.of(0));
+            if (this.getCurrentIndex().get() < (this.getPlaylistDimension() - 1)) {
+                this.setCurrentIndex(Optional.of(this.getCurrentIndex().get() + 1));
             } else {
-                this.incIndex();
+                this.setCurrentIndex(Optional.of(0));
+            }
+        } else {
+            if (this.getPlaylistDimension() > 0) {
+                
             }
         }
         return this.getCurrentIndex();
@@ -39,7 +43,7 @@ public class LoopAllNavigator extends AbstractPlaylistNavigator {
             if (this.getCurrentIndex().equals(0)) {
                 this.setCurrentIndex(Optional.of(this.getPlaylistDimension()));
             } else {
-                this.decIndex();
+//                this.decIndex();
             }
         }
         return this.getCurrentIndex();

@@ -25,17 +25,26 @@ public class NoLoopNavigator extends AbstractPlaylistNavigator {
     public Optional<Integer> next() {
         if (this.getCurrentIndex().isPresent()) {
             if (this.getCurrentIndex().get() < (this.getPlaylistDimension() - 1)) {
-                this.incIndex();
+                this.setCurrentIndex(Optional.of(this.getCurrentIndex().get() + 1));
+                return this.getCurrentIndex();
+            } else {
+                return Optional.empty();
             }
+        } else {
+            if (this.getPlaylistDimension() > 0) {
+                this.setCurrentIndex(Optional.of(0));
+            }
+            return this.getCurrentIndex();
         }
-        return this.getCurrentIndex();
     }
     
     @Override
     public Optional<Integer> prev() {
         if (this.getCurrentIndex().isPresent()) {
             if (this.getCurrentIndex().get() > 0) {
-                this.decIndex();
+                this.setCurrentIndex(Optional.of(this.getCurrentIndex().get() - 1));
+            } else {
+                return Optional.empty();
             }
         }
         return this.getCurrentIndex();

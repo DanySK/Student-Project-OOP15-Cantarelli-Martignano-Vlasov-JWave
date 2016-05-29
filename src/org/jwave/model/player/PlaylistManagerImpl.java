@@ -110,10 +110,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.setQueue(this.defaultQueue);
     }
    
-//    @Override
-//    public Playlist getPlayingQueue() {
-//        return this.loadedPlaylist;
-//    }
+    @Override
+    public Playlist getPlayingQueue() {
+        return this.loadedPlaylist;
+    }
 
     @Override
     public Playlist getDefaultPlaylist() {

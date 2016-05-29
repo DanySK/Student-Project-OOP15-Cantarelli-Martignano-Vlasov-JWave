@@ -25,7 +25,7 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
      */
     public AbstractPlaylistNavigator(final int initDimension, final Optional<Integer> index) {
         this.playlistDimension = initDimension;
-        this.currentIndex = Optional.empty();
+        this.currentIndex = index;
     }
     
     /**
@@ -46,26 +46,11 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
     }
     
     /**
-     * Increases the current index of one.
-     */
-    public void incIndex() {
-        this.currentIndex = Optional.of(this.currentIndex.get() + 1);
-    }
-    
-    /**
-     * Decreases the current index of one.
-     */
-    public void decIndex() {
-        this.currentIndex = Optional.of(this.currentIndex.get() - 1);
-    }
-    
-    /**
      * 
      * @return
      *          the current index.
      */
     protected Optional<Integer> getCurrentIndex() {
-        System.out.println("indice corrente : " + this.currentIndex);
         return this.currentIndex;
     }
     
