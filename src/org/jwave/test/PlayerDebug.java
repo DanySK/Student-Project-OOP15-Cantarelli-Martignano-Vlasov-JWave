@@ -100,7 +100,7 @@ public final class PlayerDebug {
             case 10:
                 System.out.println("Enter song index");
                 int index = in.nextInt();
-                player.setPlayer(manager.getPlayingQueue().getSong(index));
+                player.setPlayer(manager.selectSongFromPlayingQueue(index));
                 break;
             case 11:    //playlist manager options
                 System.out.println("Enter new playlist name");
@@ -153,7 +153,7 @@ public final class PlayerDebug {
                 System.out.println("Not available");
                 break;
             case 20:
-                manager.getPlayingQueue().printPlaylist();
+                System.out.println("Not available");
                 break;
             case 21:
                 System.out.println("Enter a name to select a playlist from the available ");

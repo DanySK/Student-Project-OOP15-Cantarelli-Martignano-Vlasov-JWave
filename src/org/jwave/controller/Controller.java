@@ -111,7 +111,7 @@ public final class Controller implements PlayerUIObserver {
 
     @Override
     public void selectSong(Song song) {
-        System.out.println("select "+ song.getAbsolutePath());
+//        System.out.println("select "+ song.getAbsolutePath());
         this.player.setPlayer(this.manager.selectSongFromPlayingQueue(0));      //TODO correct implementation
         this.player.play();
     }

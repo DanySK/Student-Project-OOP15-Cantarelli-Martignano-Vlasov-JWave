@@ -1,7 +1,10 @@
 package org.jwave.controller.player;
 
+import java.util.Optional;
+
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.PlaylistManager;
+import org.jwave.model.player.Song;
 
 /**
  * This class is a clock for {@link DynamicPlayer}, determining controls at a specified interval. 
@@ -54,10 +57,13 @@ public class ClockAgent implements Runnable {
     }
     
     private void checkInReproduction() {
-//        if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() && !this.dynPlayer.isPaused()) {
-//            this.dynPlayer.setPlayer(this.playlistManager.next());
-//            this.dynPlayer.play();
-//        }
+        if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() && !this.dynPlayer.isPaused()) {
+            final Optional<Song> nextSong = this.playlistManager.next();
+            if (nextSong.isPresent()) {
+                this.dynPlayer.setPlayer(nextSong.get());
+                this.dynPlayer.play();
+            }
+        }
         
         if (this.dynEditorPlayer.getLoaded().isPresent()) {
         	this.dynEditorPlayer.isPlaying();
