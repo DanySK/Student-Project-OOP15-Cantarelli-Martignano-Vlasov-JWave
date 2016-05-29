@@ -44,10 +44,9 @@ public final class ScreenLoader {
      * @throws IOException if the resource is not found
      */
     public void loadScreen(final FXMLScreens screen, final Pane mainPane) throws IOException {
-        
-        //screenContainer.setScreen(getScreen(screen));
-        //pane.getChildren().setAll(getReloadedScreen(screen,controller));
+
         mainPane.getChildren().setAll(getLoadedNode(screen));
+
     }
     
     public Node getLoadedNode(final FXMLScreens screen) throws IllegalStateException{
@@ -66,7 +65,7 @@ public final class ScreenLoader {
      * @return the Node loaded
      * @throws IOException if the resource is not found
      */
-    public Node loadFXMLInCache(final FXMLScreens screen, ScreenController controller) throws IOException {
+    public Node loadFXMLInCache(final FXMLScreens screen, Object controller) throws IOException {
 
         if (cache.containsKey(screen)) {
             System.out.println(screen + " screen already cached!");
@@ -86,7 +85,7 @@ public final class ScreenLoader {
      * @return the Node loaded
      * @throws IOException if the resource is not found
      */
-    public Node loadFXML(final FXMLScreens screen, ScreenController controller) throws IOException {
+    public Node loadFXML(final FXMLScreens screen, Object controller) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setController(controller);
         loader.setLocation(Main.class.getResource(screen.getPath()));

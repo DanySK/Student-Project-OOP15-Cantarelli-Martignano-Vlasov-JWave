@@ -55,14 +55,13 @@ public class FXEnvironment extends Application{
         show();
     }
     
-    public void loadScreen(FXMLScreens screen, ScreenController controller) {
+    public void loadScreen(FXMLScreens screen, Object controller) {
         try {
             this.loader.loadFXMLInCache(screen, controller);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        controller.setPrimaryStage(this.primaryStage);
     }
 
 }
