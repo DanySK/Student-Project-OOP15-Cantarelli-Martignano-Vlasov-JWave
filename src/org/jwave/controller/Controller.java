@@ -3,6 +3,7 @@ package org.jwave.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
@@ -13,10 +14,7 @@ import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
-import org.jwave.model.player.SongImpl;
 import org.jwave.view.PlayerUIObserver;
-
-import javafx.stage.FileChooser;
 
 public final class Controller implements PlayerUIObserver {
 
@@ -75,13 +73,28 @@ public final class Controller implements PlayerUIObserver {
 
     @Override
     public void next() {
-        // TODO Auto-generated method stub
+        try {
+            final Optional<Song> nextSong = this.manager.next();
+            if (nextSong.isPresent()) {
+                this.player.setPlayer(nextSong.get());
+                this.player.play();
+            }
+        } catch (IllegalStateException e) {
+            System.out.println("You must add at last one song in the playlist");
+        }
     }
 
     @Override
     public void previous() {
-        this.player.setPlayer(this.manager.prev());
-        this.player.play();
+        try {
+            final Optional<Song> prevSong = this.manager.prev();
+            if (prevSong.isPresent()) {
+                this.player.setPlayer(prevSong.get());
+                this.player.play();
+            }
+        } catch (IllegalStateException e) {
+            System.out.println("You must add at last one song in the playlist");
+        }
     }
 
     @Override
@@ -98,8 +111,8 @@ public final class Controller implements PlayerUIObserver {
 
     @Override
     public void selectSong(Song song) {
-        System.out.println("select "+ this.manager.next().getAbsolutePath());
-        this.player.setPlayer(this.manager.next());
+        System.out.println("select "+ song.getAbsolutePath());
+        this.player.setPlayer(this.manager.selectSongFromPlayingQueue(0));      //TODO correct implementation
         this.player.play();
     }
 
