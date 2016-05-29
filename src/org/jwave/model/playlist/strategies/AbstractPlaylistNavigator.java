@@ -1,5 +1,7 @@
 package org.jwave.model.playlist.strategies;
 
+import java.util.Optional;
+
 import org.jwave.model.ESource;
 
 /**
@@ -9,7 +11,7 @@ import org.jwave.model.ESource;
 public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
 
     private int playlistDimension;
-    private Integer currentIndex;
+    private Optional<Integer> currentIndex;
     
     /**
      * Creates a new PlaylistNavigatorImpl.
@@ -17,25 +19,26 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
      * @param initDimension
      *          initial playlist dimension.
      *          
-     * @param initCurrentIndex
-     *          the current song index.
+     * @param index
+     *          the current selected index of the playing queue.         
+     *          
      */
-    public AbstractPlaylistNavigator(final int initDimension, final int initCurrentIndex) {
+    public AbstractPlaylistNavigator(final int initDimension, final Optional<Integer> index) {
         this.playlistDimension = initDimension;
-        this.currentIndex = initCurrentIndex;
+        this.currentIndex = Optional.empty();
     }
     
     /**
      * @return 
      *          the next index that has to be selected in playlist.
      */
-    public abstract int next();
+    public abstract Optional<Integer> next();
 
     /**
      * @return 
      *          the previous index that has to be selected in playlist.
      */
-    public abstract int prev();
+    public abstract Optional<Integer> prev();
 
     @Override
     public void setPlaylistDimension(final int newDimension) {
@@ -46,14 +49,14 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
      * Increases the current index of one.
      */
     public void incIndex() {
-        this.currentIndex++;
+        this.currentIndex = Optional.of(this.currentIndex.get() + 1);
     }
     
     /**
      * Decreases the current index of one.
      */
     public void decIndex() {
-        this.currentIndex--;
+        this.currentIndex = Optional.of(this.currentIndex.get() - 1);
     }
     
     /**
@@ -61,7 +64,7 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
      * @return
      *          the current index.
      */
-    public Integer getCurrentIndex() {
+    protected Optional<Integer> getCurrentIndex() {
         System.out.println("indice corrente : " + this.currentIndex);
         return this.currentIndex;
     }
@@ -81,7 +84,16 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
     }
     
     @Override
-    public void setCurrentIndex(final int index) {
+    public void setCurrentIndex(final Optional<Integer> index) {
         this.currentIndex = index;
+    }
+    
+    /**
+     * Checks the presence of the current index.
+     */
+    protected void checkCurrentIndex() {
+        if (!this.currentIndex.isPresent()) {
+            throw new IllegalStateException();
+        }
     }
 }

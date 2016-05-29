@@ -73,7 +73,7 @@ public interface Playlist extends ESource<Integer> {
      * @throws IllegalArgumentException
      *          if the song is not present.
      */
-    Song selectSong(String name) throws IllegalArgumentException;
+    Song getSong(String name) throws IllegalArgumentException;
     
     /**
      * Selects a song.
@@ -86,7 +86,7 @@ public interface Playlist extends ESource<Integer> {
      * @throws IllegalArgumentException
      *          if the song is not present.
      */
-    Song selectSong(int index) throws IllegalArgumentException;
+    Song getSong(int index) throws IllegalArgumentException;
     
     /**
      * 

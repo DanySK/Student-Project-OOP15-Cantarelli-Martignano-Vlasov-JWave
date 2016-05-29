@@ -67,7 +67,7 @@ public class Player implements Initializable {
         if (file != null) {
             AudioSystem.getAudioSystem().getPlaylistManager().addAudioFile(file);
             AudioSystem.getAudioSystem().getDynamicPlayer()
-                    .setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().selectSong(0));
+                    .setPlayer(AudioSystem.getAudioSystem().getPlaylistManager().getPlayingQueue().getSong(0));
         }
 
         /*

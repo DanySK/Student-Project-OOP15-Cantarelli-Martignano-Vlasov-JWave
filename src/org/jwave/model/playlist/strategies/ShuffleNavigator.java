@@ -3,6 +3,7 @@ package org.jwave.model.playlist.strategies;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -14,40 +15,47 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
     
     private final Random seed;
     private final List<Integer> shuffledList;
-    private int shuffledIndex;
+    private Optional<Integer> shuffledIndex;
     
     /**
      * Creates a new instance of ShuffleNavigator.
      * 
      * @param playlistDimension
      *          the initial playlist dimension.
-     *          
-     * @param currentIndex
-     *          the index the navigator has to start with.          
+     *                    
      */
-    public ShuffleNavigator(final int playlistDimension, final int currentIndex) {
-        super(playlistDimension, currentIndex);
+    public ShuffleNavigator(final int playlistDimension) {
+        super(playlistDimension, Optional.empty());
         this.seed = new Random();
         this.shuffledList = new ArrayList<>();
-        this.shuffledIndex = 0;
+        this.shuffledIndex = Optional.empty();
+        this.shuffle();
     }
     
     @Override
-    public int next() {        
-        if (this.shuffledIndex == (this.shuffledList.size() - 1)) {
-            this.shuffle();
-        }
-        this.shuffledIndex++;
-        return this.shuffledList.get(this.shuffledIndex);
+    public Optional<Integer> next() {        
+       if (!this.shuffledIndex.isPresent() && this.getPlaylistDimension() > 0) {
+           this.shuffledIndex = Optional.of(0);
+       } else {
+           if (this.shuffledIndex.get().equals(this.shuffledList.size() - 1)) {
+               this.shuffle();
+           } 
+           this.shuffledIndex = Optional.of(this.shuffledIndex.get() + 1);
+       }
+       return this.shuffledIndex;
     }
 
     @Override
-    public int prev() {
-        if (this.shuffledIndex == 0) {
-            return 0;
-        }
-        this.shuffledIndex--;
-        return this.shuffledList.get(this.shuffledIndex);
+    public Optional<Integer> prev() {
+       if (this.shuffledIndex.equals(Optional.empty())) {
+           return this.shuffledIndex;
+       }
+       if (this.shuffledIndex.get().equals(0)) {
+           this.shuffledIndex = Optional.empty();
+           return this.shuffledIndex;
+       }
+       this.shuffledIndex = Optional.of(this.shuffledIndex.get() - 1);
+       return this.shuffledIndex;
     }
  
     

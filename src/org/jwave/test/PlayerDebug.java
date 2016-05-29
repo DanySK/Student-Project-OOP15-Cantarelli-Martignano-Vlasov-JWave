@@ -100,7 +100,7 @@ public final class PlayerDebug {
             case 10:
                 System.out.println("Enter song index");
                 int index = in.nextInt();
-                player.setPlayer(manager.getPlayingQueue().selectSong(index));
+                player.setPlayer(manager.getPlayingQueue().getSong(index));
                 break;
             case 11:    //playlist manager options
                 System.out.println("Enter new playlist name");

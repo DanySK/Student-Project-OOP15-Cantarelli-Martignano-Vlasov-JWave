@@ -1,5 +1,7 @@
 package org.jwave.model.playlist.strategies;
 
+import java.util.Optional;
+
 import org.jwave.model.EObserver;
 
 /**
@@ -13,14 +15,14 @@ public interface PlaylistNavigator extends EObserver<Integer> {
      * @return
      *          next song index in the playlist.
      */
-    int next();
+    Optional<Integer> next();
     
     /**
      * 
      * @return
      *          previous song index in the playlist.
      */
-    int prev();
+    Optional<Integer> prev();
     
     /**
      * Sets the playlist dimension for the navigator.
@@ -36,5 +38,5 @@ public interface PlaylistNavigator extends EObserver<Integer> {
      * @param index
      *          new current index.
      */
-    void setCurrentIndex(int index);
+    void setCurrentIndex(Optional<Integer> index);
 }

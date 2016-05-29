@@ -1,5 +1,7 @@
 package org.jwave.model.playlist.strategies;
 
+import java.util.Optional;
+
 /**
  * A LoopOne navigator follows the LOOP_ONE {@link}PlayMode policy.
  * 
@@ -12,18 +14,18 @@ public class LoopOneNavigator extends AbstractPlaylistNavigator {
      * @param initRepeatedSongIndex
      *          the index of the song that has to be repeated.
      */
-    public LoopOneNavigator(final int initRepeatedSongIndex) {
-        super(0, initRepeatedSongIndex);
+    public LoopOneNavigator(final Optional<Integer> initRepeatedSongIndex) {
+        super(1, initRepeatedSongIndex);
     }
 
     @Override
-    public int next() {
+    public Optional<Integer> next() {
+        this.checkCurrentIndex();
         return this.getCurrentIndex();
     }
 
     @Override
-    public int prev() {
-        return this.getCurrentIndex();
+    public Optional<Integer> prev() {
+        return this.next();
     }
-
 }

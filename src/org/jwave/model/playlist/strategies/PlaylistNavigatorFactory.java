@@ -1,5 +1,7 @@
 package org.jwave.model.playlist.strategies;
 
+import java.util.Optional;
+
 import org.jwave.model.player.PlayMode;
 
 /**
@@ -23,7 +25,7 @@ public class PlaylistNavigatorFactory {
      * @return
      *          a new playlist navigator.
      */
-    public PlaylistNavigator createNavigator(final PlayMode type, final int playlistDimension, final int currentIndex) {
+    public PlaylistNavigator createNavigator(final PlayMode type, final int playlistDimension, final Optional<Integer> currentIndex) {
         switch (type) {
             case NO_LOOP:        
                 return new NoLoopNavigator(playlistDimension, currentIndex);
@@ -32,7 +34,7 @@ public class PlaylistNavigatorFactory {
             case LOOP_ALL:       
                 return new LoopAllNavigator(playlistDimension, currentIndex);
             case SHUFFLE:        
-                return new ShuffleNavigator(playlistDimension, currentIndex);
+                return new ShuffleNavigator(playlistDimension);
             default:             
                 return new NoLoopNavigator(playlistDimension, currentIndex);
         }

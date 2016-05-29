@@ -1,5 +1,7 @@
 package org.jwave.model.playlist.strategies;
 
+import java.util.Optional;
+
 /**
  * 
  *A LoopOne navigator follows the LOOP_ALL {@link}PlayMode policy.
@@ -15,14 +17,15 @@ public class LoopAllNavigator extends AbstractPlaylistNavigator {
      * @param currentIndex
      *          starting index.
      */
-    public LoopAllNavigator(final int initDimension, final int currentIndex) {
+    public LoopAllNavigator(final int initDimension, final Optional<Integer> currentIndex) {
         super(initDimension, currentIndex);
     }
 
     @Override
-    public int next() {
+    public Optional<Integer> next() {
+        this.checkCurrentIndex();
         if (this.getCurrentIndex().equals(this.getPlaylistDimension() - 1)) {
-            this.setCurrentIndex(0);
+            this.setCurrentIndex(Optional.of(0));
         } else {
             this.incIndex();
         }
@@ -30,9 +33,10 @@ public class LoopAllNavigator extends AbstractPlaylistNavigator {
     }
 
     @Override
-    public int prev() {
+    public Optional<Integer> prev() {
+        this.checkCurrentIndex();
         if (this.getCurrentIndex().equals(0)) {
-            this.setCurrentIndex(this.getPlaylistDimension());
+            this.setCurrentIndex(Optional.of(this.getPlaylistDimension()));
         } else {
             this.decIndex();
         }

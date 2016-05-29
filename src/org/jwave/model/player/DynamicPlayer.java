@@ -71,8 +71,7 @@ public interface DynamicPlayer {
      * 
      */
     boolean hasStarted();
-    
-    
+        
     /**
      * Modifies the current volume.
      * 
