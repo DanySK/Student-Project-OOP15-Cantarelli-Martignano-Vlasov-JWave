@@ -35,6 +35,7 @@ public interface PlaylistManager {
      * 
      * @param playlist
      *          the playlist to be deleted.
+     *                    
      */
     void deletePlaylist(Playlist playlist);
     
@@ -92,8 +93,11 @@ public interface PlaylistManager {
      *
      * @param newName
      *          the new name to be assigned to the playlist.          
+     *          
+     * @throws IllegalArgumentException
+     *          if there is already a playlist with the same name.         
      */
-    void renamePlaylist(Playlist playlist, String newName);
+    void renamePlaylist(Playlist playlist, String newName) throws IllegalArgumentException;
     
     /**
      * Resets the playlist manager so the default playlist will be cleaned and it will become 

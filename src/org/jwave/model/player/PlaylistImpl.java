@@ -10,7 +10,7 @@ import java.util.Set;
 import org.jwave.model.EObserver;
 
 /**
- * This is an implementation of {@link}Playlist that can be serialized.
+ * This is an implementation of {@link Playlist} that can be serialized.
  *
  */
 public class PlaylistImpl implements Playlist, Serializable {

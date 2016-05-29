@@ -9,39 +9,57 @@ public interface DynamicPlayer {
 
     /**
      * Starts reproducing audio.
+     * 
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.
      */
-    void play();
+    void play() throws IllegalStateException;
 
     /**
      * Pauses audio reproduction.
+     * 
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.
      */
-    void pause();
+    void pause() throws IllegalStateException;
 
     /**
      * Stops audio reproduction, rewinds the loaded audio file.
+     * 
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.
      */
-    void stop();
+    void stop() throws IllegalStateException;
     
     /**
      * Moves the reproduction cursor in a specific position of the audio file.
      * 
      * @param millis
      *          the point of the file where the cursor has to be moved.
+     *          
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.          
      *                   
      */
-    void cue(int millis);
+    void cue(int millis) throws IllegalStateException;
     
     /**
      * @return
      *          the length of the loaded file in milliseconds.
+     *          
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.
      */
-    int getLength();
+    int getLength() throws IllegalStateException;
 
     /**
      * @return
      *          the current position in the loaded audio file.
+     *          
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.          
      */
-    int getPosition();
+    int getPosition() throws IllegalStateException;
 
     /**
      * 
@@ -54,23 +72,31 @@ public interface DynamicPlayer {
      * 
      * @return
      *          whether the player is playing sound.
+     *          
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.          
      */
-    boolean isPlaying();
+    boolean isPlaying() throws IllegalStateException;
     
     /**
      * 
      * @return
      *          whether the player is paused.
+     *          
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.          
      */
-    boolean isPaused();
+    boolean isPaused() throws IllegalStateException;
     
     /**
      * 
      * @return
      *          whether the player has started.
-     * 
+     *          
+     * @throws IllegalStateException
+     *          when no {@link Song} is loaded.
      */
-    boolean hasStarted();
+    boolean hasStarted() throws IllegalStateException;
         
     /**
      * Modifies the current volume.
@@ -87,4 +113,14 @@ public interface DynamicPlayer {
      *          the song to be loaded.
      */
     void setPlayer(Song song);
+    
+    /**
+     * resets this player.
+     */
+    void clearPlayer();
+    
+    /**
+     * Releases all the resources related to this player.
+     */
+    void releasePlayerResources();
 }

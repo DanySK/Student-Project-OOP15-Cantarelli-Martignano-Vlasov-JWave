@@ -34,11 +34,11 @@ public class MetaDataRetrieverImpl implements MetaDataRetriever {
     private static final String ID3V1 = "ID3v1";
     private static final String ID3V2 = "ID3v2";
 
-    private Path filePath;
+    private final Path filePath;
     private Mp3File song;
     private ID3v1 id3v1Tag;
     private ID3v2 id3v2Tag;
-    private Map<MetaData, String> datas;
+    private final Map<MetaData, String> datas;
     
     /**
      * Creates a new instance of the MetaDataV2Impl.

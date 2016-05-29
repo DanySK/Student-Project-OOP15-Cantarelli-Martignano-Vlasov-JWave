@@ -34,13 +34,15 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
     
     @Override
     public Optional<Integer> next() {        
-       if (!this.shuffledIndex.isPresent() && this.getPlaylistDimension() > 0) {
-           this.shuffledIndex = Optional.of(0);
-       } else {
+       if (this.shuffledIndex.isPresent()) {
            if (this.shuffledIndex.get().equals(this.shuffledList.size() - 1)) {
                this.shuffle();
            } 
            this.shuffledIndex = Optional.of(this.shuffledIndex.get() + 1);
+       } else {
+           if (this.getPlaylistDimension() > 0) {
+               this.shuffledIndex = Optional.of(0);
+           }
        }
        return this.shuffledIndex;
     }
@@ -49,13 +51,13 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
     public Optional<Integer> prev() {
        if (this.shuffledIndex.equals(Optional.empty())) {
            return this.shuffledIndex;
-       }
-       if (this.shuffledIndex.get().equals(0)) {
-           this.shuffledIndex = Optional.empty();
+       } else {
+           if (this.shuffledIndex.get().equals(0)) {
+               return Optional.empty();
+           }
+           this.shuffledIndex = Optional.of(this.shuffledIndex.get() - 1);
            return this.shuffledIndex;
        }
-       this.shuffledIndex = Optional.of(this.shuffledIndex.get() - 1);
-       return this.shuffledIndex;
     }
  
     

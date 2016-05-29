@@ -58,7 +58,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 
     @Override
-    public void deletePlaylist(final Playlist playlist) throws IllegalArgumentException {
+    public void deletePlaylist(final Playlist playlist) {
+//        if (!this.availablePlaylists.contains(playlist)) {
+//            throw new IllegalArgumentException("Playlist not found");
+//        }
         this.availablePlaylists.remove(playlist);
     }
     

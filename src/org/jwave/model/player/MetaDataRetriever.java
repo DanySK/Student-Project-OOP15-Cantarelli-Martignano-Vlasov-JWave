@@ -8,7 +8,7 @@ import java.util.Optional;
 import com.mpatric.mp3agic.NotSupportedException;
 
 /**
- * This interface models metadata in a more detailed way, letting user to set them.
+ * This interface models metadata.
  *
  */
 public interface MetaDataRetriever {

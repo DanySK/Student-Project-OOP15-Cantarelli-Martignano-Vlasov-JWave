@@ -57,7 +57,8 @@ public class ClockAgent implements Runnable {
     }
     
     private void checkInReproduction() {
-        if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() && !this.dynPlayer.isPaused()) {
+        if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() 
+                && !this.dynPlayer.isPaused()) {
             final Optional<Song> nextSong = this.playlistManager.next();
             if (nextSong.isPresent()) {
                 this.dynPlayer.setPlayer(nextSong.get());
@@ -102,6 +103,4 @@ public class ClockAgent implements Runnable {
     private void setStopped(final boolean value) {
         this.stopped = value;
     }
-
-
 }

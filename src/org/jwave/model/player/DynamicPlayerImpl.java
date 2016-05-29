@@ -41,7 +41,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     
     
     @Override
-    public void play() throws IllegalStateException {
+    public void play() {
         this.checkPlayerLoaded();
         this.player.play();
         if (this.isPaused()) {
@@ -53,7 +53,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
 
     @Override
-    public void pause() throws IllegalStateException {
+    public void pause() {
         this.checkPlayerLoaded();
         this.setPaused(true);
         this.player.pause();
@@ -93,16 +93,19 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public boolean isPlaying() {
+        this.checkPlayerLoaded();
         return this.player.isPlaying();
     }
     
     @Override
     public boolean isPaused() {
+        this.checkPlayerLoaded();
         return this.paused;
     }
     
     @Override
     public boolean hasStarted() {
+        this.checkPlayerLoaded();
         return this.started;
     }
 
@@ -117,13 +120,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public synchronized void setPlayer(final Song song) {
         final AudioPlayer sampleRateRetriever = minim.loadFile(song.getAbsolutePath());
-        if (this.player != null) {
-            this.stop();
-            this.player.unpatch(this.volumeControl);
-            this.volumeControl.unpatch(this.out);
-            this.out.close();
-        }
-        this.started = false;
+        this.clearPlayer();
         this.player = new FilePlayer(this.minim.loadFileStream(song.getAbsolutePath(), BUFFER_SIZE, false));
         this.player.pause();
         
@@ -137,6 +134,24 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     private void setPaused(final boolean value) {
         this.paused = value;
     }
+    
+    @Override
+    public void clearPlayer() {
+        if (this.player != null) {
+            this.stop();
+            this.player.unpatch(this.volumeControl);
+            this.volumeControl.unpatch(this.out);
+            this.out.close();
+            this.player.close();
+            this.started = false;
+        }
+    }
+
+    @Override
+    public void releasePlayerResources() {
+        this.clearPlayer();
+        this.minim.stop();
+    }  
     
     private AudioOutput createAudioOut(final float sampleRate) {
         return this.minim.getLineOut(Minim.STEREO, BUFFER_SIZE, sampleRate, OUT_BIT_DEPTH);

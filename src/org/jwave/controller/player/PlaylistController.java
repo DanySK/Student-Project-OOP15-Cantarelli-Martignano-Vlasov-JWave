@@ -183,20 +183,25 @@ public final class PlaylistController {
      * @throws ClassNotFoundException 
      * @throws IllegalArgumentException 
      */
-    public static Playlist loadDefaultPlaylist() throws IOException, IllegalArgumentException, ClassNotFoundException {
+    public static Playlist loadDefaultPlaylist() {
         final Path defaultDir = getDefaultSavePath();
-        DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir); 
-        for (Path file : stream) {
-           if (Files.isDirectory(file) && file.getFileName().toString().equals(DEF_PLAYLIST_NAME)) {
-               return loadPlaylist(file.toFile());   
-           }
+        DirectoryStream<Path> stream;
+        try {
+            stream = Files.newDirectoryStream(defaultDir);
+            for (Path file : stream) {
+                if (Files.isDirectory(file) && file.getFileName().toString().equals(DEF_PLAYLIST_NAME)) {
+                    return loadPlaylist(file.toFile());   
+                }
+             }
+            final Playlist defaultOut = new PlaylistImpl(DEF_PLAYLIST_NAME);
+            try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
+                    new FileOutputStream(new File(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME 
+                            + System.getProperty(SEPARATOR) + DEF_PLAYLIST_NAME))))) {
+                oos.writeObject(defaultOut);
+                return defaultOut; 
+            }
+        } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
+            return new PlaylistImpl(DEF_PLAYLIST_NAME);
         }
-        final Playlist defaultOut = new PlaylistImpl(DEF_PLAYLIST_NAME);
-        try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
-                new FileOutputStream(new File(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME 
-                        + System.getProperty(SEPARATOR) + DEF_PLAYLIST_NAME))))) {
-            oos.writeObject(defaultOut);
-        }
-        return defaultOut;
     }
 }
