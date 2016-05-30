@@ -86,12 +86,12 @@ public interface PlaylistManager {
     /**
      * Selects a playlist from the collection of available playlists.
      * 
-     * @param name
+     * @param playlistID
      *          the name of the playlist to be selected.
      * @return
      *          the selected playlist.
      */
-    Playlist selectPlaylist(String name);
+    Playlist selectPlaylist(UUID playlistID);
     
     /**
      * Renames the selected playlist.

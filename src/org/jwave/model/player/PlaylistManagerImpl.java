@@ -91,9 +91,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
     
     @Override
-    public Playlist selectPlaylist(final String name) {
+    public Playlist selectPlaylist(final UUID playlistID) {
         return this.availablePlaylists.stream()
-                .filter(p -> p.getName().equals(name))
+                .filter(p -> p.getName().equals(playlistID))
                 .findAny()
                 .get();
     }
