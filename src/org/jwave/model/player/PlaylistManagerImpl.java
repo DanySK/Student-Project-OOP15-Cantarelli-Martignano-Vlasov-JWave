@@ -8,8 +8,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.playlist.strategies.PlaylistNavigator;
 import org.jwave.model.playlist.strategies.PlaylistNavigatorFactory;
+
+import ddf.minim.AudioPlayer;
+import ddf.minim.Minim;
 
 /**
  * This is an implementation of {@link PlaylistManager}.
@@ -36,14 +40,16 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.availablePlaylists = new HashSet<>();
         this.currentIndex = Optional.empty();
         this.loadedPlaylist = this.defaultQueue;
-        this.playMode = PlayMode.LOOP_ALL;
+        this.playMode = PlayMode.NO_LOOP;
         this.navigator = this.navFactory.createNavigator(this.playMode, this.loadedPlaylist.getDimension(), Optional.empty());
         this.loadedPlaylist.addEObserver(this.navigator);
     }
 
     @Override
-    public void addAudioFile(final File audioFile) {
-        this.defaultQueue.addSong(new SongImpl(audioFile));
+    public Song addAudioFile(final File audioFile) throws Exception {
+        final Song out = new SongImpl(audioFile);
+        this.defaultQueue.addSong(out);
+        return out;
     }  
     
     @Override
