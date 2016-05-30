@@ -59,6 +59,18 @@ public interface PlaylistManager {
     
     /**
      * 
+     * @param index
+     *          the song index.
+     * @return
+     *          the selecteed song
+     *          
+     * @throws IllegalArgumentException
+     *          when passing an out of border index.
+     */
+    Song selectSongFromPlayingQueueAtIndex(int index) throws IllegalArgumentException;
+    
+    /**
+     * 
      * @return
      *          the next song in the playing queue.
      */
