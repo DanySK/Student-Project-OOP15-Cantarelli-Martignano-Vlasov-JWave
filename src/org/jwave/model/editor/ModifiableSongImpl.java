@@ -132,57 +132,82 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 	@Override
 	public void pasteSelectionAt(int from, int to, int at) {
 		int cutToDivideIndex = 0;
-		Cut cutToDivide = null;
-		Cut cutToInsert = generateCutFromSelection(from, to, at);
+		Optional<Cut> cutToDivide = Optional.empty();
+		Cut cutToInsert;
 		
+		/*
+		 * First we get the cut that we will be dividing in two parts
+		 * in order to make room for the inserted paste in the middle.
+		 */
 		for (int i = 0; i < cuts.size(); i++) {
 			if (cuts.get(i).getFrom() <= at && cuts.get(i).getTo() >= at) {
 				cutToDivideIndex = i;
-				cutToDivide = cuts.get(cutToDivideIndex);
+				cutToDivide = Optional.of(cuts.get(cutToDivideIndex));
 			}
 		}
 		
-		int leftHalfLength = at - cutToDivide.getFrom();
-		int rightHalfLength = cutToDivide.getLength() - leftHalfLength;
-		int halfPoint = cutToDivide.getFrom() + leftHalfLength;
-		ArrayList<Segment> leftSegments = new ArrayList<>();
-		ArrayList<Segment> rightSegments = new ArrayList<>();
-		
-//		System.out.println(leftHalfLength);
-//		System.out.println(rightHalfLength);
-		
-		int i = 0;
-		int segmentCounter = 0;
-		while (segmentCounter + (cutToDivide.getSegment(i).getLength()) < leftHalfLength) {
-			leftSegments.add(new SegmentImpl(cutToDivide.getSegment(i).getFrom(), cutToDivide.getSegment(i).getTo()));
-			segmentCounter += (cutToDivide.getSegment(i).getTo() - cutToDivide.getSegment(i).getFrom());
-			i++;
+		if (cutToDivide.isPresent()) {
+			cutToInsert = generateCutFromSelection(from, to, at);
+			
+			int leftHalfLength = at - cutToDivide.get().getFrom();
+			int rightHalfLength = cutToDivide.get().getLength() - leftHalfLength;
+			int halfPoint = cutToDivide.get().getFrom() + leftHalfLength;
+			ArrayList<Segment> leftSegments = new ArrayList<>();
+			ArrayList<Segment> rightSegments = new ArrayList<>();
+			
+			int i = 0;
+			int segmentCounter = 0;
+			while (segmentCounter + (cutToDivide.get().getSegment(i).getLength()) < leftHalfLength) {
+				leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
+				segmentCounter += (cutToDivide.get().getSegment(i).getTo() - cutToDivide.get().getSegment(i).getFrom());
+				i++;
+			}
+			
+			// middle segments
+			leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter) - 1));
+			rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter), cutToDivide.get().getSegment(i).getTo()));
+			
+			for (i++; i < cutToDivide.get().getSegments().size(); i++) {
+				rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
+			}
+			
+			CutImpl leftCut = new CutImpl(cutToDivide.get().getFrom(), halfPoint - 1, leftSegments);
+			CutImpl rightCut = new CutImpl(cutToInsert.getTo() + 1, cutToInsert.getTo() + rightHalfLength + 1, rightSegments);			
+			
+			// shift all cuts after cut that was divided
+			cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
+			cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
+			for (i = cuts.size() - 1; i > cutToDivideIndex + 1; i--) {
+				cuts.set(i, cuts.get(i - 2));
+				cuts.get(i).setFrom(cuts.get(i).getFrom() + cutToInsert.getLength() + 1);
+				cuts.get(i).setTo(cuts.get(i).getTo() + cutToInsert.getLength() + 1);
+			}
+			
+			// finally set all three cuts to the new ones
+			cuts.set(cutToDivideIndex, leftCut);
+			cuts.set(cutToDivideIndex + 1, cutToInsert);
+			cuts.set(cutToDivideIndex + 2, rightCut);
+		} else {
+			if (at < 0) {
+				at = 0;
+				
+				cutToInsert = generateCutFromSelection(from, to, at);
+				
+				/* shift all cuts up by one */
+				cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
+				for (int i = cuts.size() - 1; i > 0; i--) {
+					cuts.set(i, cuts.get(i - 1));
+					cuts.get(i).setFrom(cuts.get(i).getFrom() + cutToInsert.getLength() + 1);
+					cuts.get(i).setTo(cuts.get(i).getTo() + cutToInsert.getLength() + 1);
+				}
+				
+				cuts.set(0, cutToInsert);				
+			} else {
+				cutToInsert = generateCutFromSelection(from, to, at);
+				
+				cuts.add(cutToInsert);
+			}
 		}
-		
-		// middle segments
-		leftSegments.add(new SegmentImpl(cutToDivide.getSegment(i).getFrom(), cutToDivide.getSegment(i).getFrom() + (leftHalfLength - segmentCounter) - 1));
-		rightSegments.add(new SegmentImpl(cutToDivide.getSegment(i).getFrom() + (leftHalfLength - segmentCounter), cutToDivide.getSegment(i).getTo()));
-		
-		for (i++; i < cutToDivide.getSegments().size(); i++) {
-			rightSegments.add(new SegmentImpl(cutToDivide.getSegment(i).getFrom(), cutToDivide.getSegment(i).getTo()));
-		}
-		
-		CutImpl leftCut = new CutImpl(cutToDivide.getFrom(), halfPoint - 1, leftSegments);
-		CutImpl rightCut = new CutImpl(cutToInsert.getTo() + 1, cutToInsert.getTo() + rightHalfLength + 1, rightSegments);			
-		
-		// shift all cuts after cut that was divided
-		cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
-		cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
-		for (i = cuts.size() - 1; i > cutToDivideIndex + 1; i--) {
-			cuts.set(i, cuts.get(i - 2));
-			cuts.get(i).setFrom(cuts.get(i).getFrom() + cutToDivide.getLength() + 1);
-			cuts.get(i).setTo(cuts.get(i).getTo() + cutToDivide.getLength() + 1);
-		}
-		
-		// finally set all three cuts to the new ones
-		cuts.set(cutToDivideIndex, leftCut);
-		cuts.set(cutToDivideIndex + 1, cutToInsert);
-		cuts.set(cutToDivideIndex + 2, rightCut);
 	}
 	
 	@Override
@@ -701,7 +726,7 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		for (int i = 0; i < cuts.size(); i++) {
 			System.out.println("Cut " + i + ": from " + cuts.get(i).getFrom() + "ms to " + cuts.get(i).getTo() + "ms");
 			for (int j = 0; j < cuts.get(i).getSegments().size(); j++) {
-				System.out.println("    Segment " + j + ": from " + cuts.get(i).getSegment(j).getFrom() + "ms to " + cuts.get(i).getSegment(j).getTo() + "ms");
+				System.out.println("    		Segment " + j + ": from " + cuts.get(i).getSegment(j).getFrom() + "ms to " + cuts.get(i).getSegment(j).getTo() + "ms");
 			}
 		}
 	}

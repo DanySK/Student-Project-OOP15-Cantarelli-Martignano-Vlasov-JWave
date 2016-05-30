@@ -35,26 +35,6 @@ public class TestEditorImpl {
 	}
 	
 	@Test
-	public void testBasicLongLengthCopyAndPaste() {
-		songEditor.setSelectionFrom(0);
-		songEditor.setSelectionTo(songEditor.getOriginalSongLength());
-		songEditor.copySelection();
-		songEditor.deselectSelection();
-		songEditor.setSelectionFrom(songEditor.getOriginalSongLength());
-		songEditor.pasteCopiedSelection();		
-		
-		assertTrue(songEditor.getSong().getCuts().size() == 3);
-		
-		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == songEditor.getOriginalSongLength() - 1);
-		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == songEditor.getOriginalSongLength() - 1);
-		
-		assertTrue(songEditor.getSong().getCut(1).getFrom() == songEditor.getOriginalSongLength() && songEditor.getSong().getCut(1).getTo() == songEditor.getOriginalSongLength() + songEditor.getOriginalSongLength());
-		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(1).getSegment(0).getTo() == songEditor.getOriginalSongLength());			
-	}
-	
-	@Test
 	public void testMultiSegmentCut() {
 		songEditor.setSelectionFrom(50000);
 		songEditor.setSelectionTo(60000);
@@ -174,6 +154,50 @@ public class TestEditorImpl {
 	}
 	
 	@Test
+	public void testSimplePasteAtVeryBeginningOfSong() {
+		songEditor.setSelectionFrom(25000);
+		songEditor.setSelectionTo(50000);
+		songEditor.copySelection();
+		songEditor.deselectSelection();
+		songEditor.setSelectionFrom(-1);
+		songEditor.pasteCopiedSelection();
+		
+		assertTrue(songEditor.getSong().getCuts().size() == 2);	
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 25001);
+		
+		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 25000);
+		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 25000 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 50000);
+		
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 25001 && songEditor.getSong().getCut(1).getTo() == songEditor.getOriginalSongLength() + 25001);
+		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(1).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
+	}	
+	
+	@Test
+	public void testSimplePasteAtVeryEndOfSong() {
+		songEditor.setSelectionFrom(0);
+		songEditor.setSelectionTo(songEditor.getOriginalSongLength());
+		songEditor.copySelection();
+		songEditor.deselectSelection();
+		songEditor.setSelectionFrom(songEditor.getOriginalSongLength() + 1);
+		songEditor.pasteCopiedSelection();	
+		
+		songEditor.printSongDebug();
+		
+		assertTrue(songEditor.getSong().getCuts().size() == 2);
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + songEditor.getOriginalSongLength() + 1);
+		
+		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == songEditor.getOriginalSongLength());
+		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == songEditor.getOriginalSongLength());
+		
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == songEditor.getOriginalSongLength() + 1 && songEditor.getSong().getCut(1).getTo() == songEditor.getOriginalSongLength() + songEditor.getOriginalSongLength() + 1);
+		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(1).getSegment(0).getTo() == songEditor.getOriginalSongLength());			
+	}	
+	
+	@Test
 	public void testSimpleCutAtVeryBeginningOfSong() {
 		songEditor.setSelectionFrom(0);
 		songEditor.setSelectionTo(10000);
@@ -271,13 +295,49 @@ public class TestEditorImpl {
 	}	
 	
 	@Test
+	public void testDoubleBasicCopyAndPasteReverseOrder() {
+		songEditor.setSelectionFrom(50000);
+		songEditor.setSelectionTo(60000);
+		songEditor.copySelection();
+		songEditor.deselectSelection();
+		songEditor.setSelectionFrom(50000);
+		songEditor.pasteCopiedSelection();
+		songEditor.deselectSelection();
+		songEditor.setSelectionFrom(10000);
+		songEditor.pasteCopiedSelection();
+		
+		assertTrue(songEditor.getSong().getCuts().size() == 5);	
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 20002);
+		
+		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 9999);
+		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 9999);
+	
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 10000 && songEditor.getSong().getCut(1).getTo() == 20000);
+		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 60000);
+		
+		assertTrue(songEditor.getSong().getCut(2).getFrom() == 20001 && songEditor.getSong().getCut(2).getTo() == 60000);
+		assertTrue(songEditor.getSong().getCut(2).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 49999);
+		
+		assertTrue(songEditor.getSong().getCut(3).getFrom() == 60001 && songEditor.getSong().getCut(3).getTo() == 70001);
+		assertTrue(songEditor.getSong().getCut(3).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 60000);
+		
+		assertTrue(songEditor.getSong().getCut(4).getFrom() == 70002 && songEditor.getSong().getCut(4).getTo() == songEditor.getOriginalSongLength() + 20002);
+		assertTrue(songEditor.getSong().getCut(4).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
+	}		
+	
+	@Test
 	public void testVeryBasicThreeCutCopyAndPaste() {
 		songEditor.setSelectionFrom(50000);
 		songEditor.setSelectionTo(60000);
 		songEditor.copySelection();
 		songEditor.deselectSelection();
 		songEditor.setSelectionFrom(5000);
-		songEditor.pasteCopiedSelection();		
+		songEditor.pasteCopiedSelection();	
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 3);
 		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 10001);
@@ -306,8 +366,6 @@ public class TestEditorImpl {
 		songEditor.setSelectionFrom(100000);
 		songEditor.setSelectionTo(400000);
 		songEditor.cutSelection();
-		
-		songEditor.printSongDebug();
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 2);
 		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() - 150000);
