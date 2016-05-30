@@ -1,4 +1,4 @@
-package org.jwave.editor.test;
+package org.jwave.test.editor;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -10,7 +10,7 @@ public class TestRunner {
       
       for (Failure failure : result.getFailures()) {
          System.out.println(failure.toString());
-      }s
+      }
       
       System.out.println(result.wasSuccessful());
    }
