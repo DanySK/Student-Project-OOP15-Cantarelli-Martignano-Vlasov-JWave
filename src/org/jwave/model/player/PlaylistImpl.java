@@ -2,11 +2,14 @@ package org.jwave.model.player;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.jwave.model.EObserver;
 
@@ -23,9 +26,10 @@ public class PlaylistImpl implements Playlist, Serializable {
     
     private Set<EObserver<? super Integer>> set;
     
-    private List<Song> list;
+    private Map<UUID, Song> map;
+    private List<UUID> idList;
+    private final UUID playlistID;
     private String playlistName;
-    private transient Optional<Song> currentSelected;
     
     /**
      * Creates a new empty playlist.
@@ -35,80 +39,51 @@ public class PlaylistImpl implements Playlist, Serializable {
      */
     public PlaylistImpl(final String name) {
         this.playlistName = name;
-        this.list = new LinkedList<>();
-        this.currentSelected = Optional.empty();
+        this.playlistID = UUID.randomUUID();
+        this.idList = new LinkedList<>();
+        this.map = new HashMap<>();
         this.set = new HashSet<>();
     }
     
     @Override
     public void addSong(final Song newSong) {
-        this.list.add(newSong);
+        final UUID id = newSong.getSongID();
+        if (!this.map.containsKey(id)) {
+            this.map.put(id, newSong);
+        }
+        this.idList.add(id);
         this.notifyEObservers(this.getDimension());
     }
 
     @Override
-    public void moveSongToPosition(final int songToMoveIndex, final int position) throws IllegalArgumentException {
-        if (position > this.list.size() || position < 0) {
+    public void moveSongToPosition(final int songToMoveID, final int position) throws IllegalArgumentException {
+        if (position > this.idList.size() || position < 0) {
             throw new IllegalArgumentException("Position is out of playlist borders");
         }
-        final Song tmp = this.list.get(songToMoveIndex);
-        final Song tmpTwo = this.list.get(position);
-        this.list.remove(songToMoveIndex);
-        this.list.remove(position);
-        this.list.add(position, tmp);
-        this.list.add(songToMoveIndex, tmpTwo);
+        final UUID tmp = this.idList.get(songToMoveID);
+        final UUID tmpTwo = this.idList.get(position);
+        this.idList.remove(songToMoveID);
+        this.idList.remove(position);
+        this.idList.add(position, tmp);
+        this.idList.add(songToMoveID, tmpTwo);
     }
 
     @Override
-    public void removeFromPlaylist(final Song songToBeRemoved) {
-        this.checkSongPresence(songToBeRemoved);
-        this.list.remove(songToBeRemoved);
+    public void removeFromPlaylist(final UUID songID) {
+        this.checkSongPresence(songID);
+        this.idList.remove(songID);
+        this.map.remove(songID);
         this.notifyEObservers(this.getDimension());
     }
 
     @Override
-    public Optional<Song> getCurrentSelected() {
-        return this.currentSelected;
-    }
-
-    @Override
-    public Song getSong(final String name) throws IllegalArgumentException  {
-        final Song out = this.list.stream()
-                                .filter(s -> s.getName().equals(name))
-                                .findFirst().get();
-        this.setCurrentSong(out);
-        return out;
-    }
-
-    @Override
-    public Song getSong(final int index) throws IllegalArgumentException {
-        if (index > (this.list.size() - 1) || index < 0) {
-            throw new IllegalArgumentException("Out of playlist borders.");
-        }
-        final Song out = this.list.get(index);
-        this.setCurrentSong(out);
-        return out;        
-    }
-    
-    @Override
     public int getDimension() {
-        return this.list.size();
+        return this.idList.size();
     }
     
     @Override
     public boolean isEmpty() {
-        return this.list.isEmpty();
-    }
-    
-    @Override
-    public void printPlaylist() {
-        this.list.forEach(s -> {
-            System.out.println(this.list.indexOf(s) + " " + s.getName() + "\n");
-        });
-    }
-    
-    private void setCurrentSong(final Song newCurrentSong) {
-        this.currentSelected = Optional.of(newCurrentSong);
+        return this.idList.isEmpty();
     }
 
     @Override
@@ -116,11 +91,11 @@ public class PlaylistImpl implements Playlist, Serializable {
         this.set.add(obs);
     }
 
-    @Override
-    public int indexOf(final Song song) {
-        this.checkSongPresence(song);
-        return this.list.indexOf(song);
-    }
+//    @Override
+//    public int indexOf(final Song song) {
+//        this.checkSongPresence(song);
+//        return this.list.indexOf(song);
+//    }
 
     @Override
     public void notifyEObservers(final Integer arg) {
@@ -146,17 +121,43 @@ public class PlaylistImpl implements Playlist, Serializable {
 
     @Override
     public void clear() {
-        this.list = new LinkedList<>();
+        this.idList = new LinkedList<>();
     }
     
-    private void checkSongPresence(final Song song) {
-        if (!this.list.contains(song)) {
+    private void checkSongPresence(final UUID id) {
+        if (!this.idList.contains(id)) {
             throw new IllegalArgumentException("Song not found");
         }
     }
 
     @Override
     public List<Song> getPlaylistContent() {
-        return Collections.unmodifiableList(this.list);
+       final List<Song> out = new LinkedList<>();
+       this.idList.stream()
+       .forEachOrdered(id -> out.add(this.map.get(id)));
+       return out;
+    }
+
+    @Override
+    public UUID getPlaylistID() {
+        return this.playlistID;
+    }
+
+    @Override
+    public Song getSong(final UUID songID) {
+        return this.map.get(songID);
+    }
+    
+    @Override
+    public String toString() {
+        return this.map.toString();     //TODO can be implemented better
+    }
+
+    @Override
+    public Song getSongAtIndex(final int index) throws IllegalArgumentException {
+        if (index > this.idList.size() || index < 0) {  
+            throw new IllegalArgumentException("Out of playlsit borders");
+        }
+        return this.map.get(this.idList.get(index));
     }
 }

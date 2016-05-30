@@ -1,5 +1,7 @@
 package org.jwave.model.player;
 
+import java.util.UUID;
+
 /**
  * An interface that models the concept of song.
  * A song is an audio file containing various information
@@ -21,6 +23,13 @@ public interface Song {
      *          the location of the song in the filesystem.
      */
     String getAbsolutePath();
+    
+    /**
+     * 
+     * @return
+     *          the song object unique identifier.
+     */
+    UUID getSongID();
     
     /**
      * 
