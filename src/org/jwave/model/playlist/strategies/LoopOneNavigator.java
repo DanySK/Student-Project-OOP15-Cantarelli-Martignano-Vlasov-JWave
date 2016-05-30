@@ -19,6 +19,12 @@ public class LoopOneNavigator extends AbstractPlaylistNavigator {
     }
 
     @Override
+    protected void incIndex() { }
+    
+    @Override
+    protected void decIndex() { }
+    
+    @Override
     public Optional<Integer> next() {
         return this.getCurrentIndex();
     }
