@@ -21,6 +21,8 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -29,6 +31,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -40,8 +43,8 @@ import javafx.util.Duration;
  *
  */
 public class PlayerScreenController implements PlayerUI {
-    
-    private static double MIN_CHANGE = 0.5 ;
+
+    private static double MIN_CHANGE = 0.5;
 
     private final FXMLScreens FXMLSCREEN = FXMLScreens.PLAYER;
     private final FXEnvironment environment;
@@ -64,11 +67,12 @@ public class PlayerScreenController implements PlayerUI {
         this.tableView.setPlaceholder(new Label("Nessun brano caricato"));
 
         this.listView.setItems(this.observer.getObservablePlaylists());
-        this.listView.setOnMouseClicked(e->{
-            System.out.println("SELECTED PLAYLIST: "+listView.getSelectionModel().getSelectedItem().getName());
-            System.out.println(observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).toString());
+        this.listView.setOnMouseClicked(e -> {
+            System.out.println("SELECTED PLAYLIST: " + listView.getSelectionModel().getSelectedItem().getName());
+            System.out.println(
+                    observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).toString());
         });
-        
+
         listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
             @Override
             public ListCell<Playlist> call(ListView<Playlist> lv) {
@@ -79,10 +83,9 @@ public class PlayerScreenController implements PlayerUI {
                         if (item == null) {
                             setText(null);
                         } else {
-                            if(item.getName() == "default") {
+                            if (item.getName() == "default") {
                                 setText("Tutti i brani");
-                            }
-                            else{
+                            } else {
                                 setText(item.getName());
                             }
                         }
@@ -91,11 +94,9 @@ public class PlayerScreenController implements PlayerUI {
             }
         });
 
-        
         this.volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov,
-                Number old_val, Number new_val) {
-                    System.out.println("VOLUME: "+new_val);
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                System.out.println("VOLUME: " + new_val);
             }
         });
     }
@@ -124,7 +125,8 @@ public class PlayerScreenController implements PlayerUI {
             this.observer.newPlaylist(result.get());
         }
 
-        //result.ifPresent(name -> System.out.println("Nuova Playlist: " + name));
+        // result.ifPresent(name -> System.out.println("Nuova Playlist: " +
+        // name));
     }
 
     @FXML
@@ -156,18 +158,25 @@ public class PlayerScreenController implements PlayerUI {
 
     @FXML
     private void openFile() {
-        System.out.println("Open");
-
         FileChooser fileChooser = new FileChooser();
-        // fileChooser.setSelectedExtensionFilter();
-        // new FileChooser.ExtensionFilter("*.mp3");
-        File file = fileChooser.showOpenDialog(this.primaryStage);
-        observer.loadSong(file);
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio file", "*.mp3", "*.wav"));
+        List<File> openedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
+        openedFiles.forEach(f -> {
+            try {
+                observer.loadSong(f);
+            } catch (Exception e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Errore");
+                alert.setHeaderText("Impossibile aprire il file " + f.getName());
+                alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
+                alert.showAndWait();
+            }
+        });
     }
-    
+
     @FXML
     private void positionChanged() {
-        System.out.println("SET POSITION: "+positionSlider.getValue());
+        System.out.println("SET POSITION: " + positionSlider.getValue());
         observer.moveToMoment(positionSlider.getValue());
     }
 

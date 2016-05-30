@@ -11,7 +11,7 @@ import javafx.collections.ObservableList;
 
 public interface PlayerUIObserver {
     
-    public void loadSong(File song);
+    public void loadSong(File song) throws Exception;
     
     public void loadSong(Path path);
     

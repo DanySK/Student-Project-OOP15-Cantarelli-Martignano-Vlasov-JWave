@@ -6,16 +6,22 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
+import org.jwave.model.player.MetaDataRetriever;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
+import org.jwave.model.player.SongImpl;
 import org.jwave.view.PlayerUIObserver;
+
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,7 +48,7 @@ public final class Controller implements PlayerUIObserver {
         this.player = new DynamicPlayerImpl();
         this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(PlaylistController.loadDefaultPlaylist());
-        this.agent = new ClockAgent(player, player, manager, "agent");
+        this.agent = new ClockAgent(player, player, manager, "agent"); //!!!!!!!!! playerx2
         this.agent.startClockAgent();
         try {
             manager.setAvailablePlaylists(PlaylistController.reloadAvailablePlaylists());
@@ -63,20 +69,26 @@ public final class Controller implements PlayerUIObserver {
     }
 
     @Override
-    public void loadSong(final File song) {
+    public void loadSong(final File song) throws Exception {
         System.out.println("load " + song.getPath() + "  " + song);
+
         this.manager.addAudioFile(song);
+
+        
+        //player.setPlayer(new SongImpl(song));
+        //songs.get(manager.getDefaultPlaylist()).add(song);
+
+        manager.getDefaultPlaylist().getPlaylistContent().forEach(e -> {
+            System.out.println(e.getName());
+        });
+        
+        /*
         if (this.player.isEmpty()) {
             manager.setQueue(manager.getDefaultPlaylist());
             this.player
                     .setPlayer(manager.selectSongFromPlayingQueueAtIndex(manager.getPlayingQueue().getDimension() - 1));
         }
-
-        System.out.print("PLAYING QUEUE: ");
-        for (int i = 0; i < manager.getPlayingQueue().getDimension(); i++) {
-            System.out.print(manager.getPlayingQueue().getSongAtIndex(i).getName() + "  ");
-        }
-        System.out.println();
+        */
     }
 
     @Override
@@ -89,9 +101,9 @@ public final class Controller implements PlayerUIObserver {
         if (this.player.isPlaying()) {
             this.player.pause();
         } else {
-            if (!player.isEmpty()){
+            if (!player.isEmpty()) {
                 this.player.play();
-            }          
+            }
         }
     }
 
@@ -140,9 +152,7 @@ public final class Controller implements PlayerUIObserver {
     @Override
     public void addSongToPlaylist(Song song, Playlist playlist) {
         playlist.addSong(song);
-        System.out.println("ADDING " + song + " TO " + playlist);
         songs.get(playlist).add(song);
-        System.out.println(songs.get(playlist).toString());
     }
 
     @Override
@@ -164,7 +174,10 @@ public final class Controller implements PlayerUIObserver {
     @Override
     public ObservableList<Song> getObservablePlaylistContent(Playlist playlist) {
 
-        System.out.println(playlist.getName() + " SONGS " + this.songs.toString());
+        System.out.println(playlist.getName() + " SONGS ");
+        this.songs.get(playlist).forEach(e -> {
+            System.out.println(e.toString());
+        });
         return songs.get(playlist);
     }
 }
