@@ -6,7 +6,7 @@ import java.util.Optional;
  * 
  *A LoopOne navigator follows the LOOP_ALL {@link}PlayMode policy.
  */
-public class LoopAllNavigator extends AbstractPlaylistNavigator {
+public class LinearNavigator extends AbstractPlaylistNavigator {
 
     /**
      * Creates a new instance of this navigator.
@@ -17,7 +17,7 @@ public class LoopAllNavigator extends AbstractPlaylistNavigator {
      * @param currentIndex
      *          starting index.
      */
-    public LoopAllNavigator(final int initDimension, final Optional<Integer> currentIndex) {
+    public LinearNavigator(final int initDimension, final Optional<Integer> currentIndex) {
         super(initDimension, currentIndex);
     }
 
@@ -41,7 +41,7 @@ public class LoopAllNavigator extends AbstractPlaylistNavigator {
     public Optional<Integer> prev() {
         if (this.getCurrentIndex().isPresent()) {
             if (this.getCurrentIndex().get() == 0) {
-                this.setCurrentIndex(Optional.of(this.getPlaylistDimension()));
+                this.setCurrentIndex(Optional.of(this.getPlaylistDimension() - 1));
             } else {
                 this.setCurrentIndex(Optional.of(this.getCurrentIndex().get() - 1));
             }

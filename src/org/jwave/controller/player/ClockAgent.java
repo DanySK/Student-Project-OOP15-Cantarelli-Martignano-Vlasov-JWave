@@ -3,6 +3,7 @@ package org.jwave.controller.player;
 import java.util.Optional;
 
 import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.Song;
 
@@ -57,18 +58,8 @@ public class ClockAgent implements Runnable {
     }
     
     private void checkInReproduction() {
-        if (!this.dynPlayer.isEmpty() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() 
-                && !this.dynPlayer.isPaused()) {
-            final Optional<Song> nextSong = this.playlistManager.next();
-            if (nextSong.isPresent()) {
-                this.dynPlayer.setPlayer(nextSong.get());
-                this.dynPlayer.play();
-            }
-        }
-        
-        if (this.dynEditorPlayer.getLoaded().isPresent()) {
-        	this.dynEditorPlayer.isPlaying();
-        }
+        this.checkPlayer();
+        this.checkEditor();
     }
     
     /**
@@ -102,5 +93,39 @@ public class ClockAgent implements Runnable {
     
     private void setStopped(final boolean value) {
         this.stopped = value;
+    }
+    
+    private void checkPlayer() {
+        final PlayMode currentMode = this.playlistManager.getPlayMode();
+        if (!this.dynPlayer.isEmpty() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() 
+                && !this.dynPlayer.isPaused()) {
+            switch (currentMode) {
+            case LOOP_ONE:
+                this.dynPlayer.stop();
+                this.dynPlayer.play();
+                break;
+            case NO_LOOP:
+                final Optional<Song> current = this.dynPlayer.getLoaded();
+                if (current.isPresent()) {
+                    if (this.playlistManager.getPlayingQueue().indexOf(current.get().getSongID()) 
+                            >= (this.playlistManager.getPlayingQueue().getDimension() - 1)) {
+                        this.dynPlayer.setPlayer(this.playlistManager.selectSongFromPlayingQueueAtIndex(0));
+                        break;
+                    }
+                }
+            default:
+                final Optional<Song> nextSong = this.playlistManager.next();
+                if (nextSong.isPresent()) {
+                    this.dynPlayer.setPlayer(nextSong.get());
+                    this.dynPlayer.play();
+                }
+            }
+        }
+    }
+    
+    private void checkEditor() {
+        if (this.dynEditorPlayer.getLoaded().isPresent()) {
+            this.dynEditorPlayer.isPlaying();
+        }
     }
 }

@@ -160,7 +160,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     }
     
     private void checkPlayerLoaded() {
-        if (this.player == null) {
+        if (this.isEmpty()) {
             throw new IllegalStateException("No song has been loaded");
         }
     }
