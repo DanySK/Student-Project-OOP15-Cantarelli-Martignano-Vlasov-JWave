@@ -15,7 +15,7 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
     
     private final Random seed;
     private final List<Integer> shuffledList;
-    private Optional<Integer> shuffledIndex;
+//    private Optional<Integer> shuffledIndex;
     
     /**
      * Creates a new instance of ShuffleNavigator.
@@ -28,39 +28,40 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
         super(playlistDimension, Optional.empty());
         this.seed = new Random();
         this.shuffledList = new ArrayList<>();
-        this.shuffledIndex = Optional.empty();
-        this.shuffle();
+//        this.shuffledIndex = Optional.empty();
     }
     
     @Override
     public Optional<Integer> next() {        
-       if (this.shuffledIndex.isPresent()) {
-           if (this.shuffledIndex.get() >= (this.shuffledList.size() - 1)) {
+       if (this.getCurrentIndex().isPresent()) {
+           if (this.getCurrentIndex().get() >= (this.shuffledList.size() - 1)) {
                this.shuffle();
            } 
-           this.shuffledIndex = Optional.of(this.shuffledIndex.get() + 1);
+           this.incIndex();
        } else {
-           if (this.getPlaylistDimension() > 0) {
+           if (this.getPlaylistDimension() > 0) {       //init case
                this.shuffle();
-               this.shuffledIndex = Optional.of(this.shuffledList.get(0));
+               this.incIndex();
            }
        }
-       return this.shuffledIndex;
+       return Optional.of(this.shuffledList.get(this.getCurrentIndex().get()));
     }
 
     @Override
     public Optional<Integer> prev() {
-       if (this.shuffledIndex.equals(Optional.empty())) {
-           return this.shuffledIndex;
+       if (this.getCurrentIndex().equals(Optional.empty())) {
+           return this.getCurrentIndex();
        } else {
-           if (this.shuffledIndex.get().equals(0)) {
+           if (this.getCurrentIndex().get().equals(0)) {
                return Optional.empty();
            }
-           this.shuffledIndex = Optional.of(this.shuffledIndex.get() - 1);
-           return this.shuffledIndex;
+           this.decIndex();
+           return Optional.of(this.shuffledList.get(this.getCurrentIndex().get()));
        }
     }
  
+    @Override
+    public void setCurrentIndex(final Optional<Integer> index) { }
     
     private void shuffle() {
         final int dim = this.getPlaylistDimension();

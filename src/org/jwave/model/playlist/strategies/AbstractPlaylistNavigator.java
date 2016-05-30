@@ -39,10 +39,22 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
      *          the previous index that has to be selected in playlist.
      */
     public abstract Optional<Integer> prev();
-
-    @Override
-    public void setPlaylistDimension(final int newDimension) {
-        this.playlistDimension = newDimension;
+    
+    /**
+     * Increments current index.
+     */
+    protected void incIndex() {
+        if (this.currentIndex.equals(Optional.empty())) {
+            this.currentIndex = Optional.of(0);
+        }
+       this.addToCurrentIndex(1);
+    }
+    
+    /**
+     * Decrements current index.
+     */
+    protected void decIndex() {
+        this.addToCurrentIndex(-1);
     }
     
     /**
@@ -71,5 +83,13 @@ public abstract class AbstractPlaylistNavigator implements PlaylistNavigator {
     @Override
     public void setCurrentIndex(final Optional<Integer> index) {
         this.currentIndex = index;
+    }
+    
+    private void setPlaylistDimension(final int newDimension) {
+        this.playlistDimension = newDimension;
+    }
+    
+    private void addToCurrentIndex(final int value) {
+        this.currentIndex = Optional.of(this.currentIndex.get() + value);
     }
 }

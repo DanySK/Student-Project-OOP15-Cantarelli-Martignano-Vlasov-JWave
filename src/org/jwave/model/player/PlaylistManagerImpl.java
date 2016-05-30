@@ -37,7 +37,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.currentIndex = Optional.empty();
         this.defaultQueue = newDefaultQueue;
         this.loadedPlaylist = this.defaultQueue;
-        this.playMode = PlayMode.SHUFFLE;
+        this.playMode = PlayMode.NO_LOOP;
         this.navigator = this.navFactory.createNavigator(this.playMode, this.loadedPlaylist.getDimension(), Optional.empty());
         this.loadedPlaylist.addEObserver(this.navigator);
     }
@@ -60,9 +60,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     @Override
     public void deletePlaylist(final Playlist playlist) {
-//        if (!this.availablePlaylists.contains(playlist)) {
-//            throw new IllegalArgumentException("Playlist not found");
-//        }
         this.availablePlaylists.remove(playlist);
     }
     

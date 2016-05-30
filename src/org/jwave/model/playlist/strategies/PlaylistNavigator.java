@@ -25,14 +25,6 @@ public interface PlaylistNavigator extends EObserver<Integer> {
     Optional<Integer> prev();
     
     /**
-     * Sets the playlist dimension for the navigator.
-     * 
-     * @param newDimension
-     *          the new playlist dimension the navigator has to scroll.
-     */
-    void setPlaylistDimension(int newDimension);  
-    
-    /**
      * Sets the current index in the navigator.
      * 
      * @param index
