@@ -69,16 +69,7 @@ public final class Controller implements PlayerUIObserver {
         if (this.player.isEmpty()) {
             manager.setQueue(manager.getDefaultPlaylist());
             this.player
-                    .setPlayer(manager.selectSongFromPlayingQueueAtIndex(manager.getPlayingQueue().getDimension() - 1)); // the
-                                                                                                                         // song
-                                                                                                                         // added
-                                                                                                                         // is
-                                                                                                                         // the
-                                                                                                                         // last
-                                                                                                                         // in
-                                                                                                                         // the
-                                                                                                                         // default
-                                                                                                                         // playlist
+                    .setPlayer(manager.selectSongFromPlayingQueueAtIndex(manager.getPlayingQueue().getDimension() - 1));
         }
 
         System.out.print("PLAYING QUEUE: ");
@@ -98,7 +89,9 @@ public final class Controller implements PlayerUIObserver {
         if (this.player.isPlaying()) {
             this.player.pause();
         } else {
-            this.player.play();
+            if (!player.isEmpty()){
+                this.player.play();
+            }          
         }
     }
 
@@ -135,6 +128,7 @@ public final class Controller implements PlayerUIObserver {
     public void newPlaylist(String name) {
         Playlist newPlaylist = this.manager.createNewPlaylist(name);
         this.playlists.add(newPlaylist);
+        this.songs.put(newPlaylist, FXCollections.observableArrayList());
         try {
             PlaylistController.savePlaylistToFile(newPlaylist, name);
         } catch (IOException e) {
@@ -146,7 +140,9 @@ public final class Controller implements PlayerUIObserver {
     @Override
     public void addSongToPlaylist(Song song, Playlist playlist) {
         playlist.addSong(song);
+        System.out.println("ADDING " + song + " TO " + playlist);
         songs.get(playlist).add(song);
+        System.out.println(songs.get(playlist).toString());
     }
 
     @Override
@@ -167,6 +163,8 @@ public final class Controller implements PlayerUIObserver {
 
     @Override
     public ObservableList<Song> getObservablePlaylistContent(Playlist playlist) {
+
+        System.out.println(playlist.getName() + " SONGS " + this.songs.toString());
         return songs.get(playlist);
     }
 }
