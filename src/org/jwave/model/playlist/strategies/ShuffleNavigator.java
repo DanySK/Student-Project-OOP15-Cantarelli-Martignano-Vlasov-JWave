@@ -44,7 +44,7 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
                this.incIndex();
            }
        }
-       return this.getCurrentIndex();
+       return Optional.of(this.shuffledList.get(this.getCurrentIndex().get()));
     }
 
     @Override
@@ -56,7 +56,7 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
                return Optional.empty();
            }
            this.decIndex();
-           return this.getCurrentIndex();
+           return Optional.of(this.shuffledList.get(this.getCurrentIndex().get()));
        }
     }
  
