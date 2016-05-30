@@ -73,7 +73,9 @@ public interface Playlist extends ESource<Integer> {
      * @return
      *          the selected song.
      *          
-     *          
+     * @throws IllegalArgumentException
+     *          when the playilist doesn't contain the songID.   
+     *                  
      */
     Song getSong(UUID songID) throws IllegalArgumentException;  
     
