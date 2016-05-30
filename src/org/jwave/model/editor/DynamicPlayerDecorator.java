@@ -16,7 +16,7 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 	private int currentSegmentIndex;
 	private int currentCutIndex;
 	
-	public DynamicPlayerDecorator(DynamicPlayer player) {
+	public DynamicPlayerDecorator(final DynamicPlayer player) {
 		this.decoratedDynamicPlayer = player;
 	}
 	
@@ -41,7 +41,7 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 	}
 
 	@Override
-	public void cue(int millis) {
+	public void cue(final int millis) {
 		this.decoratedDynamicPlayer.cue(millis);
 	}
 
@@ -56,13 +56,21 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 
 	@Override
 	public int getPosition() {
-		int currentPosition = this.cuts.get(this.currentCutIndex).getFrom();
+		int currentPosition = 0;
+		Cut currentCut;
+		Segment currentSegment;
+		
+		currentCut = this.cuts.get(this.currentCutIndex);
+		
+		currentPosition = currentCut.getFrom();
 		
 		for (int i = 0; i < this.currentSegmentIndex; i++) {
 			currentPosition += this.cuts.get(this.currentCutIndex).getSegment(i).getLength();
 		}
 		
-		currentPosition += this.getSongPosition() - this.cuts.get(this.currentCutIndex).getSegment(this.currentSegmentIndex).getFrom();
+		currentSegment = currentCut.getSegment(this.currentSegmentIndex);
+		
+		currentPosition += this.getSongPosition() - currentSegment.getFrom();
 		
 		return currentPosition;
 	}
@@ -110,12 +118,12 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 	}
 
 	@Override
-	public void setVolume(int amount) {
+	public void setVolume(final int amount) {
 		this.decoratedDynamicPlayer.setVolume(amount);
 	}
 	
 	@Override
-	public void setPlayer(Song song) {
+	public void setPlayer(final Song song) {
 		this.song = (ModifiableSong) song;
 		
 		this.decoratedDynamicPlayer.setPlayer(this.song);

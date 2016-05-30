@@ -8,27 +8,27 @@ import org.jwave.model.player.Song;
 public abstract class ModifiableSongDecorator implements Song {
 	protected Song decoratedSong;
 	
-	public ModifiableSongDecorator(Song decoratedSong) {
+	public ModifiableSongDecorator(final Song decoratedSong) {
 		this.decoratedSong = decoratedSong;
 	}
 
 	@Override
-	public String getName() {
+	final public String getName() {
 		return decoratedSong.getName();
 	}
 
 	@Override
-	public String getAbsolutePath() {
+	final public String getAbsolutePath() {
 		return decoratedSong.getAbsolutePath();
 	}
 
 	@Override
-	public UUID getSongID() {
+	final public UUID getSongID() {
 		return decoratedSong.getSongID();
 	}
 	
 	@Override
-    public MetaDataRetriever getMetaData() {
+    final public MetaDataRetriever getMetaData() {
         return decoratedSong.getMetaData();
     }
 }

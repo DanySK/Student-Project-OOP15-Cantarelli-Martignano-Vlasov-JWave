@@ -129,7 +129,12 @@ public class EditorImpl implements Editor {
 		if (isSomethingSelected()) {
 			this.song.resetPreviousCopy();
 			this.copiedFrom = (this.selectionFrom < 0 ? 0 : this.selectionFrom);
-			this.copiedTo = (this.selectionTo > this.getModifiedSongLength() ? this.getModifiedSongLength() : this.selectionTo);			
+			
+			if (this.selectionTo > this.getModifiedSongLength()) {
+				this.copiedTo = this.getModifiedSongLength();
+			} else {
+				this.copiedTo = this.selectionTo;
+			}			
 		} else {
 			throw new IllegalStateException();
 		}
@@ -191,11 +196,16 @@ public class EditorImpl implements Editor {
 	}	
 	
 	public void printWaveform() {
+		List<GroupedSampleInfo> results;
+		
 		if (this.isSongLoaded()) {
-			List<GroupedSampleInfo> results = this.song.getAggregatedWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
+			results = this.song.getAggregatedWaveform(0, (int) (this.song.getModifiedLength() / 1), 1000);
 			
 			for (int i = 0; i < results.size(); i++) {
-				System.out.println(i + ", " + results.get(i).getLeftChannelMax() + ", " + results.get(i).getLeftChannelMin() + ", " + results.get(i).getRightChannelMax() + ", " + results.get(i).getRightChannelMin());
+				System.out.println(i + ", " + results.get(i).getLeftChannelMax() +
+										", " + results.get(i).getLeftChannelMin() +
+										", " + results.get(i).getRightChannelMax() +
+										", " + results.get(i).getRightChannelMin());
 			}
 		}		
 	}

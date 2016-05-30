@@ -11,8 +11,10 @@ public class GroupedSampleInfoImpl implements GroupedSampleInfo {
 	private final float rightPosRMS;
 	private final float rightNegRMS;	
 	
-	public GroupedSampleInfoImpl(float leftMax, float leftMin, float leftPosRMS, float leftNegRMS,
-								 float rightMax, float rightMin, float rightPosRMS, float rightNegRMS) {
+	public GroupedSampleInfoImpl(final float leftMax, final float leftMin,
+								 final float leftPosRMS, final float leftNegRMS,
+								 final float rightMax, final float rightMin,
+								 final float rightPosRMS, final float rightNegRMS) {
 		this.leftMax = leftMax;
 		this.leftMin = leftMin;
 		this.leftPosRMS = leftPosRMS;
