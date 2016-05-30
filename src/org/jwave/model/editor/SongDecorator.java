@@ -1,5 +1,7 @@
 package org.jwave.model.editor;
 
+import java.util.UUID;
+
 import org.jwave.model.player.MetaDataRetriever;
 import org.jwave.model.player.Song;
 
@@ -16,6 +18,10 @@ public abstract class SongDecorator implements Song {
 
 	public String getAbsolutePath() {
 		return decoratedSong.getAbsolutePath();
+	}
+
+	public UUID getSongID() {
+		return decoratedSong.getSongID();
 	}
 	
     @Override
