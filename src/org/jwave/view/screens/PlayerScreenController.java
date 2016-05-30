@@ -66,6 +66,7 @@ public class PlayerScreenController implements PlayerUI {
         this.listView.setItems(this.observer.getObservablePlaylists());
         this.listView.setOnMouseClicked(e->{
             System.out.println("SELECTED PLAYLIST: "+listView.getSelectionModel().getSelectedItem().getName());
+            System.out.println(observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).toString());
         });
         
         listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
@@ -78,8 +79,12 @@ public class PlayerScreenController implements PlayerUI {
                         if (item == null) {
                             setText(null);
                         } else {
-                            // assume MyDataType.getSomeProperty() returns a string
-                            setText(item.getName());
+                            if(item.getName() == "default") {
+                                setText("Tutti i brani");
+                            }
+                            else{
+                                setText(item.getName());
+                            }
                         }
                     }
                 };

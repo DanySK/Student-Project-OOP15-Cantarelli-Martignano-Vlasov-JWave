@@ -68,10 +68,10 @@
             </VBox>
             <TableView fx:id="tableView" prefHeight="431.0" prefWidth="640.0">
               <columns>
-                <TableColumn prefWidth="160.0" text="Titolo" />
-                <TableColumn minWidth="0.0" prefWidth="160.0" text="Autore" />
-                  <TableColumn minWidth="0.0" prefWidth="160.0" text="Album" />
-                  <TableColumn minWidth="0.0" prefWidth="160.0" text="Genere" />
+                <TableColumn fx:id="columnTitle" prefWidth="160.0" text="Titolo" />
+                <TableColumn fx:id="columnAuthor" minWidth="0.0" prefWidth="160.0" text="Autore" />
+                  <TableColumn fx:id="columnAlbum" minWidth="0.0" prefWidth="160.0" text="Album" />
+                  <TableColumn fx:id="columnGenre" minWidth="0.0" prefWidth="160.0" text="Genere" />
               </columns>
             </TableView>
             </items>
