@@ -131,8 +131,6 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 
 	@Override
 	public void pasteSelectionAt(int from, int to, int at) {
-		to = to - 1;
-		
 		int cutToDivideIndex = 0;
 		Cut cutToDivide = null;
 		Cut cutToInsert = generateCutFromSelection(from, to, at);

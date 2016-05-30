@@ -1,4 +1,4 @@
-package org.jwave.editor.test;
+package org.jwave.test.editor;
 
 import static org.junit.Assert.*;
 
@@ -49,9 +49,9 @@ public class TestEditorImpl {
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == songEditor.getOriginalSongLength() - 1);
 		
-		assertTrue(songEditor.getSong().getCut(1).getFrom() == songEditor.getOriginalSongLength() && songEditor.getSong().getCut(1).getTo() == songEditor.getOriginalSongLength() + songEditor.getOriginalSongLength() - 1);
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == songEditor.getOriginalSongLength() && songEditor.getSong().getCut(1).getTo() == songEditor.getOriginalSongLength() + songEditor.getOriginalSongLength());
 		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(1).getSegment(0).getTo() == songEditor.getOriginalSongLength() - 1);			
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(1).getSegment(0).getTo() == songEditor.getOriginalSongLength());			
 	}
 	
 	@Test
@@ -74,31 +74,29 @@ public class TestEditorImpl {
 		songEditor.setSelectionTo(75000);
 		songEditor.cutSelection();
 		
-		songEditor.printSongDebug();
-		
 		assertTrue(songEditor.getSong().getCuts().size() == 5);	
-		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 12499);		
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 12501);		
 		
 		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 9999);
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 9999);
 	
-		assertTrue(songEditor.getSong().getCut(1).getFrom() == 10000 && songEditor.getSong().getCut(1).getTo() == 19999);
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 10000 && songEditor.getSong().getCut(1).getTo() == 20000);
 		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 59999);
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 60000);
 		
-		assertTrue(songEditor.getSong().getCut(2).getFrom() == 20000 && songEditor.getSong().getCut(2).getTo() == 49999);
+		assertTrue(songEditor.getSong().getCut(2).getFrom() == 20001 && songEditor.getSong().getCut(2).getTo() == 49999);
 		assertTrue(songEditor.getSong().getCut(2).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 39999);
+		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 39998);
 		
 		assertTrue(songEditor.getSong().getCut(3).getFrom() == 50000 && songEditor.getSong().getCut(3).getTo() == 57499);
 		assertTrue(songEditor.getSong().getCut(3).getSegments().size() == 2);
 		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 5000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 9999);
 		assertTrue(songEditor.getSong().getCut(3).getSegment(1).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(1).getTo() == 52499);
 		
-		assertTrue(songEditor.getSong().getCut(4).getFrom() == 57500 && songEditor.getSong().getCut(4).getTo() == 313038);
+		assertTrue(songEditor.getSong().getCut(4).getFrom() == 57500 && songEditor.getSong().getCut(4).getTo() == 313040);
 		assertTrue(songEditor.getSong().getCut(4).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 45001 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
+		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 44999 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
 	}
 	
 	@Test
@@ -118,29 +116,29 @@ public class TestEditorImpl {
 		songEditor.pasteCopiedSelection();
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 5);	
-		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 30000);
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 30002);
 		
 		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 9999);
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 9999);
 	
-		assertTrue(songEditor.getSong().getCut(1).getFrom() == 10000 && songEditor.getSong().getCut(1).getTo() == 19999);
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 10000 && songEditor.getSong().getCut(1).getTo() == 20000);
 		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 59999);
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 60000);
 		
-		assertTrue(songEditor.getSong().getCut(2).getFrom() == 20000 && songEditor.getSong().getCut(2).getTo() == 49999);
+		assertTrue(songEditor.getSong().getCut(2).getFrom() == 20001 && songEditor.getSong().getCut(2).getTo() == 49999);
 		assertTrue(songEditor.getSong().getCut(2).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 39999);
+		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 39998);
 		
-		assertTrue(songEditor.getSong().getCut(3).getFrom() == 50000 && songEditor.getSong().getCut(3).getTo() == 69999);
+		assertTrue(songEditor.getSong().getCut(3).getFrom() == 50000 && songEditor.getSong().getCut(3).getTo() == 70000);
 		assertTrue(songEditor.getSong().getCut(3).getSegments().size() == 3);
 		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 5000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 9999);
-		assertTrue(songEditor.getSong().getCut(3).getSegment(1).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(1).getTo() == 59999);
+		assertTrue(songEditor.getSong().getCut(3).getSegment(1).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(1).getTo() == 60000);
 		assertTrue(songEditor.getSong().getCut(3).getSegment(2).getFrom() == 10000 && songEditor.getSong().getCut(3).getSegment(2).getTo() == 14999);
 		
-		assertTrue(songEditor.getSong().getCut(4).getFrom() == 70000 && songEditor.getSong().getCut(4).getTo() == songEditor.getOriginalSongLength() + 30000);
+		assertTrue(songEditor.getSong().getCut(4).getFrom() == 70001 && songEditor.getSong().getCut(4).getTo() == songEditor.getOriginalSongLength() + 30002);
 		assertTrue(songEditor.getSong().getCut(4).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 40000 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
+		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 39999 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
 	}	
 	
 	@Test
@@ -151,8 +149,6 @@ public class TestEditorImpl {
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 2);	
 		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() - 90001);
-		
-		songEditor.printSongDebug();
 		
 		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 9999);
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
@@ -204,10 +200,10 @@ public class TestEditorImpl {
 		songEditor.pasteCopiedSelection();
 		songEditor.deselectSelection();
 		songEditor.setSelectionFrom(50000);
-		songEditor.pasteCopiedSelection();
+		songEditor.pasteCopiedSelection();		
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 7);	
-		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 270000);
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 270003);
 		
 		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 9999);
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
@@ -217,25 +213,25 @@ public class TestEditorImpl {
 		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 49999);
 		
-		assertTrue(songEditor.getSong().getCut(2).getFrom() == 50000 && songEditor.getSong().getCut(2).getTo() == 139999);
+		assertTrue(songEditor.getSong().getCut(2).getFrom() == 50000 && songEditor.getSong().getCut(2).getTo() == 140000);
 		assertTrue(songEditor.getSong().getCut(2).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 99999);
+		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 100000);
 		
-		assertTrue(songEditor.getSong().getCut(3).getFrom() == 140000 && songEditor.getSong().getCut(3).getTo() == 189999);
+		assertTrue(songEditor.getSong().getCut(3).getFrom() == 140001 && songEditor.getSong().getCut(3).getTo() == 190001);
 		assertTrue(songEditor.getSong().getCut(3).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 99999);
+		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 100000);
 		
-		assertTrue(songEditor.getSong().getCut(4).getFrom() == 190000 && songEditor.getSong().getCut(4).getTo() == 289999);
+		assertTrue(songEditor.getSong().getCut(4).getFrom() == 190002 && songEditor.getSong().getCut(4).getTo() == 290000);
 		assertTrue(songEditor.getSong().getCut(4).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(4).getSegment(0).getTo() == 109999);
+		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(4).getSegment(0).getTo() == 109998);
 		
-		assertTrue(songEditor.getSong().getCut(5).getFrom() == 290000 && songEditor.getSong().getCut(5).getTo() == 379999);
+		assertTrue(songEditor.getSong().getCut(5).getFrom() == 290001 && songEditor.getSong().getCut(5).getTo() == 380001);
 		assertTrue(songEditor.getSong().getCut(5).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(5).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(5).getSegment(0).getTo() == 99999);
+		assertTrue(songEditor.getSong().getCut(5).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(5).getSegment(0).getTo() == 100000);
 		
-		assertTrue(songEditor.getSong().getCut(6).getFrom() == 380000 && songEditor.getSong().getCut(6).getTo() == songEditor.getOriginalSongLength() + 270000);
+		assertTrue(songEditor.getSong().getCut(6).getFrom() == 380002 && songEditor.getSong().getCut(6).getTo() == songEditor.getOriginalSongLength() + 270003);
 		assertTrue(songEditor.getSong().getCut(6).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(6).getSegment(0).getFrom() == 110000 && songEditor.getSong().getCut(6).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
+		assertTrue(songEditor.getSong().getCut(6).getSegment(0).getFrom() == 109999 && songEditor.getSong().getCut(6).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
 	}
 	
 	@Test
@@ -251,27 +247,27 @@ public class TestEditorImpl {
 		songEditor.pasteCopiedSelection();
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 5);	
-		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 20000);
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 20002);
 		
 		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 9999);
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 9999);
 	
-		assertTrue(songEditor.getSong().getCut(1).getFrom() == 10000 && songEditor.getSong().getCut(1).getTo() == 19999);
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 10000 && songEditor.getSong().getCut(1).getTo() == 20000);
 		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 59999);
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 60000);
 		
-		assertTrue(songEditor.getSong().getCut(2).getFrom() == 20000 && songEditor.getSong().getCut(2).getTo() == 49999);
+		assertTrue(songEditor.getSong().getCut(2).getFrom() == 20001 && songEditor.getSong().getCut(2).getTo() == 49999);
 		assertTrue(songEditor.getSong().getCut(2).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 39999);
+		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 10000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == 39998);
 		
-		assertTrue(songEditor.getSong().getCut(3).getFrom() == 50000 && songEditor.getSong().getCut(3).getTo() == 59999);
+		assertTrue(songEditor.getSong().getCut(3).getFrom() == 50000 && songEditor.getSong().getCut(3).getTo() == 60000);
 		assertTrue(songEditor.getSong().getCut(3).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 59999);
+		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 60000);
 		
-		assertTrue(songEditor.getSong().getCut(4).getFrom() == 60000 && songEditor.getSong().getCut(4).getTo() == songEditor.getOriginalSongLength() + 20000);
+		assertTrue(songEditor.getSong().getCut(4).getFrom() == 60001 && songEditor.getSong().getCut(4).getTo() == songEditor.getOriginalSongLength() + 20002);
 		assertTrue(songEditor.getSong().getCut(4).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 40000 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
+		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 39999 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
 	}	
 	
 	@Test
@@ -284,18 +280,44 @@ public class TestEditorImpl {
 		songEditor.pasteCopiedSelection();		
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 3);
-		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 10000);
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + 10001);
 		
 		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 4999);
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 4999);
 		
-		assertTrue(songEditor.getSong().getCut(1).getFrom() == 5000 && songEditor.getSong().getCut(1).getTo() == 14999);
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 5000 && songEditor.getSong().getCut(1).getTo() == 15000);
 		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
-		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 59999);		
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 50000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == 60000);		
 		
-		assertTrue(songEditor.getSong().getCut(2).getFrom() == 15000  && songEditor.getSong().getCut(2).getTo() == songEditor.getModifiedSongLength());
+		assertTrue(songEditor.getSong().getCut(2).getFrom() == 15001  && songEditor.getSong().getCut(2).getTo() == songEditor.getOriginalSongLength() + 10001);
 		assertTrue(songEditor.getSong().getCut(2).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(2).getSegment(0).getFrom() == 5000 && songEditor.getSong().getCut(2).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
 	}	
+	
+	@Test
+	public void testVeryBasicCopyAndPasteAndCutToRemoveCenter() {
+		songEditor.setSelectionFrom(150000);
+		songEditor.setSelectionTo(300000);
+		songEditor.copySelection();
+		songEditor.deselectSelection();
+		songEditor.setSelectionFrom(200000);
+		songEditor.pasteCopiedSelection();	
+		songEditor.setSelectionFrom(100000);
+		songEditor.setSelectionTo(400000);
+		songEditor.cutSelection();
+		
+		songEditor.printSongDebug();
+		
+		assertTrue(songEditor.getSong().getCuts().size() == 2);
+		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() - 150000);
+		
+		assertTrue(songEditor.getSong().getCut(0).getFrom() == 0 && songEditor.getSong().getCut(0).getTo() == 99999);
+		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 99999);
+		
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 100000 && songEditor.getSong().getCut(1).getTo() == 150539);
+		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
+		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 250000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == songEditor.getOriginalSongLength());			
+	}		
 }
