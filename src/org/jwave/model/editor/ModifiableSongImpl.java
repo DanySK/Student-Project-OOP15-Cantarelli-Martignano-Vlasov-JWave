@@ -212,6 +212,9 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 	
 	@Override
 	public void deleteSelection(int from, int to) {
+		previousCopy.clear();
+		previousCopy.addAll(this.generateCutFromSelection(from, to, 0).getSegments());
+		
 		int i;
 		int selectionLength = to - from + 1; // plus one because algebraic subtraction forgets about one ms index
 
