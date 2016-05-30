@@ -26,9 +26,12 @@ public interface PlaylistManager {
      * 
      * @return 
      *          the playlist created
+     *          
+     * @pthrows IllegalArgumentException
+     *          when inserting a name that is already present in the avalable playlists.         
      * 
      */
-    Playlist createNewPlaylist(String name);
+    Playlist createNewPlaylist(String name) throws IllegalArgumentException;
     
     /**
      * Deletes a playlist.

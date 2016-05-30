@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -86,52 +87,30 @@ public final class PlaylistController {
      * @return
      *          A collection containing all the available playlists.
      *          
-     * @throws IOException 
-     * 
-     * @throws ClassNotFoundException 
-     * 
-     * @throws IllegalArgumentException 
      */
-    public static Collection<Playlist> reloadAvailablePlaylists() throws IOException, IllegalArgumentException, 
-    ClassNotFoundException {   
+    public static Collection<Playlist> reloadAvailablePlaylists() {   
         final Path defaultDir = getDefaultSavePath();
         final Set<Playlist> out = new HashSet<>();
-        final  DirectoryStream<Path> stream = Files.newDirectoryStream(defaultDir);
+        DirectoryStream<Path> stream;
+        try {
+            stream = Files.newDirectoryStream(defaultDir);
+        } catch (IOException e) {
+            return Collections.emptySet();
+        }
         for (Path file : stream) {
-            if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jwo")) {
-                out.add(loadPlaylist(file.toFile()));
+            if (Files.exists(file) && Files.isRegularFile(file)) {
+                try {
+                    out.add(loadPlaylist(file.toFile()));
+                } catch (ClassNotFoundException | IOException e) { }
             }
         }
         return out;
     }
     
-//    /**
-//     * Renames a playlist.
-//     * 
-//     * @param playlist
-//     *          the playlist to be renamed.
-//     *          
-//     * @param newName
-//     *          the new name of the playlist.
-//     *          
-//     * @throws FileNotFoundException
-//     * 
-//     * @throws IOException
-//     */
-//    public static void renamePlaylist(final Playlist playlist, final String newName) throws FileNotFoundException, IOException {
-//        final String oldName = playlist.getName();      //avoid name duplication
-//        final Path filePath = Paths.get(getDefaultSavePath() + System.getProperty(SEPARATOR) + oldName);
-//        savePlaylistToFile(playlist, playlist.getName(), getDefaultSavePath());
-//        Files.delete(filePath);
-//    }
-    
-    private static Playlist loadPlaylist(final File playlist) throws IllegalArgumentException, ClassNotFoundException, IOException {
+    private static Playlist loadPlaylist(final File playlist) throws FileNotFoundException, IOException, ClassNotFoundException {
         try (final ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(
                 new FileInputStream(playlist)))) {
             final Playlist extractedPlaylist = (Playlist) ois.readObject();
-            if (!(extractedPlaylist instanceof Playlist)) {
-                throw new IllegalArgumentException("File not recognized");
-            }
             return extractedPlaylist;
         }
     }
@@ -150,7 +129,7 @@ public final class PlaylistController {
         final Path userHomeDir  = Paths.get(System.getProperty(HOME));
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(userHomeDir)) {
             for (Path file : stream) {
-               if (Files.isDirectory(file) && file.getFileName().toString().equals(SAVE_DIR_NAME)) {
+               if (Files.exists(file) && Files.isDirectory(file) && file.getFileName().toString().equals(SAVE_DIR_NAME)) {
                    return true;
                }
             }
@@ -158,12 +137,8 @@ public final class PlaylistController {
         return false;
     }
     
-    private static void createSaveDir() {       //verify if it is better to throw the exception.
-        try {
-            Files.createDirectory(getDefaultSavePath());
-        } catch (IOException e) {
-            System.err.println("Cannot create default save directory.");
-        }
+    private static void createSaveDir() throws IOException {       //verify if it is better to throw the exception.
+        Files.createDirectory(getDefaultSavePath());
     }
     
     private static Path getDefaultSavePath() {
@@ -189,7 +164,7 @@ public final class PlaylistController {
         try {
             stream = Files.newDirectoryStream(defaultDir);
             for (Path file : stream) {
-                if (Files.isDirectory(file) && file.getFileName().toString().equals(DEF_PLAYLIST_NAME)) {
+                if (Files.exists(file) && Files.isDirectory(file) && file.getFileName().toString().equals(DEF_PLAYLIST_NAME)) {
                     return loadPlaylist(file.toFile());   
                 }
              }
@@ -204,4 +179,10 @@ public final class PlaylistController {
             return new PlaylistImpl(DEF_PLAYLIST_NAME);
         }
     }
+    
+//    private static void checkPlaylistContent(final Playlist playlist) {
+//        if (!(playlist instanceof Playlist)) {
+//            throw new IllegalArgumentException("File not recognized");
+//        }
+//    }
 }

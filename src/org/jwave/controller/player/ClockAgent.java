@@ -57,7 +57,7 @@ public class ClockAgent implements Runnable {
     }
     
     private void checkInReproduction() {
-        if (this.dynPlayer.getLoaded().isPresent() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() 
+        if (!this.dynPlayer.isEmpty() && !this.dynPlayer.isPlaying() && this.dynPlayer.hasStarted() 
                 && !this.dynPlayer.isPaused()) {
             final Optional<Song> nextSong = this.playlistManager.next();
             if (nextSong.isPresent()) {

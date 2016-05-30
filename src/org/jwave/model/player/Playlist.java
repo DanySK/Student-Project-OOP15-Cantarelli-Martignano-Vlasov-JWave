@@ -1,5 +1,6 @@
 package org.jwave.model.player;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.jwave.model.ESource;
@@ -87,6 +88,13 @@ public interface Playlist extends ESource<Integer> {
      *          if the song is not present.
      */
     Song getSong(int index) throws IllegalArgumentException;
+    
+    /**
+     * 
+     * @return
+     *          all the songs contained in this playlist in a defensive copy.
+     */
+    List<Song> getPlaylistContent();
     
     /**
      * 

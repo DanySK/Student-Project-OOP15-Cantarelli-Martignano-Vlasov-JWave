@@ -97,6 +97,13 @@ public interface DynamicPlayer {
      *          when no {@link Song} is loaded.
      */
     boolean hasStarted() throws IllegalStateException;
+    
+    /**
+     * 
+     * @return
+     *          if the player has any song loaded.
+     */
+    boolean isEmpty();
         
     /**
      * Modifies the current volume.

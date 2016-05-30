@@ -93,7 +93,9 @@ public class DynamicPlayerImpl implements DynamicPlayer {
 
     @Override
     public boolean isPlaying() {
-        this.checkPlayerLoaded();
+        if (this.isEmpty()) {
+            return false;
+        }
         return this.player.isPlaying();
     }
     
@@ -161,5 +163,10 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         if (this.player == null) {
             throw new IllegalStateException("No song has been loaded");
         }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.player == null;
     }
 }

@@ -1,6 +1,7 @@
 package org.jwave.model.player;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -152,5 +153,10 @@ public class PlaylistImpl implements Playlist, Serializable {
         if (!this.list.contains(song)) {
             throw new IllegalArgumentException("Song not found");
         }
+    }
+
+    @Override
+    public List<Song> getPlaylistContent() {
+        return Collections.unmodifiableList(this.list);
     }
 }
