@@ -3,6 +3,7 @@ package org.jwave.model.player;
 import java.io.File;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Interface that models the concept of playlist manager. A playlist manager manages playlists and contains the 
@@ -45,24 +46,16 @@ public interface PlaylistManager {
     /**
      * Selects a song from the current playing queue, making it the current selected.
      * 
-     * @param name
-     *          the name of the song to be loaded.
+     * @param songID
+     *          the song identifier.
      *          
      * @return
-     *          the selected song.
+     *  the selected song.
+     *  
+     *  @throws IllegalArgumentException
+     *          when the playing queue doesn't contain the songID.               
      */
-    Song selectSongFromPlayingQueue(String name);
-    
-    /**
-     * Selects a song from the current playing queue, making it the current selected.
-     * 
-     * @param index
-     *          the index of the song to be loaded.
-     *          
-     * @return
-     *          the selected song.
-     */
-    Song selectSongFromPlayingQueue(int index);
+    Song selectSongFromPlayingQueue(UUID songID) throws IllegalArgumentException;
     
     /**
      * 

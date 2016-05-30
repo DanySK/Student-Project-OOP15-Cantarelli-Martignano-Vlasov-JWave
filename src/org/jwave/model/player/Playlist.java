@@ -2,6 +2,7 @@ package org.jwave.model.player;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.jwave.model.ESource;
 
@@ -22,7 +23,7 @@ public interface Playlist extends ESource<Integer> {
     /**
      * Moves the selected song in a new position.
      * 
-     * @param songToMoveIndex
+     * @param songToMoveID
      *          the song to be moved.
      * @param position
      *          the new position index.
@@ -30,31 +31,28 @@ public interface Playlist extends ESource<Integer> {
      * @throws IllegalArgumentException
      *          if the new position is out of playlist borders.
      */
-    void moveSongToPosition(int songToMoveIndex, int position) throws IllegalArgumentException;
+    void moveSongToPosition(int songToMoveID, int position) throws IllegalArgumentException;
     
     /**
      * Removes songs from the playlist.
      * 
-     * @param songToBeRemoved
+     * @param songID
      *          the songs to be removed.
+     *          
+     * @throws IllegalArgumentException
+     *          when the playlist doesn't contain the id.
+     *          
      */
-    void removeFromPlaylist(Song songToBeRemoved);
+    void removeFromPlaylist(UUID songID) throws IllegalArgumentException;
     
-    /**
-     * 
-     * @return
-     *          an {@link}Optional containing the selected song if present.
-     */
-    Optional<Song> getCurrentSelected();
-    
-    /**
-     * 
-     * @param song
-     *          the song contained in the playlist.
-     * @return
-     *          the index of a song in the playlist.
-     */
-    int indexOf(Song song);
+//    /**
+//     * 
+//     * @param song
+//     *          the song contained in the playlist.
+//     * @return
+//     *          the index of a song in the playlist.
+//     */
+//    int indexOf(Song song);
     
     /**
      * 
@@ -64,30 +62,30 @@ public interface Playlist extends ESource<Integer> {
     int getDimension();
     
     /**
-     * Selects a song.
      * 
-     * @param name
-     *          name of the song that has to be selected.
+     * 
+     * @param songID
+     *          the song identifier.
+     *          
      * @return
      *          the selected song.
      *          
-     * @throws IllegalArgumentException
-     *          if the song is not present.
+     *          
      */
-    Song getSong(String name) throws IllegalArgumentException;
+    Song getSong(UUID songID) throws IllegalArgumentException;  
     
     /**
-     * Selects a song.
      * 
      * @param index
-     *          index of the song that has to be selected.
+     *          the index of the playlist.
+     *          
      * @return
-     *          the selected song.
+     *          the selected song
      *          
      * @throws IllegalArgumentException
-     *          if the song is not present.
+     *          if passing an out of border index.
      */
-    Song getSong(int index) throws IllegalArgumentException;
+    Song getSongAtIndex(int index) throws IllegalArgumentException;
     
     /**
      * 
@@ -111,10 +109,11 @@ public interface Playlist extends ESource<Integer> {
     String getName();
     
     /**
-     * Prints the playlist.
      * 
+     * @return
+     *          the playlist unique identifier.
      */
-    void printPlaylist();
+    UUID getPlaylistID();
     
     /**
      * Clears the playlist.

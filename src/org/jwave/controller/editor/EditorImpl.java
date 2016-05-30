@@ -81,7 +81,7 @@ public class EditorImpl implements Editor {
 	
 	@Override
 	public void setSelectionFrom(int ms) throws IllegalArgumentException {
-		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
+		if (ms >= -1 && ms <= this.song.getModifiedLength() + 1) {
 			if (this.getSelectionTo() > -1 && ms > this.getSelectionTo()) {
 				this.selectionFrom = this.getSelectionTo();
 				this.selectionTo = ms;
@@ -95,7 +95,7 @@ public class EditorImpl implements Editor {
 
 	@Override
 	public void setSelectionTo(int ms) throws IllegalArgumentException {
-		if (ms >= 0 && ms <= this.song.getModifiedLength()) {
+		if (ms >= -1 && ms <= this.song.getModifiedLength() + 1) {
 			if (this.getSelectionFrom() > -1 && ms < this.getSelectionFrom()) {
 				this.selectionTo = this.getSelectionFrom();
 				this.selectionFrom = ms;
@@ -125,19 +125,19 @@ public class EditorImpl implements Editor {
 	
 	@Override
 	public boolean isCursorSet() {
-		return (this.selectionFrom >= 0);
+		return (this.selectionFrom >= -1);
 	}
 
 	@Override
 	public boolean isSomethingSelected() {
-		return (this.selectionFrom >= 0 && this.selectionTo >= 0);
+		return (this.selectionFrom >= -1 && this.selectionTo >= -1);
 	}
 
 	@Override
 	public void copySelection() throws IllegalStateException {
 		if (isSomethingSelected()) {
-			this.copiedFrom = this.selectionFrom;
-			this.copiedTo = this.selectionTo;
+			this.copiedFrom = (this.selectionFrom < 0 ? 0 : this.selectionFrom);
+			this.copiedTo = (this.selectionTo > this.getModifiedSongLength() ? this.getModifiedSongLength() : this.selectionTo);
 			this.song.resetPreviousCopy();
 		} else {
 			throw new IllegalStateException();

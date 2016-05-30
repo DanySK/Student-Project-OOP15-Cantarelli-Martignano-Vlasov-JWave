@@ -1,4 +1,4 @@
-package org.jwave.editor.test;
+package org.jwave.test.editor;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

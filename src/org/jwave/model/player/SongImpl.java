@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.UnsupportedTagException;
@@ -21,6 +22,7 @@ public class SongImpl implements Song, Serializable {
     private static final long serialVersionUID = 9045721077357297256L;
     
     private final File decorated;
+    private final UUID songID;
     private final transient MetaDataRetriever metaData;
     
     /**
@@ -39,6 +41,7 @@ public class SongImpl implements Song, Serializable {
      */
     public SongImpl(final File audioFile) {
         this.decorated = audioFile;   
+        this.songID = UUID.randomUUID();
         final Path pathForMetaData = Paths.get(this.decorated.getAbsolutePath());
         this.metaData = new MetaDataRetrieverImpl(pathForMetaData);  
     }
@@ -56,5 +59,10 @@ public class SongImpl implements Song, Serializable {
     @Override
     public MetaDataRetriever getMetaData() {
         return this.metaData;
+    }
+
+    @Override
+    public UUID getSongID() {   //check if it is better to return a defensive copy
+        return this.songID;
     }
 }

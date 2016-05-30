@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.jwave.model.playlist.strategies.PlaylistNavigator;
 import org.jwave.model.playlist.strategies.PlaylistNavigatorFactory;
@@ -72,7 +73,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         }
         final Optional<Integer> nextIndex = this.navigator.next();
         if (nextIndex.isPresent()) {
-            return Optional.of(this.selectSongFromPlayingQueue(nextIndex.get()));
+            return Optional.of(this.loadedPlaylist.getSongAtIndex(nextIndex.get()));
         }
         return Optional.empty();
     }
@@ -84,7 +85,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         }
         final Optional<Integer> prevIndex = this.navigator.prev();
         if (prevIndex.isPresent()) {
-            return Optional.of(this.selectSongFromPlayingQueue(prevIndex.get()));
+            return Optional.of(this.loadedPlaylist.getSongAtIndex(prevIndex.get()));
         }
         return Optional.empty();
     }
@@ -125,7 +126,9 @@ public class PlaylistManagerImpl implements PlaylistManager {
     
     @Override
     public Collection<Playlist> getAvailablePlaylists() {
-       return Collections.unmodifiableSet(this.availablePlaylists);
+        final Set<Playlist> out = new HashSet<>(this.availablePlaylists);
+        out.add(this.defaultQueue);
+        return Collections.unmodifiableSet(out);
     }
 
     @Override
@@ -166,16 +169,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public Song selectSongFromPlayingQueue(final String name) {
-        final Song out = this.loadedPlaylist.getSong(name);
-        this.navigator.setCurrentIndex(Optional.of(this.loadedPlaylist.indexOf(out)));
-        return out;
+    public Song selectSongFromPlayingQueue(final UUID songID) throws IllegalArgumentException {
+        return this.defaultQueue.getSong(songID);
     }
 
-    @Override
-    public Song selectSongFromPlayingQueue(final int index) {
-        final Song out = this.loadedPlaylist.getSong(index);
-        this.navigator.setCurrentIndex(Optional.of(this.loadedPlaylist.indexOf(out)));
-        return out;
-    }
+    
+
+   
 }
