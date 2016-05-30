@@ -2,20 +2,12 @@ package org.jwave.controller.editor;
 
 import java.util.List;
 
-import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.editor.ModifiableSongImpl;
 import org.jwave.model.editor.SimpleSampleInfo;
 import org.jwave.model.player.Song;
 
-import ddf.minim.AudioSample;
-import ddf.minim.Minim;
-
 public class EditorImpl implements Editor {
-	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
-	
-	private AudioSample songSample;
-	
 	private int selectionFrom;
 	private int selectionTo;
 	private int copiedFrom;
@@ -35,16 +27,15 @@ public class EditorImpl implements Editor {
 	@Override
 	public ModifiableSongImpl getSong() throws IllegalStateException {
 		if (this.isSongLoaded()) {
-			return new ModifiableSongImpl(this.song, this.songSample);
+			return new ModifiableSongImpl(this.song);
 		} else {
 			throw new IllegalStateException();
 		}
 	}
 
 	@Override
-	public void loadSongToEdit(Song song) {
-		this.songSample = minim.loadSample(song.getAbsolutePath(), 2048);
-		this.song = new ModifiableSongImpl(song, this.songSample);		
+	public void loadSongToEdit(final Song song) {
+		this.song = new ModifiableSongImpl(song);		
 	}
 	
 	@Override
@@ -80,7 +71,7 @@ public class EditorImpl implements Editor {
 	}		
 	
 	@Override
-	public void setSelectionFrom(int ms) throws IllegalArgumentException {
+	public void setSelectionFrom(final int ms) throws IllegalArgumentException {
 		if (ms >= -1 && ms <= this.song.getModifiedLength() + 1) {
 			if (this.getSelectionTo() > -1 && ms > this.getSelectionTo()) {
 				this.selectionFrom = this.getSelectionTo();
@@ -94,7 +85,7 @@ public class EditorImpl implements Editor {
 	}
 
 	@Override
-	public void setSelectionTo(int ms) throws IllegalArgumentException {
+	public void setSelectionTo(final int ms) throws IllegalArgumentException {
 		if (ms >= -1 && ms <= this.song.getModifiedLength() + 1) {
 			if (this.getSelectionFrom() > -1 && ms < this.getSelectionFrom()) {
 				this.selectionTo = this.getSelectionFrom();
@@ -136,9 +127,9 @@ public class EditorImpl implements Editor {
 	@Override
 	public void copySelection() throws IllegalStateException {
 		if (isSomethingSelected()) {
-			this.copiedFrom = (this.selectionFrom < 0 ? 0 : this.selectionFrom);
-			this.copiedTo = (this.selectionTo > this.getModifiedSongLength() ? this.getModifiedSongLength() : this.selectionTo);
 			this.song.resetPreviousCopy();
+			this.copiedFrom = (this.selectionFrom < 0 ? 0 : this.selectionFrom);
+			this.copiedTo = (this.selectionTo > this.getModifiedSongLength() ? this.getModifiedSongLength() : this.selectionTo);			
 		} else {
 			throw new IllegalStateException();
 		}
@@ -177,6 +168,7 @@ public class EditorImpl implements Editor {
 	@Override
 	public void cutSelection() throws IllegalStateException {
 		if (isSomethingSelected()) {
+			this.copySelection();
 			this.song.deleteSelection(getSelectionFrom(), getSelectionTo());
 		} else {
 			throw new IllegalStateException();
@@ -184,17 +176,17 @@ public class EditorImpl implements Editor {
 	}
 	
 	@Override
-	public boolean isMaxResolution(int from, int to, int samples) {
+	public boolean isMaxResolution(final int from, final int to, final int samples) {
 		return this.song.isMaxResolution(from, to, samples);
 	}
 	
 	@Override
-	public List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples) {
+	public List<SimpleSampleInfo> getSimpleWaveform(final int from, final int to, final int samples) {
 		return this.song.getSimpleWaveform(from, to, samples);
 	}
 	
 	@Override
-	public List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples) {
+	public List<GroupedSampleInfo> getAggregatedWaveform(final int from, final int to, final int samples) {
 		return this.song.getAggregatedWaveform(from, to, samples);
 	}	
 	
@@ -209,7 +201,7 @@ public class EditorImpl implements Editor {
 	}
 	
 	@Override
-	public void exportSong(String exportPath) {
+	public void exportSong(final String exportPath) {
 		this.song.exportSong(exportPath);
 	}
 	
