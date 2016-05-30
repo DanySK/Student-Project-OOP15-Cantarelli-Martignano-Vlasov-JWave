@@ -11,7 +11,6 @@ import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
 import org.jwave.model.player.Playlist;
-import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
@@ -40,7 +39,7 @@ public final class Controller implements PlayerUIObserver {
 
         this.player = new DynamicPlayerImpl();
         this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
-        this.manager = new PlaylistManagerImpl(new PlaylistImpl("Tutti i brani"));
+        this.manager = new PlaylistManagerImpl(PlaylistController.loadDefaultPlaylist());
         this.agent = new ClockAgent(player, player, manager, "agent");
         this.agent.startClockAgent();
         try {
@@ -60,9 +59,11 @@ public final class Controller implements PlayerUIObserver {
     public void loadSong(File song) {
         System.out.println("load " + song.getPath() + "  " + song);
         this.manager.addAudioFile(song);
-        // if(!this.player.hasStarted()){
-        this.player.setPlayer(manager.getDefaultPlaylist().getSong(0));
-        // }
+        if(player.isEmpty()){
+            manager.setQueue(manager.getDefaultPlaylist());
+            this.player.setPlayer(manager.getDefaultPlaylist().getSong(0));
+        }
+
         System.out.print("PLAYING QUEUE: ");
         for (int i = 0; i < manager.getPlayingQueue().getDimension(); i++) {
             System.out.print(manager.getPlayingQueue().getSong(i).getName()+"  ");

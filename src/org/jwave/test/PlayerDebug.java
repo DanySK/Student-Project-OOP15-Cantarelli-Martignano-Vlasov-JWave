@@ -123,11 +123,13 @@ public final class PlayerDebug {
                 }
             case 14:
                 System.out.println("Refreshing available playlists");
+                /*
                 try {
                     manager.setAvailablePlaylists(PlaylistController.reloadAvailablePlaylists());
                 } catch (IllegalArgumentException | ClassNotFoundException | IOException e) {
                    System.err.println("Problem encountered while loading playlists.");
                 }
+                */
                 break;
             case 15:
                 System.out.println("Does nothing");

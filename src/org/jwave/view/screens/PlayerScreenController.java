@@ -23,12 +23,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 /**
@@ -64,6 +66,24 @@ public class PlayerScreenController implements PlayerUI {
         this.listView.setItems(this.observer.getObservablePlaylists());
         this.listView.setOnMouseClicked(e->{
             System.out.println("SELECTED PLAYLIST: "+listView.getSelectionModel().getSelectedItem().getName());
+        });
+        
+        listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
+            @Override
+            public ListCell<Playlist> call(ListView<Playlist> lv) {
+                return new ListCell<Playlist>() {
+                    @Override
+                    public void updateItem(Playlist item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null) {
+                            setText(null);
+                        } else {
+                            // assume MyDataType.getSomeProperty() returns a string
+                            setText(item.getName());
+                        }
+                    }
+                };
+            }
         });
 
         
