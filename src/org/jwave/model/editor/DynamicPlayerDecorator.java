@@ -127,6 +127,11 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 	}
 	
 	@Override
+	public boolean isEmpty() {
+	    return this.decoratedDynamicPlayer.isEmpty();
+	}
+	
+	@Override
 	public void clearPlayer() {
 		this.decoratedDynamicPlayer.clearPlayer();
 	}

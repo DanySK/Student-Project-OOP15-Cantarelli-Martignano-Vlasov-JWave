@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
+import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
 import org.jwave.model.player.Playlist;
@@ -16,15 +17,13 @@ import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
 import org.jwave.view.PlayerUIObserver;
 
-import com.sun.javafx.collections.ObservableListWrapper;
-
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public final class Controller implements PlayerUIObserver {
 
     private final DynamicPlayer player;
+    private final DynamicPlayer editorPlayer;
     private final PlaylistManager manager;
     private final ClockAgent agent;
 
@@ -40,9 +39,10 @@ public final class Controller implements PlayerUIObserver {
         }
 
         this.player = new DynamicPlayerImpl();
+        this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(new PlaylistImpl("Tutti i brani"));
         this.agent = new ClockAgent(player, player, manager, "agent");
-
+        this.agent.startClockAgent();
         try {
             manager.setAvailablePlaylists(PlaylistController.reloadAvailablePlaylists());
         } catch (Exception e) {
@@ -91,11 +91,14 @@ public final class Controller implements PlayerUIObserver {
 
     @Override
     public void next() {
+        final boolean wasPlaying = this.player.isPlaying();
         try {
             final Optional<Song> nextSong = this.manager.next();
             if (nextSong.isPresent()) {
                 this.player.setPlayer(nextSong.get());
-                this.player.play();
+                if (wasPlaying) {
+                    this.player.play();
+                }
             }
         } catch (IllegalStateException e) {
             System.out.println("You must add at last one song in the playlist");
@@ -104,11 +107,14 @@ public final class Controller implements PlayerUIObserver {
 
     @Override
     public void previous() {
+        final boolean wasPlaying = this.player.isPlaying();
         try {
             final Optional<Song> prevSong = this.manager.prev();
             if (prevSong.isPresent()) {
                 this.player.setPlayer(prevSong.get());
-                this.player.play();
+                if (wasPlaying) {
+                    this.player.play();
+                }
             }
         } catch (IllegalStateException e) {
             System.out.println("You must add at last one song in the playlist");
