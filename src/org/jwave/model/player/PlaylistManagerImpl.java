@@ -48,6 +48,14 @@ public class PlaylistManagerImpl implements PlaylistManager {
     @Override
     public Song addAudioFile(final File audioFile) throws Exception {
         final Song out = new SongImpl(audioFile);
+        final DynamicPlayer tester = new DynamicPlayerImpl();
+        try {
+            tester.setPlayer(out);
+        } catch(Exception e) {
+            throw e;
+        } finally {
+            tester.releasePlayerResources();
+        }
         this.defaultQueue.addSong(out);
         return out;
     }  
