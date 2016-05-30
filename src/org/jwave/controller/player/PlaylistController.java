@@ -35,6 +35,7 @@ public final class PlaylistController {
     private static final String HOME = "user.home";
     private static final String SEPARATOR = "file.separator";
     private static final String DEF_PLAYLIST_NAME = "default";
+    private static final String DEF_EXTENSION = ".jwo";
     
     /**
      * Creates a new instance of controller.
@@ -57,7 +58,10 @@ public final class PlaylistController {
      * 
      * @throws FileNotFoundException 
      */
-    public static void savePlaylistToFile(final Playlist playlist, final String name, final Path path) throws FileNotFoundException, IOException {
+    public static void savePlaylistToFile(final Playlist playlist, final String name, final Path path) throws IOException {
+        final Path outFile = Paths.get(path.toString() + System.getProperty(SEPARATOR) + name + DEF_EXTENSION);
+        Files.deleteIfExists(outFile);
+        Files.createFile(outFile);
         try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
                 new FileOutputStream(new File(path.toString() + System.getProperty(SEPARATOR) + playlist.getName() + ".jwo"))))) {
             oos.writeObject(playlist);
@@ -75,9 +79,8 @@ public final class PlaylistController {
      *          
      * @throws IOException 
      * 
-     * @throws FileNotFoundException 
      */
-    public static void savePlaylistToFile(final Playlist playlist, final String name) throws FileNotFoundException, IOException {
+    public static void savePlaylistToFile(final Playlist playlist, final String name) throws IOException {
         savePlaylistToFile(playlist, name, getDefaultSavePath());
     }
 

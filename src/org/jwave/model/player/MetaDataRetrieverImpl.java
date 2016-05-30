@@ -75,7 +75,7 @@ public class MetaDataRetrieverImpl implements MetaDataRetriever {
         final String outPath = this.song.getFilename() + "~";
         this.song.save(outPath);
         Files.copy(Paths.get(outPath), this.filePath, StandardCopyOption.REPLACE_EXISTING);
-        Files.delete(Paths.get(outPath));
+        Files.deleteIfExists(Paths.get(outPath));
     }
    
     private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, 
