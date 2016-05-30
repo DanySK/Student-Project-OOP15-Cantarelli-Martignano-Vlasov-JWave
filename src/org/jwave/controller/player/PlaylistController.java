@@ -98,7 +98,7 @@ public final class PlaylistController {
             return Collections.emptySet();
         }
         for (Path file : stream) {
-            if (Files.exists(file) && Files.isRegularFile(file)) {
+            if (Files.exists(file) && Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jwo")) {
                 try {
                     out.add(loadPlaylist(file.toFile()));
                 } catch (ClassNotFoundException | IOException e) { }
