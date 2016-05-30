@@ -170,12 +170,16 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
     @Override
     public Song selectSongFromPlayingQueue(final UUID songID) throws IllegalArgumentException {
-        return this.defaultQueue.getSong(songID);
+        final Song out = this.defaultQueue.getSong(songID);
+        this.navigator.setCurrentIndex(Optional.of(this.loadedPlaylist.indexOf(songID)));
+        return out;
     }
 
     @Override
     public Song selectSongFromPlayingQueueAtIndex(final int index) throws IllegalArgumentException {
-        return this.loadedPlaylist.getSongAtIndex(index);
+        final Song out = this.defaultQueue.getSongAtIndex(index);
+        this.navigator.setCurrentIndex(Optional.of(index));
+        return out;
     }
 
     

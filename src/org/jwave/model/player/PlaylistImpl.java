@@ -91,11 +91,11 @@ public class PlaylistImpl implements Playlist, Serializable {
         this.set.add(obs);
     }
 
-//    @Override
-//    public int indexOf(final Song song) {
-//        this.checkSongPresence(song);
-//        return this.list.indexOf(song);
-//    }
+    @Override
+    public int indexOf(final UUID songID) {
+        this.checkSongPresence(songID);
+        return this.idList.indexOf(songID);
+    }
 
     @Override
     public void notifyEObservers(final Integer arg) {
@@ -155,7 +155,7 @@ public class PlaylistImpl implements Playlist, Serializable {
 
     @Override
     public Song getSongAtIndex(final int index) throws IllegalArgumentException {
-        if (index > this.idList.size() || index < 0) {  
+        if (index > (this.idList.size() - 1) || index < 0) {  
             throw new IllegalArgumentException("Out of playlsit borders");
         }
         return this.map.get(this.idList.get(index));
