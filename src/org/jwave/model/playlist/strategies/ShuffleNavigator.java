@@ -15,7 +15,6 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
     
     private final Random seed;
     private final List<Integer> shuffledList;
-//    private Optional<Integer> shuffledIndex;
     
     /**
      * Creates a new instance of ShuffleNavigator.
@@ -28,7 +27,6 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
         super(playlistDimension, Optional.empty());
         this.seed = new Random();
         this.shuffledList = new ArrayList<>();
-//        this.shuffledIndex = Optional.empty();
     }
     
     @Override

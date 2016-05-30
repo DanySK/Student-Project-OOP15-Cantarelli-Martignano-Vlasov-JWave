@@ -16,8 +16,14 @@ public interface PlaylistManager {
      * 
      * @param audioFile
      *          the audioFile to be loaded.
+     *          
+     * @throws Exception 
+     *          if the file doesn't contain WAVE or MP3 data.
+     *          
+     * @return
+     *          the added song.         
      */
-    void addAudioFile(File audioFile);
+    Song addAudioFile(File audioFile) throws Exception;
     
     /**
      * Creates a new playlist and adds it to the collection of available playlists.
