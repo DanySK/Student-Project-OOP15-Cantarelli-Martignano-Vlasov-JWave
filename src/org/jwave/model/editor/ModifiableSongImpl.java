@@ -22,7 +22,7 @@ import ddf.minim.Minim;
 import ddf.minim.analysis.FFT;
 import ddf.minim.javasound.FloatSampleBuffer;
 
-public class ModifiableSongImpl extends SongDecorator implements ModifiableSong {
+public class ModifiableSongImpl extends ModifiableSongDecorator implements ModifiableSong {
 	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
 	
 	private final List<Cut> cuts;
@@ -72,7 +72,10 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		int i, j;
 		int totalCopied;
 		int currentCutIndex;
-		int currentSegmentIndex;		
+		int currentSegmentIndex;
+		int currentSegmentLength;
+		int initialSegmentOffset;
+		int copiedOffset;		
 		
 		if (previousCopy.size() == 0) {			
 			ArrayList<Segment> copiedSegments = new ArrayList<>();
@@ -87,12 +90,11 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 				}
 			}
 			
-			// and the initial segment
-			i = 0; // segment index counter
-			j = 0; // millisecond counter
-			int currentSegmentLength;
-			int initialSegmentOffset = 0;
-			int copiedOffset = from - cuts.get(currentCutIndex).getFrom(); // WithRespectToCutFrom
+			/* and the initial segment */
+			i = 0; 			/* segment index counter */
+			j = 0; 			/* millisecond counter */
+			initialSegmentOffset = 0;
+			copiedOffset = from - cuts.get(currentCutIndex).getFrom(); /* WithRespectToCutFrom */
 			while (currentSegmentIndex == -1) {
 				currentSegmentLength = cuts.get(currentCutIndex).getSegment(i).getLength();
 				if (j <= copiedOffset && (j + currentSegmentLength) >= copiedOffset) {
@@ -134,16 +136,25 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 	}	
 
 	@Override
-	public void pasteSelectionAt(int from, int to, int at) {
+	public void pasteSelectionAt(final int from, final int to, final int at) {
 		int cutToDivideIndex = 0;
 		Optional<Cut> cutToDivide = Optional.empty();
 		Cut cutToInsert;
+		
+		int leftHalfLength, rightHalfLength, halfPoint;
+		ArrayList<Segment> leftSegments = new ArrayList<>();
+		ArrayList<Segment> rightSegments = new ArrayList<>();		
+		
+		CutImpl leftCut;
+		CutImpl rightCut;	
+		
+		int i, segmentCounter;
 		
 		/*
 		 * First we get the cut that we will be dividing in two parts
 		 * in order to make room for the inserted paste in the middle.
 		 */
-		for (int i = 0; i < cuts.size(); i++) {
+		for (i = 0; i < cuts.size(); i++) {
 			if (cuts.get(i).getFrom() <= at && cuts.get(i).getTo() >= at) {
 				cutToDivideIndex = i;
 				cutToDivide = Optional.of(cuts.get(cutToDivideIndex));
@@ -153,21 +164,19 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		if (cutToDivide.isPresent()) {
 			cutToInsert = generateCutFromSelection(from, to, at);
 			
-			int leftHalfLength = at - cutToDivide.get().getFrom();
-			int rightHalfLength = cutToDivide.get().getLength() - leftHalfLength;
-			int halfPoint = cutToDivide.get().getFrom() + leftHalfLength;
-			ArrayList<Segment> leftSegments = new ArrayList<>();
-			ArrayList<Segment> rightSegments = new ArrayList<>();
+			leftHalfLength = at - cutToDivide.get().getFrom();
+			rightHalfLength = cutToDivide.get().getLength() - leftHalfLength;
+			halfPoint = cutToDivide.get().getFrom() + leftHalfLength;
 			
-			int i = 0;
-			int segmentCounter = 0;
+			i = 0;
+			segmentCounter = 0;
 			while (segmentCounter + (cutToDivide.get().getSegment(i).getLength()) < leftHalfLength) {
 				leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
 				segmentCounter += (cutToDivide.get().getSegment(i).getTo() - cutToDivide.get().getSegment(i).getFrom());
 				i++;
 			}
 			
-			// middle segments
+			/* the two middle segments that "touch" the inserted cut */
 			leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter) - 1));
 			rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter), cutToDivide.get().getSegment(i).getTo()));
 			
@@ -175,31 +184,29 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 				rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
 			}
 			
-			CutImpl leftCut = new CutImpl(cutToDivide.get().getFrom(), halfPoint - 1, leftSegments);
-			CutImpl rightCut = new CutImpl(cutToInsert.getTo() + 1, cutToInsert.getTo() + rightHalfLength + 1, rightSegments);			
+			leftCut = new CutImpl(cutToDivide.get().getFrom(), halfPoint - 1, leftSegments);
+			rightCut = new CutImpl(cutToInsert.getTo() + 1, cutToInsert.getTo() + rightHalfLength + 1, rightSegments);			
 			
-			// shift all cuts after cut that was divided
-			cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
-			cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
+			/* shift all cuts up after cut that was divided */
+			cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); /* filler cut, to increase size */
+			cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); /* filler cut, to increase size */
 			for (i = cuts.size() - 1; i > cutToDivideIndex + 1; i--) {
 				cuts.set(i, cuts.get(i - 2));
 				cuts.get(i).setFrom(cuts.get(i).getFrom() + cutToInsert.getLength() + 1);
 				cuts.get(i).setTo(cuts.get(i).getTo() + cutToInsert.getLength() + 1);
 			}
 			
-			// finally set all three cuts to the new ones
+			/* finally set all three cuts to the newly created ones */
 			cuts.set(cutToDivideIndex, leftCut);
 			cuts.set(cutToDivideIndex + 1, cutToInsert);
 			cuts.set(cutToDivideIndex + 2, rightCut);
 		} else {
 			if (at < 0) {
-				at = 0;
-				
-				cutToInsert = generateCutFromSelection(from, to, at);
+				cutToInsert = generateCutFromSelection(from, to, 0);
 				
 				/* shift all cuts up by one */
 				cuts.add(new CutImpl(0, 0, new ArrayList<Segment>())); // filler cut, to increase size
-				for (int i = cuts.size() - 1; i > 0; i--) {
+				for (i = cuts.size() - 1; i > 0; i--) {
 					cuts.set(i, cuts.get(i - 1));
 					cuts.get(i).setFrom(cuts.get(i).getFrom() + cutToInsert.getLength() + 1);
 					cuts.get(i).setTo(cuts.get(i).getTo() + cutToInsert.getLength() + 1);
