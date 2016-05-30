@@ -61,7 +61,7 @@ public final class Controller implements PlayerUIObserver {
         System.out.println("load " + song.getPath() + "  " + song);
         this.manager.addAudioFile(song);
         // if(!this.player.hasStarted()){
-        this.player.setPlayer(manager.getDefaultPlaylist().getSong(manager.getDefaultPlaylist().getDimension() - 1));
+        this.player.setPlayer(manager.getDefaultPlaylist().getSong(0));
         // }
         System.out.print("PLAYING QUEUE: ");
         for (int i = 0; i < manager.getPlayingQueue().getDimension(); i++) {
