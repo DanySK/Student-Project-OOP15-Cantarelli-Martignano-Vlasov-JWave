@@ -2,20 +2,12 @@ package org.jwave.controller.editor;
 
 import java.util.List;
 
-import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.editor.ModifiableSongImpl;
 import org.jwave.model.editor.SimpleSampleInfo;
 import org.jwave.model.player.Song;
 
-import ddf.minim.AudioSample;
-import ddf.minim.Minim;
-
 public class EditorImpl implements Editor {
-	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
-	
-	private AudioSample songSample;
-	
 	private int selectionFrom;
 	private int selectionTo;
 	private int copiedFrom;
@@ -35,7 +27,7 @@ public class EditorImpl implements Editor {
 	@Override
 	public ModifiableSongImpl getSong() throws IllegalStateException {
 		if (this.isSongLoaded()) {
-			return new ModifiableSongImpl(this.song, this.songSample);
+			return new ModifiableSongImpl(this.song);
 		} else {
 			throw new IllegalStateException();
 		}
@@ -43,8 +35,7 @@ public class EditorImpl implements Editor {
 
 	@Override
 	public void loadSongToEdit(final Song song) {
-		this.songSample = minim.loadSample(song.getAbsolutePath(), 2048);
-		this.song = new ModifiableSongImpl(song, this.songSample);		
+		this.song = new ModifiableSongImpl(song);		
 	}
 	
 	@Override

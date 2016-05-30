@@ -14,6 +14,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
+import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.player.Song;
 
 import ddf.minim.AudioSample;
@@ -22,15 +23,17 @@ import ddf.minim.analysis.FFT;
 import ddf.minim.javasound.FloatSampleBuffer;
 
 public class ModifiableSongImpl extends SongDecorator implements ModifiableSong {
+	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
+	
 	private final List<Cut> cuts;
 	private final AudioSample songSample;
 	
 	private final List<Segment> previousCopy;
 	
-	public ModifiableSongImpl(Song decoratedSong, AudioSample sampleReference) {
+	public ModifiableSongImpl(final Song decoratedSong) {
 		super(decoratedSong);
 		
-		this.songSample = sampleReference;
+		this.songSample = minim.loadSample(this.getAbsolutePath(), 2048);
 		
 		if (decoratedSong instanceof ModifiableSong) {
 			ModifiableSong modifiableSong = (ModifiableSong) decoratedSong;
@@ -64,28 +67,29 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 		return this.cuts.get(this.cuts.size() - 1).getTo();
 	}
 	
-	private CutImpl generateCutFromSelection(int from, int to, int at) {
+	private CutImpl generateCutFromSelection(final int from, final int to, final int at) {
 		int copiedCutLength = to - from;
+		int i, j;
+		int totalCopied;
+		int currentCutIndex;
+		int currentSegmentIndex;		
 		
 		if (previousCopy.size() == 0) {			
 			ArrayList<Segment> copiedSegments = new ArrayList<>();
 			
-			int currentCutIndex = -1;
-			int currentSegmentIndex = -1;	
+			currentCutIndex = -1;
+			currentSegmentIndex = -1;	
 			
-			// we find the initial cut from which to begin transfering segments
-			int i = 0;
-			while (i < cuts.size() && currentCutIndex == -1) {
+			/* we find the initial cut from which to begin transfering segments */
+			for (i = 0; i < cuts.size() && currentCutIndex == -1; i++) {
 				if (cuts.get(i).getFrom() <= from && cuts.get(i).getTo() >= from) {
 					currentCutIndex = i;
 				}
-				
-				i++;
 			}
 			
 			// and the initial segment
 			i = 0; // segment index counter
-			int j = 0; // millisecond counter
+			j = 0; // millisecond counter
 			int currentSegmentLength;
 			int initialSegmentOffset = 0;
 			int copiedOffset = from - cuts.get(currentCutIndex).getFrom(); // WithRespectToCutFrom
@@ -100,8 +104,8 @@ public class ModifiableSongImpl extends SongDecorator implements ModifiableSong 
 				i++;
 			}
 			
-			// start copying in segments
-			int totalCopied = 0; // in ms
+			/* start copying in segments */
+			totalCopied = 0;
 			i = currentCutIndex;
 			j = currentSegmentIndex;
 			while (totalCopied < copiedCutLength) {
