@@ -6,6 +6,9 @@ import java.nio.file.Path;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.Song;
 
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+
 public interface PlayerUIObserver {
     
     public void loadSong(File song);
@@ -16,6 +19,8 @@ public interface PlayerUIObserver {
     
     public void play();
     
+    public void moveToMoment(Double percentage);
+    
     public void stop();
     
     public void next();
@@ -25,5 +30,7 @@ public interface PlayerUIObserver {
     public void newPlaylist(String name);
     
     public void addSongToPlaylist(Song song, Playlist playlist);
+    
+    public ObservableList<Playlist> getObservablePlaylists();
 
 }

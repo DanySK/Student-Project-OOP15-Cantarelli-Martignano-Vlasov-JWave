@@ -1,14 +1,35 @@
 package org.jwave.view.screens;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+import org.jwave.controller.Controller;
+import org.jwave.model.player.Playlist;
+import org.jwave.model.player.Song;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.PlayerUI;
 import org.jwave.view.PlayerUIObserver;
+
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * Controller for the Player screen.
@@ -16,32 +37,69 @@ import javafx.stage.Stage;
  * @author Alessandro Martignano
  *
  */
-public class PlayerScreenController implements PlayerUI{
+public class PlayerScreenController implements PlayerUI {
+    
+    private static double MIN_CHANGE = 0.5 ;
 
     private final FXMLScreens FXMLSCREEN = FXMLScreens.PLAYER;
     private final FXEnvironment environment;
     private Stage primaryStage;
-    private PlayerUIObserver observer;
+    private final PlayerUIObserver observer;
 
     @FXML
-    private Button btnPlay;
-    
-    public PlayerScreenController(FXEnvironment environment) {
+    private Button btnPlay, btnNewPlaylist;
+    @FXML
+    private Slider positionSlider, volumeSlider;
+    @FXML
+    private ListView<Playlist> listView;
+    @FXML
+    private TableView<?> tableView;
+
+    public PlayerScreenController(FXEnvironment environment, PlayerUIObserver controller) {
+        this.observer = controller;
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
+        this.tableView.setPlaceholder(new Label("Nessun brano caricato"));
+
+        this.listView.setItems(this.observer.getObservablePlaylists());
+        this.listView.setOnMouseClicked(e->{
+            System.out.println("SELECTED PLAYLIST: "+listView.getSelectionModel().getSelectedItem().getName());
+        });
+
+        
+        this.volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov,
+                Number old_val, Number new_val) {
+                    System.out.println("VOLUME: "+new_val);
+            }
+        });
     }
-    
+
     @Override
     public void show() {
         this.primaryStage = this.environment.getMainStage();
         this.environment.displayScreen(FXMLSCREEN);
     }
-    
+
     @Override
     public void setObserver(PlayerUIObserver observer) {
 
-        this.observer = observer;
-        
+        // this.observer = observer;
+
+    }
+
+    @FXML
+    private void newPlaylist() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nuova playlist");
+        dialog.setHeaderText("Inserire il nome della nuova palylist");
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            System.out.println("NEW PLAYLIST: " + result.get());
+            this.observer.newPlaylist(result.get());
+        }
+
+        //result.ifPresent(name -> System.out.println("Nuova Playlist: " + name));
     }
 
     @FXML
@@ -49,40 +107,43 @@ public class PlayerScreenController implements PlayerUI{
 
         System.out.println("play");
         this.observer.play();
-        //AudioSystem.getAudioSystem().getDynamicPlayer().play();
+        // AudioSystem.getAudioSystem().getDynamicPlayer().play();
 
     }
 
     @FXML
     private void stopPlay() {
         System.out.println("stop");
-        //AudioSystem.getAudioSystem().getDynamicPlayer().pause();
+        // AudioSystem.getAudioSystem().getDynamicPlayer().pause();
     }
 
     @FXML
     private void next() {
         System.out.println("next");
-        observer.selectSong(null);
-
+        observer.next();
     }
 
     @FXML
     private void prev() {
         System.out.println("prev");
-
+        observer.previous();
     }
 
     @FXML
     private void openFile() {
         System.out.println("Open");
 
-
         FileChooser fileChooser = new FileChooser();
         // fileChooser.setSelectedExtensionFilter();
         // new FileChooser.ExtensionFilter("*.mp3");
-        System.out.println(primaryStage);
         File file = fileChooser.showOpenDialog(this.primaryStage);
         observer.loadSong(file);
     }
     
+    @FXML
+    private void positionChanged() {
+        System.out.println("SET POSITION: "+positionSlider.getValue());
+        observer.moveToMoment(positionSlider.getValue());
+    }
+
 }

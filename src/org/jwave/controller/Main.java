@@ -15,8 +15,8 @@ public class Main {
         PlatformImpl.startup(() -> { });
         Controller controller = new Controller();
         FXEnvironment environment = new FXEnvironment();
-        PlayerScreenController player = new PlayerScreenController(environment);
-        player.setObserver(controller);
+        PlayerScreenController player = new PlayerScreenController(environment,controller);
+        //player.setObserver(controller);
 
         Platform.runLater(() -> {
             try {
