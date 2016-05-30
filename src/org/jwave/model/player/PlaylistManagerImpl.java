@@ -37,7 +37,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.currentIndex = Optional.empty();
         this.defaultQueue = newDefaultQueue;
         this.loadedPlaylist = this.defaultQueue;
-        this.playMode = PlayMode.NO_LOOP;
+        this.playMode = PlayMode.LOOP_ALL;
         this.navigator = this.navFactory.createNavigator(this.playMode, this.loadedPlaylist.getDimension(), Optional.empty());
         this.loadedPlaylist.addEObserver(this.navigator);
     }

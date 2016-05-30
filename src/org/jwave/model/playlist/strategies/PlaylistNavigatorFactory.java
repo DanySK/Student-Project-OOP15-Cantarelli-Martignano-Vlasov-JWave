@@ -27,16 +27,10 @@ public class PlaylistNavigatorFactory {
      */
     public PlaylistNavigator createNavigator(final PlayMode type, final int playlistDimension, final Optional<Integer> currentIndex) {
         switch (type) {
-            case NO_LOOP:        
-                return new NoLoopNavigator(playlistDimension, currentIndex);
-            case LOOP_ONE:       
-                return new LoopOneNavigator(currentIndex);
-            case LOOP_ALL:       
-                return new LoopAllNavigator(playlistDimension, currentIndex);
             case SHUFFLE:        
                 return new ShuffleNavigator(playlistDimension);
             default:             
-                return new NoLoopNavigator(playlistDimension, currentIndex);
+                return new LinearNavigator(playlistDimension, currentIndex);
         }
     }
 }
