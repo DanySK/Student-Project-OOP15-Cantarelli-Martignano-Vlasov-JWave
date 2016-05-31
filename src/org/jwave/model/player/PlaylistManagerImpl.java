@@ -46,13 +46,13 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public Song addAudioFile(final File audioFile) throws Exception {
+    public Song addAudioFile(final File audioFile) throws IllegalArgumentException {
         final Song out = new SongImpl(audioFile);
         final DynamicPlayer tester = new DynamicPlayerImpl();
         try {
             tester.setPlayer(out);
         } catch(Exception e) {
-            throw e;
+            throw new IllegalArgumentException();
         } finally {
             tester.releasePlayerResources();
         }

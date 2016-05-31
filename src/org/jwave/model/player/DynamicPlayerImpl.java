@@ -159,7 +159,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     @Override
     public void releasePlayerResources() {
         this.clearPlayer();
-        this.minim.stop();
+        //this.minim.stop();
     }  
     
     private AudioOutput createAudioOut(final float sampleRate) {
