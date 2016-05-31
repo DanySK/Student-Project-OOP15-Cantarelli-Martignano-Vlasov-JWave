@@ -50,7 +50,6 @@ public final class PlayerControllerImpl implements PlayerController {
         try {
             PlaylistController.saveDefaultPlaylistToFile(def, def.getName());
         } catch (IOException e) {
-            System.out.println("Porca paletta");
             e.printStackTrace();
         }
         this.agent = new ClockAgent(player, manager, ClockAgent.Mode.PLAYER);
@@ -97,7 +96,8 @@ public final class PlayerControllerImpl implements PlayerController {
 
         this.songs.get(manager.getDefaultPlaylist()).add(newSong);
 
-        PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
+        PlaylistController.saveDefaultPlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
+        //PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
         // manager.getDefaultPlaylist().getName());
     }
 
@@ -162,6 +162,11 @@ public final class PlayerControllerImpl implements PlayerController {
     @Override
     public void addSongToPlaylist(Song song, Playlist playlist) {
         playlist.addSong(song);
+        try {
+            PlaylistController.savePlaylistToFile(playlist, playlist.getName());
+        } catch (IOException e) {
+            System.out.println("AHIA");
+        }
         songs.get(playlist).add(song);
     }
 
