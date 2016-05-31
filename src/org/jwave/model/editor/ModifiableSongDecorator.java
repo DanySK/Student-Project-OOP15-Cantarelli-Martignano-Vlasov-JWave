@@ -6,7 +6,7 @@ import org.jwave.model.player.MetaDataRetriever;
 import org.jwave.model.player.Song;
 
 public abstract class ModifiableSongDecorator implements Song {
-	protected Song decoratedSong;
+	protected final Song decoratedSong;
 	
 	public ModifiableSongDecorator(final Song decoratedSong) {
 		this.decoratedSong = decoratedSong;

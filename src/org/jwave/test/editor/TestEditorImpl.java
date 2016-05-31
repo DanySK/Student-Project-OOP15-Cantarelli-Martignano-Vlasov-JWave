@@ -181,9 +181,7 @@ public class TestEditorImpl {
 		songEditor.copySelection();
 		songEditor.deselectSelection();
 		songEditor.setSelectionFrom(songEditor.getOriginalSongLength() + 1);
-		songEditor.pasteCopiedSelection();	
-		
-		songEditor.printSongDebug();
+		songEditor.pasteCopiedSelection();
 		
 		assertTrue(songEditor.getSong().getCuts().size() == 2);
 		assertTrue(songEditor.getModifiedSongLength() == songEditor.getOriginalSongLength() + songEditor.getOriginalSongLength() + 1);
