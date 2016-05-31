@@ -44,8 +44,8 @@ public final class PlayerControllerImpl implements PlayerController {
         this.agent = new ClockAgent(player, player, manager, "agent"); //!!!!!!!!! playerx2
         this.agent.startClockAgent();
         
-        ScreenRefresher refresher = new ScreenRefresher(player, this);
-        refresher.start();
+        //ScreenRefresher refresher = new ScreenRefresher(player, this);
+        //refresher.start();
         
         try {
             manager.setAvailablePlaylists(PlaylistController.reloadAvailablePlaylists());
