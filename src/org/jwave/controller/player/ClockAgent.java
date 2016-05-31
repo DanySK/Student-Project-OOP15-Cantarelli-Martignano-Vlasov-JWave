@@ -10,8 +10,6 @@ import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.Song;
 import org.jwave.view.PlayerController;
 
-import ddf.minim.Controller;
-
 /**
  * This class is a clock for {@link DynamicPlayer}, determining controls at a specified interval. 
  *
@@ -149,6 +147,8 @@ public class ClockAgent implements Runnable {
     }
     
     private void notifyControllers() {
-        this.controllerSet.forEach(c -> c.updatePosition(this.dynPlayer.getPosition()));
+        if (!this.dynPlayer.isEmpty()) {
+            this.controllerSet.forEach(c -> c.updatePosition(this.dynPlayer.getPosition()));
+        }
     }
 }
