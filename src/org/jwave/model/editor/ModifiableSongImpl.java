@@ -14,7 +14,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import org.jwave.controller.player.FileSystemHandler;
+import org.jwave.model.FileSystemHandler;
 import org.jwave.model.player.Song;
 
 import ddf.minim.AudioSample;
@@ -23,7 +23,7 @@ import ddf.minim.analysis.FFT;
 import ddf.minim.javasound.FloatSampleBuffer;
 
 public class ModifiableSongImpl extends ModifiableSongDecorator implements ModifiableSong {
-	private final static Minim minim = new Minim(FileSystemHandler.getFileSystemHandler());
+	private final static Minim minim = new Minim(new FileSystemHandler());
 	
 	private final List<Cut> cuts;
 	private final AudioSample songSample;

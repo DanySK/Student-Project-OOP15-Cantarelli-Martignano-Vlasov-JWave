@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.jwave.model.player.DynamicPlayer;
-import org.jwave.model.player.PlayMode;
-import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.Song;
+import org.jwave.model.playlist.PlayMode;
+import org.jwave.model.playlist.PlaylistManager;
 import org.jwave.view.PlayerController;
 
 /**

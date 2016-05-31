@@ -3,8 +3,10 @@ package org.jwave.view;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import org.jwave.model.player.Playlist;
+
 import org.jwave.model.player.Song;
+import org.jwave.model.playlist.Playlist;
+
 import javafx.collections.ObservableList;
 
 public interface PlayerController {

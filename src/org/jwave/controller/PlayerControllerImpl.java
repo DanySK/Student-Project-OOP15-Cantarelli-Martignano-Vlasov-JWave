@@ -14,10 +14,10 @@ import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
-import org.jwave.model.player.Playlist;
-import org.jwave.model.player.PlaylistManager;
-import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
+import org.jwave.model.playlist.Playlist;
+import org.jwave.model.playlist.PlaylistManager;
+import org.jwave.model.playlist.PlaylistManagerImpl;
 import org.jwave.view.PlayerController;
 import org.jwave.view.PlayerUI;
 

@@ -2,7 +2,7 @@ package org.jwave.model.player;
 
 import java.util.Optional;
 
-import org.jwave.controller.player.FileSystemHandler;
+import org.jwave.model.FileSystemHandler;
 
 import ddf.minim.AudioOutput;
 import ddf.minim.AudioPlayer;
@@ -33,7 +33,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
      * Creates a new DynamicPlayerImpl.
      */
     public DynamicPlayerImpl() { 
-        this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
+        this.minim = new Minim(new FileSystemHandler());
         this.volumeControl = new Gain();
         this.started = false;
         this.paused = false;
@@ -102,7 +102,6 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     
     @Override
     public boolean isPaused() {
-//        this.checkPlayerLoaded();
         if (this.isEmpty()) {
             return false;
         }
@@ -111,11 +110,15 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     
     @Override
     public boolean hasStarted() {
-//        this.checkPlayerLoaded();
         if (this.isEmpty()) {
             return false;
         }
         return this.started;
+    }
+   
+    @Override
+    public boolean isEmpty() {
+        return this.player == null;
     }
 
     @Override
@@ -140,28 +143,15 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.loaded = Optional.of(song);
     }
     
+    @Override
+    public void resetPlayer() {
+        this.clearPlayer();
+    }
+    
     private void setPaused(final boolean value) {
         this.paused = value;
     }
     
-    /**
-     * Clear the player.
-     * @return
-     *  true if the operation succeded.
-     */
-    private boolean clearPlayer() {
-        if (this.player != null) {
-            this.stop();
-            this.player.unpatch(this.volumeControl);
-            this.volumeControl.unpatch(this.out);
-            this.out.close();
-            this.player.close();
-            this.started = false;
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void releasePlayerResources() {
         if (this.clearPlayer()) {
@@ -179,14 +169,16 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         }
     }
 
-    @Override
-    public boolean isEmpty() {
-        return this.player == null;
-    }
-
-
-    @Override
-    public void resetPlayer() {
-        this.clearPlayer();
+    private boolean clearPlayer() {
+        if (this.player != null) {
+            this.stop();
+            this.player.unpatch(this.volumeControl);
+            this.volumeControl.unpatch(this.out);
+            this.out.close();
+            this.player.close();
+            this.started = false;
+            return true;
+        }
+        return false;
     }
 }

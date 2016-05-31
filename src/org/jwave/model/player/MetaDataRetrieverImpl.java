@@ -26,10 +26,10 @@ import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
 /**
- * This class is an implementation of MetaDataV2.
+ * This class is an implementation of {@link MetaDataRetriever}.
  *
  */
-public class MetaDataRetrieverImpl implements MetaDataRetriever {
+public final class MetaDataRetrieverImpl implements MetaDataRetriever {
 
     private static final String ID3V1 = "ID3v1";
     private static final String ID3V2 = "ID3v2";
@@ -62,6 +62,18 @@ public class MetaDataRetrieverImpl implements MetaDataRetriever {
     public String retrieve(final MetaData metaDataValue) {
         return this.datas.get(metaDataValue);
     }
+    
+    @Override
+    public Optional<InputStream> getAlbumArtwork() {
+        if (this.song.hasId3v2Tag()) {
+            final byte[] imageData = this.id3v2Tag.getAlbumImage();
+            if (imageData != null) {
+                final Optional<InputStream> out = Optional.of(new ByteArrayInputStream(imageData));
+                return out;
+            }
+        }
+        return Optional.empty();
+    }
 
     @Override
     public void setData(final MetaData metaDataValue, final String newValue) throws IllegalAccessException, 
@@ -89,18 +101,6 @@ public class MetaDataRetrieverImpl implements MetaDataRetriever {
             this.fill(this.id3v2Tag, ID3V2);
         }
         this.fillWithEmptyValues();
-    }
-    
-    @Override
-    public Optional<InputStream> getAlbumArtwork() {
-        if (this.song.hasId3v2Tag()) {
-            final byte[] imageData = this.id3v2Tag.getAlbumImage();
-            if (imageData != null) {
-                final Optional<InputStream> out = Optional.of(new ByteArrayInputStream(imageData));
-                return out;
-            }
-        }
-        return Optional.empty();
     }
     
     private <T extends ID3v1> void fill(final T tag, final String tagType) throws NoSuchMethodException, 

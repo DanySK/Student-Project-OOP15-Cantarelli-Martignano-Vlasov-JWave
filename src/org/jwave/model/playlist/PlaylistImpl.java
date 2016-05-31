@@ -1,17 +1,16 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.jwave.model.EObserver;
+import org.jwave.model.player.Song;
 
 /**
  * This is an implementation of {@link Playlist} that can be serialized.
@@ -42,7 +41,6 @@ public class PlaylistImpl implements Playlist, Serializable {
         this.playlistID = UUID.randomUUID();
         this.idList = new LinkedList<>();
         this.map = new HashMap<>();
-        System.out.println("entra nel costruttore");
         this.set = new HashSet<>();
     }
     
@@ -76,6 +74,12 @@ public class PlaylistImpl implements Playlist, Serializable {
         this.map.remove(songID);
         this.notifyEObservers(this.getDimension());
     }
+    
+    @Override
+    public int indexOf(final UUID songID) {
+        this.checkSongPresence(songID);
+        return this.idList.indexOf(songID);
+    }
 
     @Override
     public int getDimension() {
@@ -86,73 +90,12 @@ public class PlaylistImpl implements Playlist, Serializable {
     public boolean isEmpty() {
         return this.idList.isEmpty();
     }
-
-    @Override
-    public void addEObserver(final EObserver<? super Integer> obs) {
-        this.set.add(obs);
-    }
-
-    @Override
-    public int indexOf(final UUID songID) {
-        this.checkSongPresence(songID);
-        return this.idList.indexOf(songID);
-    }
-
-    @Override
-    public void notifyEObservers(final Integer arg) {
-        this.set.forEach(obs -> obs.update(this, arg));
-    }
-
-    @Override
-    public String getName() {
-        return this.playlistName;
-    }
-
-    @Override
-    public void clearObservers() {
-        this.set = new HashSet<>();
-    }
-
-    @Override
-    public void setName(final String newName) {
-        this.playlistName = newName;
-    }
-
-    @Override
-    public void clear() {
-        this.idList = new LinkedList<>();
-    }
     
-    private void checkSongPresence(final UUID id) {
-        if (!this.idList.contains(id)) {
-            throw new IllegalArgumentException("Song not found");
-        }
-    }
-
-    @Override
-    public List<Song> getPlaylistContent() {
-       final List<Song> out = new LinkedList<>();
-       this.idList.stream()
-       .forEachOrdered(id -> out.add(this.map.get(id)));
-       return out;
-    }
-
-    @Override
-    public UUID getPlaylistID() {
-        return this.playlistID;
-    }
-
     @Override
     public Song getSong(final UUID songID) {
         return this.map.get(songID);
     }
     
-    @Override
-    public String toString() {
-        //return this.map.toString();     //TODO can be implemented better
-        return this.getName();
-    }
-
     @Override
     public Song getSongAtIndex(final int index) throws IllegalArgumentException {
         if (index > (this.idList.size() - 1) || index < 0) {  
@@ -160,9 +103,63 @@ public class PlaylistImpl implements Playlist, Serializable {
         }
         return this.map.get(this.idList.get(index));
     }
+    
+    @Override
+    public List<Song> getPlaylistContent() {
+       final List<Song> out = new LinkedList<>();
+       this.idList.stream()
+       .forEachOrdered(id -> out.add(this.map.get(id)));
+       return out;
+    }
+    
+    @Override
+    public String getName() {
+        return this.playlistName;
+    }
+    
+    @Override
+    public UUID getPlaylistID() {
+        return this.playlistID;
+    }
 
+    @Override
+    public void clear() {
+        this.idList = new LinkedList<>();
+    }
+
+    @Override
+    public void setName(final String newName) {
+        this.playlistName = newName;
+    }
+    
     @Override
     public void refreshContent() {
         this.map.values().forEach(s -> s.refreshMetaData());
+    }
+    
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+    
+    @Override
+    public void addEObserver(final EObserver<? super Integer> obs) {
+        this.set.add(obs);
+    }
+    
+    @Override
+    public void notifyEObservers(final Integer arg) {
+        this.set.forEach(obs -> obs.update(this, arg));
+    }
+    
+    @Override
+    public void clearObservers() {
+        this.set = new HashSet<>();
+    }
+    
+    private void checkSongPresence(final UUID id) {
+        if (!this.idList.contains(id)) {
+            throw new IllegalArgumentException("Song not found");
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist;
 
 import java.io.File;
 import java.util.Collection;
@@ -9,8 +9,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.jwave.model.playlist.strategies.PlaylistNavigator;
-import org.jwave.model.playlist.strategies.PlaylistNavigatorFactory;
+import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.DynamicPlayerImpl;
+import org.jwave.model.player.Song;
+import org.jwave.model.player.SongImpl;
+import org.jwave.model.playlist.navigator.PlaylistNavigatorFactory;
 
 /**
  * This is an implementation of {@link PlaylistManager}.
@@ -77,6 +80,20 @@ public class PlaylistManagerImpl implements PlaylistManager {
                 this.availablePlaylists.remove(p);
             }
         });
+    }
+    
+    @Override
+    public Song selectSongFromPlayingQueue(final UUID songID) throws IllegalArgumentException {
+        final Song out = this.defaultQueue.getSong(songID);
+        this.navigator.setCurrentIndex(Optional.of(this.loadedPlaylist.indexOf(songID)));
+        return out;
+    }
+
+    @Override
+    public Song selectSongFromPlayingQueueAtIndex(final int index) throws IllegalArgumentException {
+        final Song out = this.defaultQueue.getSongAtIndex(index);
+        this.navigator.setCurrentIndex(Optional.of(index));
+        return out;
     }
     
     @Override
@@ -150,12 +167,6 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
 
     @Override
-    public void setAvailablePlaylists(final Collection<? extends Playlist> playlists) {
-        this.availablePlaylists = new HashSet<>();
-        this.availablePlaylists.addAll(playlists);
-    }
-
-    @Override
     public void setPlayMode(final PlayMode newPlayMode) {
         this.playMode = newPlayMode;
         this.setNavigator(newPlayMode);
@@ -170,6 +181,12 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.loadedPlaylist.addEObserver(this.navigator);
     }
     
+    @Override
+    public void setAvailablePlaylists(final Collection<? extends Playlist> playlists) {
+        this.availablePlaylists = new HashSet<>();
+        this.availablePlaylists.addAll(playlists);
+    }
+    
     private boolean isNameAlreadyPresent(final String name) {
         return this.availablePlaylists.stream().anyMatch(p -> p.getName().equals(name));
     }
@@ -179,23 +196,5 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.navigator = this.navFactory.createNavigator(mode, dimension, this.currentIndex);
         this.loadedPlaylist.clearObservers();
         this.loadedPlaylist.addEObserver(this.navigator);
-    }
-
-    @Override
-    public Song selectSongFromPlayingQueue(final UUID songID) throws IllegalArgumentException {
-        final Song out = this.defaultQueue.getSong(songID);
-        this.navigator.setCurrentIndex(Optional.of(this.loadedPlaylist.indexOf(songID)));
-        return out;
-    }
-
-    @Override
-    public Song selectSongFromPlayingQueueAtIndex(final int index) throws IllegalArgumentException {
-        final Song out = this.defaultQueue.getSongAtIndex(index);
-        this.navigator.setCurrentIndex(Optional.of(index));
-        return out;
-    }
-
-    
-
-   
+    }  
 }

@@ -18,8 +18,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jwave.model.player.Playlist;
-import org.jwave.model.player.PlaylistImpl;
+import org.jwave.model.playlist.Playlist;
+import org.jwave.model.playlist.PlaylistImpl;
 
 /**
  * Defines the controller methods.
@@ -83,6 +83,7 @@ public final class PlaylistController {
     public static Collection<Playlist> reloadAvailablePlaylists() {   
         final Path defaultDir = getDefaultSavePath();
         final Set<Playlist> out = new HashSet<>();
+        //code inspired by Oracle tutorials.
         DirectoryStream<Path> stream;
         try {
             stream = Files.newDirectoryStream(defaultDir);
@@ -99,7 +100,8 @@ public final class PlaylistController {
         return out;
     }
     
-    private static Playlist loadPlaylist(final File playlist) throws FileNotFoundException, IOException, ClassNotFoundException {
+    private static Playlist loadPlaylist(final File playlist) throws FileNotFoundException, IOException, 
+    ClassNotFoundException {
         try (final ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(
                 new FileInputStream(playlist)))) {
             final Playlist extractedPlaylist = (Playlist) ois.readObject();
@@ -123,7 +125,8 @@ public final class PlaylistController {
         final Path userHomeDir  = Paths.get(System.getProperty(HOME));
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(userHomeDir)) {
             for (Path file : stream) {
-               if (Files.exists(file) && Files.isDirectory(file) && file.getFileName().toString().equals(SAVE_DIR_NAME)) {
+               if (Files.exists(file) && Files.isDirectory(file) 
+                       && file.getFileName().toString().equals(SAVE_DIR_NAME)) {
                    return true;
                }
             }
@@ -136,7 +139,7 @@ public final class PlaylistController {
     }
     
     private static Path getDefaultSavePath() {
-        return Paths.get(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME);
+        return Paths.get(System.getProperty(HOME), System.getProperty(SEPARATOR), SAVE_DIR_NAME);
     }
     
     /**
@@ -150,7 +153,8 @@ public final class PlaylistController {
      * @throws IllegalArgumentException 
      */
     public static Playlist loadDefaultPlaylist() {
-        final Path defPath = Paths.get(getDefaultSavePath().toString(), System.getProperty(SEPARATOR), DEF_PLAYLIST_NAME);
+        final Path defPath = Paths.get(getDefaultSavePath().toString(), System.getProperty(SEPARATOR), 
+                DEF_PLAYLIST_NAME);
         try {
             final Playlist out = loadPlaylist(defPath.toFile());
             return out;
@@ -161,18 +165,11 @@ public final class PlaylistController {
     }
     
     private static void savePlaylist(final Playlist playlist, final String name) throws IOException {
-        final Path outFile = Paths.get(getDefaultSavePath().toString() + System.getProperty(SEPARATOR) + name);
+        final Path outFile = Paths.get(getDefaultSavePath().toString(), System.getProperty(SEPARATOR), name);
         Files.deleteIfExists(outFile);
-//        Files.createFile(outFile);
         try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
                 new FileOutputStream(new File(outFile.toString()))))) {
             oos.writeObject(playlist);
         }
     }
-    
-//    private static void checkPlaylistContent(final Playlist playlist) {
-//        if (!(playlist instanceof Playlist)) {
-//            throw new IllegalArgumentException("File not recognized");
-//        }
-//    }
 }

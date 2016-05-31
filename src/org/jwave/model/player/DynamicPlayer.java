@@ -3,7 +3,7 @@ package org.jwave.model.player;
 import java.util.Optional;
 
 /**
- * This interface represents a dynamic player.
+ * This interface represents a dynamic player that can reproduce {@link Song}.
  */
 public interface DynamicPlayer {
 

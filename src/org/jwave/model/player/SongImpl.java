@@ -62,7 +62,7 @@ public class SongImpl implements Song, Serializable {
     }
 
     @Override
-    public UUID getSongID() {   //check if it is better to return a defensive copy
+    public UUID getSongID() {
         return this.songID;
     }
 
