@@ -16,12 +16,19 @@ import org.jwave.view.PlayerController;
  */
 public class ClockAgent implements Runnable {
     
-    public static enum Mode {
+    /**
+     * Enum describing ClockAgent modes.
+     *
+     */
+    public enum Mode {
         /**
-         * 
+         * Checks what to to do when a song has finished. 
          */
         PLAYER,
         
+        /**
+         * Checks if the reproduced song has some cuts inside.
+         */
         EDITOR;
     }
     
@@ -44,8 +51,6 @@ public class ClockAgent implements Runnable {
      * @param manager
      *          the manager this clock agent has to maintain referenced.
      *          
-     * @param threadName
-     *          name of the thread.
      */
     public ClockAgent(final DynamicPlayer player, final PlaylistManager manager, final ClockAgent.Mode checkMode) {
         this.dynPlayer = player;
