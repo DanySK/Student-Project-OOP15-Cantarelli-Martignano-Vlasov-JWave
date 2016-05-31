@@ -171,7 +171,7 @@ public final class PlaylistController {
     private static void savePlaylist(final Playlist playlist, final String name) throws IOException {
         final Path outFile = Paths.get(getDefaultSavePath().toString() + System.getProperty(SEPARATOR) + name);
         Files.deleteIfExists(outFile);
-        Files.createFile(outFile);
+//        Files.createFile(outFile);
         try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
                 new FileOutputStream(new File(outFile.toString()))))) {
             oos.writeObject(playlist);
