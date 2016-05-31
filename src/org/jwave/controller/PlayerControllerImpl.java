@@ -41,7 +41,8 @@ public final class PlayerControllerImpl implements PlayerController {
         this.player = new DynamicPlayerImpl();
         this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(PlaylistController.loadDefaultPlaylist());
-        this.agent = new ClockAgent(player, player, manager, "agent"); //!!!!!!!!! playerx2
+        this.agent = new ClockAgent(player, manager, ClockAgent.Mode.PLAYER);
+        this.agent.addController(this);
         this.agent.startClockAgent();
         
         //ScreenRefresher refresher = new ScreenRefresher(player, this);
@@ -154,7 +155,7 @@ public final class PlayerControllerImpl implements PlayerController {
     
     
     public void updatePosition(Integer ms) {
-        
+        System.out.print(ms+"  ");
     }
     
     @Override
