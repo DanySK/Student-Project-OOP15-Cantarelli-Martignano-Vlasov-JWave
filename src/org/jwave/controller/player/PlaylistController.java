@@ -144,6 +144,7 @@ public final class PlaylistController {
      * 
      * @return
      *          the default playlist.
+     *          
      * @throws IOException 
      * @throws ClassNotFoundException 
      * @throws IllegalArgumentException 
