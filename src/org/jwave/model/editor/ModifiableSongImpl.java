@@ -360,7 +360,6 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	
 	@Override
 	/*
-	 * Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	 * Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	 */
 	public List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples) throws IllegalArgumentException {
@@ -465,7 +464,6 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	}	
 	
 	@Override
-	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	public List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples) {
 		List<GroupedSampleInfo> waveformValues = new ArrayList<GroupedSampleInfo>();
@@ -617,6 +615,7 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	}
 	
 	@Override
+	/* https://github.com/ddf/Minim/blob/master/src/ddf/minim/javasound/JSBufferedSampleRecorder.java */
 	public void exportSong(String exportPath) {
 		String exportName = exportPath;
 		AudioFileFormat.Type type = AudioFileFormat.Type.WAVE;
