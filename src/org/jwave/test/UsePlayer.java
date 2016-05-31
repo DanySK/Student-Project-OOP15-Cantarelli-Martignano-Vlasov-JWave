@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
-import org.jwave.model.player.MetaData;
 import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
@@ -35,6 +34,5 @@ public final class UsePlayer {
         }
         p.setPlayer(m.selectSongFromPlayingQueueAtIndex(0));
         p.play();
-        System.out.println( p.getLoaded().get().getMetaData().retrieve(MetaData.ALBUM));
     }
 }

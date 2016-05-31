@@ -111,7 +111,7 @@ public interface DynamicPlayer {
      * @param amount
      *          the amount of volume to be set.         
      *  @throws IllegalArgumentException
-     *                  if amount < 0 || amount > 30.
+     *                  if amount < 0 || amount > 70.
      *                           
      */
     void setVolume(float amount);
