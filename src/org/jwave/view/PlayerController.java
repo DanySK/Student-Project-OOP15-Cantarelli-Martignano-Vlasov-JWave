@@ -9,7 +9,7 @@ import org.jwave.model.player.Song;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 
-public interface PlayerUIObserver {
+public interface PlayerController {
     
     public void loadSong(File song) throws Exception;
     
@@ -20,6 +20,8 @@ public interface PlayerUIObserver {
     public void play();
     
     public void moveToMoment(Double percentage);
+    
+    public void updatePosition(Integer ms);
     
     public void setVolume(Integer amount);
     

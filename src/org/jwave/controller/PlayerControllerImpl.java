@@ -6,28 +6,20 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
-import org.jwave.model.player.MetaData;
-import org.jwave.model.player.MetaDataRetriever;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
-import org.jwave.model.player.SongImpl;
-import org.jwave.view.PlayerUIObserver;
-
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
-
+import org.jwave.view.PlayerController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public final class Controller implements PlayerUIObserver {
+public final class PlayerControllerImpl implements PlayerController {
 
     private final DynamicPlayer player;
     private final DynamicPlayer editorPlayer;
@@ -37,7 +29,7 @@ public final class Controller implements PlayerUIObserver {
     private final ObservableList<Playlist> playlists;
     private final Map<Playlist, ObservableList<Song>> songs;
 
-    Controller() {
+    PlayerControllerImpl() {
 
         try {
             PlaylistController.checkDefaultDir();
@@ -51,6 +43,10 @@ public final class Controller implements PlayerUIObserver {
         this.manager = new PlaylistManagerImpl(PlaylistController.loadDefaultPlaylist());
         this.agent = new ClockAgent(player, player, manager, "agent"); //!!!!!!!!! playerx2
         this.agent.startClockAgent();
+        
+        ScreenRefresher refresher = new ScreenRefresher(player, this);
+        refresher.start();
+        
         try {
             manager.setAvailablePlaylists(PlaylistController.reloadAvailablePlaylists());
         } catch (Exception e) {
@@ -79,6 +75,8 @@ public final class Controller implements PlayerUIObserver {
             player.setPlayer(newSong);
             manager.next();
         }
+        
+        this.songs.get(manager.getDefaultPlaylist()).add(newSong);
 
         //PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(), manager.getDefaultPlaylist().getName());
     }
@@ -97,11 +95,6 @@ public final class Controller implements PlayerUIObserver {
                 this.player.play();
             }
         }
-        System.out.println("\n\n\n\n\n\n\n\n\n\n");
-        this.manager.getPlayingQueue().getPlaylistContent().forEach(e->{
-            System.out.println((e == player.getLoaded().get() ? "->" : "  ") + e.getName());
-            
-        });
     }
 
     @Override
@@ -159,9 +152,15 @@ public final class Controller implements PlayerUIObserver {
         this.player.play();
     }
     
+    
+    public void updatePosition(Integer ms) {
+        
+    }
+    
     @Override
     public void moveToMoment(Double percentage) {
-        this.player.cue((int) ((percentage * player.getLength()) / 100));
+        if(!this.player.isEmpty())
+            player.cue((int) ((percentage * player.getLength()) / 100));
     }
 
     public void setVolume(Integer amount) {
