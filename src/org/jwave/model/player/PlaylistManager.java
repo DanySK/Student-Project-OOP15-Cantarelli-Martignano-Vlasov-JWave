@@ -43,11 +43,11 @@ public interface PlaylistManager {
     /**
      * Deletes a playlist.
      * 
-     * @param playlist
+     * @param playlistID
      *          the playlist to be deleted.
      *                    
      */
-    void deletePlaylist(Playlist playlist);
+    void deletePlaylist(UUID playlistID);
     
     /**
      * Selects a song from the current playing queue, making it the current selected.

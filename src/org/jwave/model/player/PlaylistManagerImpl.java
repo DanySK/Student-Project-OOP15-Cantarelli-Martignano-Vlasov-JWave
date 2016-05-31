@@ -52,7 +52,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
         final DynamicPlayer tester = new DynamicPlayerImpl();
         try {
             tester.setPlayer(out);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw e;
         } finally {
             tester.releasePlayerResources();
@@ -73,8 +73,12 @@ public class PlaylistManagerImpl implements PlaylistManager {
 
 
     @Override
-    public void deletePlaylist(final Playlist playlist) {
-        this.availablePlaylists.remove(playlist);
+    public void deletePlaylist(final UUID playlistID) {
+        this.availablePlaylists.forEach(p -> {
+            if (p.getPlaylistID().equals(playlistID)) {
+                this.availablePlaylists.remove(p);
+            }
+        });
     }
     
     @Override
