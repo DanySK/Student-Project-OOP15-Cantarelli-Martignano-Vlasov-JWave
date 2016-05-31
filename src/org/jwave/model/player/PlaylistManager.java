@@ -23,6 +23,9 @@ public interface PlaylistManager {
      *          
      * @return
      *          the added song.         
+     *          
+     * @throws IllegalArgumentException
+     *          when passing a file that doesn't contain audio data.         
      */
     Song addAudioFile(File audioFile) throws IllegalArgumentException;
     

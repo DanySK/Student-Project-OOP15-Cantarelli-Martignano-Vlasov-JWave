@@ -4,8 +4,7 @@ import java.util.UUID;
 
 /**
  * An interface that models the concept of song.
- * A song is an audio file containing various information
- * stored in metadata.
+ * A song is an audio file containing also metadata.
  *
  */
 public interface Song {
@@ -38,5 +37,8 @@ public interface Song {
      */
     MetaDataRetriever getMetaData();
     
+    /**
+     * Refreshes metadata.
+     */
     void refreshMetaData();
 }
