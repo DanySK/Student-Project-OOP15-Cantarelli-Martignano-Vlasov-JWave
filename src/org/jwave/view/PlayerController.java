@@ -11,6 +11,8 @@ import javafx.collections.ObservableList;
 
 public interface PlayerController {
     
+    public void attachUI(PlayerUI UI);
+    
     public void loadSong(File song) throws Exception;
     
     public void loadSong(Path path);

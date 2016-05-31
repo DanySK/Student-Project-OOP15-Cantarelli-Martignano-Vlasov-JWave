@@ -82,7 +82,7 @@
         </SplitPane>
       <VBox>
          <children>
-            <Slider fx:id="positionSlider" majorTickUnit="1.0" minorTickCount="1" onMouseReleased="#positionChanged" prefHeight="8.0" prefWidth="900.0">
+            <Slider fx:id="positionSlider" majorTickUnit="1.0" max="10000.0" minorTickCount="1" onMousePressed="#lockSlider" onMouseReleased="#changePosition" prefHeight="8.0" prefWidth="900.0">
                <VBox.margin>
                   <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                </VBox.margin>
