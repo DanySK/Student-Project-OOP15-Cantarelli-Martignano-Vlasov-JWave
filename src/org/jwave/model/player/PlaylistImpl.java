@@ -150,7 +150,8 @@ public class PlaylistImpl implements Playlist, Serializable {
     
     @Override
     public String toString() {
-        return this.map.toString();     //TODO can be implemented better
+        //return this.map.toString();     //TODO can be implemented better
+        return this.getName();
     }
 
     @Override
