@@ -1,8 +1,11 @@
 package org.jwave.view.screens;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.jwave.model.player.MetaData;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.Song;
@@ -10,14 +13,22 @@ import org.jwave.view.FXEnvironment;
 import org.jwave.view.PlayerUI;
 import org.jwave.view.PlayerController;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -35,17 +46,16 @@ import javafx.util.Callback;
  */
 public class PlayerScreenController implements PlayerUI {
 
-    private static double MIN_CHANGE = 0.5;
-
     private final FXMLScreens FXMLSCREEN = FXMLScreens.PLAYER;
     private final FXEnvironment environment;
+    private final PlayerController controller;
     private Stage primaryStage;
-    private final PlayerController observer;
+    private boolean lockedPositionSlider;
 
     @FXML
     private Button btnPlay, btnNewPlaylist;
     @FXML
-    private Slider positionSlider, volumeSlider;
+    private volatile Slider positionSlider, volumeSlider;
     @FXML
     private ListView<Playlist> listView;
     @FXML
@@ -54,9 +64,10 @@ public class PlayerScreenController implements PlayerUI {
     private TableColumn<Song, String> columnFile, columnTitle, columnAuthor, columnAlbum, columnGenre;
 
     public PlayerScreenController(FXEnvironment environment, PlayerController controller) {
-        this.observer = controller;
+        this.controller = controller;
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
+        this.lockedPositionSlider = false;
 
         tableView.setPlaceholder(new Label("Nessun brano caricato"));
         tableView.setRowFactory(tr -> {
@@ -64,11 +75,25 @@ public class PlayerScreenController implements PlayerUI {
             return row;
         });
 
-        listView.setItems(observer.getObservablePlaylists());
+        MenuItem addToPlaylist = new MenuItem("Aggiungi a playlist");
+        addToPlaylist.setOnAction(e->{
+            List<Playlist> choices = controller.getObservablePlaylists().stream().filter(p->p.getName() != "default").collect(Collectors.toList());
+            ChoiceDialog<Playlist> dialog = new ChoiceDialog<>(choices.get(0), choices);
+            //dialog.
+            dialog.setTitle("Aggiungi a playlist");
+            dialog.setHeaderText("Scegli la playlist in cui inserire "+tableView.getSelectionModel().getSelectedItem().getName());
+
+            // Traditional way to get the response value.
+            Optional<Playlist> result = dialog.showAndWait();
+            result.ifPresent(playlist->controller.addSongToPlaylist(tableView.getSelectionModel().getSelectedItem(), playlist));
+        });
+        tableView.setContextMenu(new ContextMenu(addToPlaylist));
+
+        listView.setItems(controller.getObservablePlaylists());
         listView.setOnMouseClicked(e -> {
             System.out.println("SELECTED PLAYLIST: " + listView.getSelectionModel().getSelectedItem().getName());
             // observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).forEach(s->System.out.println(s.getName()));
-            tableView.setItems(observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
+            tableView.setItems(controller.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
         });
 
         listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
@@ -103,7 +128,7 @@ public class PlayerScreenController implements PlayerUI {
         columnGenre.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
 
-        volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> observer.setVolume(new_val.intValue()));
+        volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> controller.setVolume(new_val.intValue()));
 
     }
 
@@ -134,30 +159,30 @@ public class PlayerScreenController implements PlayerUI {
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()) {
             System.out.println("NEW PLAYLIST: " + result.get());
-            this.observer.newPlaylist(result.get());
+            this.controller.newPlaylist(result.get());
         }
     }
 
     @FXML
     private void play() {
-        observer.play();
+        controller.play();
     }
 
     @FXML
     private void stopPlay() {
-        observer.stop();
+        controller.stop();
     }
 
     @FXML
     private void next() {
         System.out.println("next");
-        observer.next();
+        controller.next();
     }
 
     @FXML
     private void prev() {
         System.out.println("prev");
-        observer.previous();
+        controller.previous();
     }
 
     @FXML
@@ -168,7 +193,7 @@ public class PlayerScreenController implements PlayerUI {
         if (openedFiles != null)
             openedFiles.forEach(f -> {
                 try {
-                    observer.loadSong(f);
+                    controller.loadSong(f);
                 } catch (Exception e) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Errore");
@@ -180,8 +205,20 @@ public class PlayerScreenController implements PlayerUI {
     }
 
     @FXML
-    private void positionChanged() {
-        observer.moveToMoment(positionSlider.getValue());
+    private void changePosition() {
+        controller.moveToMoment(positionSlider.getValue());
+        lockedPositionSlider = false;
+    }
+
+    @Override
+    public void updatePosition(Integer ms, Integer lenght) {
+        if (!positionSlider.isValueChanging() && lockedPositionSlider == false)
+            positionSlider.setValue((ms * 10000) / lenght);
+    }
+
+    @FXML
+    private void lockSlider() {
+        lockedPositionSlider = true;
     }
 
 }

@@ -130,11 +130,11 @@ public class MetaDataRetrieverImpl implements MetaDataRetriever {
         }
     }
     
-    @SuppressWarnings("unchecked")       //TODO check if it can be avoided.
+    @SuppressWarnings("unchecked")
     private <T extends ID3v1> void setTag(final MetaData tag, final String newValue) throws IllegalAccessException, 
     IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         T metaDataVersion = null;
-        if (tag.getTagType().equals(ID3V1)) {   //TODO refactoring if possible.
+        if (tag.getTagType().equals(ID3V1)) { 
             if (this.id3v1Tag == null) {
                 this.id3v1Tag = new ID3v1Tag();
             }

@@ -1,14 +1,12 @@
 package org.jwave.test;
 
 import java.io.File;
-import java.util.Optional;
 
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
 import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
-import org.jwave.model.player.Song;
 
 /**
  * This class is intended for testing player functionalities.
@@ -34,14 +32,7 @@ public final class UsePlayer {
         } catch (Exception e) {
             System.out.println("File not found");
         }
-
-        System.out.println("PlaylistDimension = " + m.getDefaultPlaylist().getDimension());
-        final Optional<Song> s = m.next(); 
-        if (s.isPresent()) {
-            p.setPlayer(s.get());
-            p.play();
-        } else {
-            System.out.println("can't load the song");
-        }
+        p.setPlayer(m.selectSongFromPlayingQueueAtIndex(0));
+        p.play();
     }
 }

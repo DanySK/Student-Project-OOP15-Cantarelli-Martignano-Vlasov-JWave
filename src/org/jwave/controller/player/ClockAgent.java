@@ -1,11 +1,14 @@
 package org.jwave.controller.player;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.Song;
+import org.jwave.view.PlayerController;
 
 /**
  * This class is a clock for {@link DynamicPlayer}, determining controls at a specified interval. 
@@ -13,11 +16,27 @@ import org.jwave.model.player.Song;
  */
 public class ClockAgent implements Runnable {
     
+    /**
+     * Enum describing ClockAgent modes.
+     *
+     */
+    public enum Mode {
+        /**
+         * Checks what to to do when a song has finished. 
+         */
+        PLAYER,
+        
+        /**
+         * Checks if the reproduced song has some cuts inside.
+         */
+        EDITOR;
+    }
+    
     private final Thread t;
-    private final String name;
-    private DynamicPlayer dynPlayer;
-    private DynamicPlayer dynEditorPlayer;
+    private final DynamicPlayer dynPlayer;
     private PlaylistManager playlistManager;
+    private Set<PlayerController> controllerSet;
+    private final ClockAgent.Mode mode;
     private volatile boolean stopped;
     
     /**
@@ -32,21 +51,18 @@ public class ClockAgent implements Runnable {
      * @param manager
      *          the manager this clock agent has to maintain referenced.
      *          
-     * @param threadName
-     *          name of the thread.
      */
-    public ClockAgent(final DynamicPlayer player, final DynamicPlayer editorPlayer, final PlaylistManager manager, final String threadName) {
+    public ClockAgent(final DynamicPlayer player, final PlaylistManager manager, final ClockAgent.Mode checkMode) {
         this.dynPlayer = player;
-        this.dynEditorPlayer = editorPlayer;
         this.playlistManager = manager;
         this.stopped = false;
-        this.name = threadName;
-        this.t = new Thread(this, this.name);
+        this.controllerSet = new HashSet<>();
+        this.mode = checkMode;
+        this.t = new Thread(this);
     }
     
     @Override
     public void run() {
-//        System.out.println("Running thread" + this.name);
         while (!this.isStopped()) {
             try {
                 this.checkInReproduction();
@@ -58,8 +74,15 @@ public class ClockAgent implements Runnable {
     }
     
     private void checkInReproduction() {
-        this.checkPlayer();
-        this.checkEditor();
+        switch (this.mode) {
+        case EDITOR:
+            this.checkEditor();
+            break;
+        default:
+            this.checkPlayer();
+        }
+        if(dynPlayer.isPlaying())
+            this.notifyControllers();
     }
     
     /**
@@ -71,13 +94,13 @@ public class ClockAgent implements Runnable {
     }
     
     /**
-     * Sets the {@link DynamicPlayer} referenced by this agent.
+     * Adds a controller to the agent. 
      * 
-     * @param player
-     *          the player to be referenced by this agent.
+     * @param newController
+     *          the controller to be added.
      */
-    public void setPlayer(final DynamicPlayer player) {
-        this.dynPlayer = player;
+    public void addController(final PlayerController newController) {
+        this.controllerSet.add(newController);
     }
     
     /**
@@ -124,8 +147,14 @@ public class ClockAgent implements Runnable {
     }
     
     private void checkEditor() {
-        if (this.dynEditorPlayer.getLoaded().isPresent()) {
-            this.dynEditorPlayer.isPlaying();
+        if (this.dynPlayer.getLoaded().isPresent()) {
+            this.dynPlayer.isPlaying();
+        }
+    }
+    
+    private void notifyControllers() {
+        if (!this.dynPlayer.isEmpty()) {
+            this.controllerSet.forEach(c -> c.updatePosition(this.dynPlayer.getPosition()));
         }
     }
 }

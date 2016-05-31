@@ -118,7 +118,7 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 	}
 
 	@Override
-	public void setVolume(final int amount) {
+	public void setVolume(final float amount) {
 		this.decoratedDynamicPlayer.setVolume(amount);
 	}
 	
