@@ -43,45 +43,34 @@ public final class PlaylistController {
     private PlaylistController() { }
     
     /**
-     * Saves a playlist in the file system.
-     * 
-     * @param playlist
-     *          the playlist to be saved.
-     *          
-     * @param name
-     *          the name of the new playlist.         
-     *          
-     * @param path     
-     *          the path where the playlist will be stored.
-     *          
-     * @throws IOException 
-     * 
-     * @throws FileNotFoundException 
-     */
-    public static void savePlaylistToFile(final Playlist playlist, final String name, final Path path) throws IOException {
-        final Path outFile = Paths.get(path.toString() + System.getProperty(SEPARATOR) + name + DEF_EXTENSION);
-        Files.deleteIfExists(outFile);
-        Files.createFile(outFile);
-        try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
-                new FileOutputStream(new File(path.toString() + System.getProperty(SEPARATOR) + playlist.getName() + ".jwo"))))) {
-            oos.writeObject(playlist);
-        }
-    }
-    
-    /**
      * Saves a playlist in the default save directory.
      * 
      * @param playlist
      *          the playlist to be saved.
      *          
      * @param name
-     *          the name of the new playlist.         
+     *          the name of the new playlist (the extension will be added automatically).         
      *          
      * @throws IOException 
      * 
      */
     public static void savePlaylistToFile(final Playlist playlist, final String name) throws IOException {
-        savePlaylistToFile(playlist, name, getDefaultSavePath());
+        savePlaylist(playlist, name + DEF_EXTENSION);
+    }
+    
+    /**
+     * Saves the default playlist to file.
+     * 
+      * @param playlist
+     *          the playlist to be saved.
+     *          
+     * @param name
+     *          the name of the new playlist.         
+     *          
+     * @throws IOException 
+     */
+    public static void saveDefaultPlaylistToFile(final Playlist playlist, final String name) throws IOException {
+        savePlaylist(playlist, name);
     }
 
     /**
@@ -148,10 +137,6 @@ public final class PlaylistController {
         return Paths.get(System.getProperty(HOME) + System.getProperty(SEPARATOR) + SAVE_DIR_NAME);
     }
     
-//    private boolean isAudioFileName(final String name) {
-//        return (name.endsWith(".wav") || name.endsWith(".mp3")); 
-//    }
-    
     /**
      * Loads the default playlist or creates it if necessary.
      * 
@@ -180,6 +165,16 @@ public final class PlaylistController {
             }
         } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
             return new PlaylistImpl(DEF_PLAYLIST_NAME);
+        }
+    }
+    
+    private static void savePlaylist(final Playlist playlist, final String name) throws IOException {
+        final Path outFile = Paths.get(getDefaultSavePath().toString() + System.getProperty(SEPARATOR) + name + DEF_EXTENSION);
+        Files.deleteIfExists(outFile);
+        Files.createFile(outFile);
+        try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
+                new FileOutputStream(new File(getDefaultSavePath().toString() + System.getProperty(SEPARATOR) + name))))) {
+            oos.writeObject(playlist);
         }
     }
     
