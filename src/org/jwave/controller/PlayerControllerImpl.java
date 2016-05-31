@@ -90,7 +90,7 @@ public final class PlayerControllerImpl implements PlayerController {
 
         this.songs.get(manager.getDefaultPlaylist()).add(newSong);
 
-        // PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(),
+        PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
         // manager.getDefaultPlaylist().getName());
     }
 
