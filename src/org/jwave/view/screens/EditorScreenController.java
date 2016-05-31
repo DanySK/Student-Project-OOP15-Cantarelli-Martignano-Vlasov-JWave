@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.jwave.controller.EditorController;
 import org.jwave.controller.PlayerControllerImpl;
 import org.jwave.model.player.MetaData;
-import org.jwave.model.player.Playlist;
+import org.jwave.model.playlist.Playlist;
 import org.jwave.model.player.Song;
 import org.jwave.view.EditorUI;
 import org.jwave.view.FXEnvironment;
