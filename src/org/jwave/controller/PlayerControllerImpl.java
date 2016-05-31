@@ -77,7 +77,7 @@ public final class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public void loadSong(final File song) throws Exception {
+    public void loadSong(final File song) throws IllegalArgumentException, IOException{
         Song newSong = this.manager.addAudioFile(song);
 
         // In case of first opening, there are no other songs, the song is

@@ -1,6 +1,7 @@
 package org.jwave.view.screens;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -194,11 +195,17 @@ public class PlayerScreenController implements PlayerUI {
             openedFiles.forEach(f -> {
                 try {
                     controller.loadSong(f);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException a) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Errore");
                     alert.setHeaderText("Impossibile aprire il file " + f.getName());
                     alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
+                    alert.showAndWait();
+                } catch (IOException i) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Errore");
+                    alert.setHeaderText("Impossibile accedere alla playlist.");
+                    alert.setContentText("Le canzoni saranno comunque disponibili alla riproduzione ma non saranno memorizzate in maniera permanente.");
                     alert.showAndWait();
                 }
             });

@@ -23,7 +23,7 @@ public interface PlaylistManager {
      * @return
      *          the added song.         
      */
-    Song addAudioFile(File audioFile) throws Exception;
+    Song addAudioFile(File audioFile) throws IllegalArgumentException;
     
     /**
      * Creates a new playlist and adds it to the collection of available playlists.
