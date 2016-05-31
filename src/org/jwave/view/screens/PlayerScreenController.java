@@ -85,6 +85,7 @@ public class PlayerScreenController implements PlayerUI {
 
             // Traditional way to get the response value.
             Optional<Playlist> result = dialog.showAndWait();
+            result.ifPresent(playlist->controller.addSongToPlaylist(tableView.getSelectionModel().getSelectedItem(), playlist));
         });
         tableView.setContextMenu(new ContextMenu(addToPlaylist));
 
