@@ -15,12 +15,11 @@ import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
-import org.jwave.view.PlayerUIObserver;
-
+import org.jwave.view.PlayerController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public final class Controller implements PlayerUIObserver {
+public final class PlayerControllerImpl implements PlayerController {
 
     private final DynamicPlayer player;
     private final DynamicPlayer editorPlayer;
@@ -30,7 +29,7 @@ public final class Controller implements PlayerUIObserver {
     private final ObservableList<Playlist> playlists;
     private final Map<Playlist, ObservableList<Song>> songs;
 
-    Controller() {
+    PlayerControllerImpl() {
 
         try {
             PlaylistController.checkDefaultDir();
@@ -42,8 +41,12 @@ public final class Controller implements PlayerUIObserver {
         this.player = new DynamicPlayerImpl();
         this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(PlaylistController.loadDefaultPlaylist());
-        this.agent = new ClockAgent(player, player, manager, "agent");
+        this.agent = new ClockAgent(player, player, manager, "agent"); //!!!!!!!!! playerx2
         this.agent.startClockAgent();
+        
+        ScreenRefresher refresher = new ScreenRefresher(player, this);
+        refresher.start();
+        
         try {
             manager.setAvailablePlaylists(PlaylistController.reloadAvailablePlaylists());
         } catch (Exception e) {
@@ -63,20 +66,19 @@ public final class Controller implements PlayerUIObserver {
     }
 
     @Override
-    public void loadSong(final File song) {
-        System.out.println("load " + song.getPath() + "  " + song);
-        this.manager.addAudioFile(song);
+    public void loadSong(final File song) throws Exception {
+        Song newSong = this.manager.addAudioFile(song);
+        
+        //In case of first opening, there are no other songs, the song is automatically queued 
         if (this.player.isEmpty()) {
             manager.setQueue(manager.getDefaultPlaylist());
-            this.player
-                    .setPlayer(manager.selectSongFromPlayingQueueAtIndex(manager.getPlayingQueue().getDimension() - 1));
+            player.setPlayer(newSong);
+            manager.next();
         }
+        
+        this.songs.get(manager.getDefaultPlaylist()).add(newSong);
 
-        System.out.print("PLAYING QUEUE: ");
-        for (int i = 0; i < manager.getPlayingQueue().getDimension(); i++) {
-            System.out.print(manager.getPlayingQueue().getSongAtIndex(i).getName() + "  ");
-        }
-        System.out.println();
+        //PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(), manager.getDefaultPlaylist().getName());
     }
 
     @Override
@@ -89,9 +91,9 @@ public final class Controller implements PlayerUIObserver {
         if (this.player.isPlaying()) {
             this.player.pause();
         } else {
-            if (!player.isEmpty()){
+            if (!player.isEmpty()) {
                 this.player.play();
-            }          
+            }
         }
     }
 
@@ -140,9 +142,7 @@ public final class Controller implements PlayerUIObserver {
     @Override
     public void addSongToPlaylist(Song song, Playlist playlist) {
         playlist.addSong(song);
-        System.out.println("ADDING " + song + " TO " + playlist);
         songs.get(playlist).add(song);
-        System.out.println(songs.get(playlist).toString());
     }
 
     @Override
@@ -151,20 +151,33 @@ public final class Controller implements PlayerUIObserver {
         this.player.setPlayer(song);
         this.player.play();
     }
+    
+    
+    public void updatePosition(Integer ms) {
+        
+    }
+    
+    @Override
+    public void moveToMoment(Double percentage) {
+        if(!this.player.isEmpty())
+            player.cue((int) ((percentage * player.getLength()) / 100));
+    }
 
+    public void setVolume(Integer amount) {
+        this.player.setVolume(amount);
+    }
+    
     public ObservableList<Playlist> getObservablePlaylists() {
         return this.playlists;
     }
 
     @Override
-    public void moveToMoment(Double percentage) {
-        this.player.cue((int) ((percentage * player.getLength()) / 100));
+    public ObservableList<Song> getObservablePlaylistContent(Playlist playlist) {
+        return songs.get(playlist);
     }
 
-    @Override
-    public ObservableList<Song> getObservablePlaylistContent(Playlist playlist) {
-
-        System.out.println(playlist.getName() + " SONGS " + this.songs.toString());
-        return songs.get(playlist);
+    public void terminate(){
+        this.player.releasePlayerResources();
+        //this.agent.KILL
     }
 }

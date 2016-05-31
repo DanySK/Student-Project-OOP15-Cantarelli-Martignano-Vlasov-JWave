@@ -20,7 +20,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
@@ -68,11 +68,15 @@
             </VBox>
             <TableView fx:id="tableView" prefHeight="431.0" prefWidth="640.0">
               <columns>
+                  <TableColumn fx:id="columnFile" prefWidth="160.0" text="File" />
                 <TableColumn fx:id="columnTitle" prefWidth="160.0" text="Titolo" />
                 <TableColumn fx:id="columnAuthor" minWidth="0.0" prefWidth="160.0" text="Autore" />
                   <TableColumn fx:id="columnAlbum" minWidth="0.0" prefWidth="160.0" text="Album" />
                   <TableColumn fx:id="columnGenre" minWidth="0.0" prefWidth="160.0" text="Genere" />
               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
             </TableView>
             </items>
         </SplitPane>
@@ -138,7 +142,13 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" HBox.hgrow="NEVER">
                      <children>
-                        <Slider fx:id="volumeSlider" />
+                        <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="2" showTickMarks="true" value="10.0">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding></Slider>
                      </children>
                      <padding>
                         <Insets left="10.0" right="10.0" />

@@ -13,7 +13,7 @@ public class Main {
 
         
         PlatformImpl.startup(() -> { });
-        Controller controller = new Controller();
+        PlayerControllerImpl controller = new PlayerControllerImpl();
         FXEnvironment environment = new FXEnvironment();
         PlayerScreenController player = new PlayerScreenController(environment,controller);
         //player.setObserver(controller);

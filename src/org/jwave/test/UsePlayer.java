@@ -28,8 +28,13 @@ public final class UsePlayer {
         //to be filled with junit test.
         final DynamicPlayer p = new DynamicPlayerImpl();
         final PlaylistManager m = new PlaylistManagerImpl(new PlaylistImpl("GianCartone"));
-        m.addAudioFile(new File("/home/canta/Music/03. The Gift Of Music.mp3"));
-        m.addAudioFile(new File("/home/canta/Music/05-infected_mushroom-feelings.mp3"));
+        try {
+            m.addAudioFile(new File("/home/canta/Music/03. The Gift Of Music.mp3"));
+            m.addAudioFile(new File("/home/canta/Music/05-infected_mushroom-feelings.mp3"));
+        } catch (Exception e) {
+            System.out.println("File not found");
+        }
+
         System.out.println("PlaylistDimension = " + m.getDefaultPlaylist().getDimension());
         final Optional<Song> s = m.next(); 
         if (s.isPresent()) {

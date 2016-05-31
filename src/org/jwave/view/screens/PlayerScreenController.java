@@ -1,37 +1,31 @@
 package org.jwave.view.screens;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.jwave.controller.Controller;
+import org.jwave.model.player.MetaData;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.Song;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.PlayerUI;
-import org.jwave.view.PlayerUIObserver;
-
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import org.jwave.view.PlayerController;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.Duration;
 
 /**
  * Controller for the Player screen.
@@ -40,13 +34,13 @@ import javafx.util.Duration;
  *
  */
 public class PlayerScreenController implements PlayerUI {
-    
-    private static double MIN_CHANGE = 0.5 ;
+
+    private static double MIN_CHANGE = 0.5;
 
     private final FXMLScreens FXMLSCREEN = FXMLScreens.PLAYER;
     private final FXEnvironment environment;
     private Stage primaryStage;
-    private final PlayerUIObserver observer;
+    private final PlayerController observer;
 
     @FXML
     private Button btnPlay, btnNewPlaylist;
@@ -55,62 +49,81 @@ public class PlayerScreenController implements PlayerUI {
     @FXML
     private ListView<Playlist> listView;
     @FXML
-    private TableView<?> tableView;
+    private TableView<Song> tableView;
+    @FXML
+    private TableColumn<Song, String> columnFile, columnTitle, columnAuthor, columnAlbum, columnGenre;
 
-    public PlayerScreenController(FXEnvironment environment, PlayerUIObserver controller) {
+    public PlayerScreenController(FXEnvironment environment, PlayerController controller) {
         this.observer = controller;
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
-        this.tableView.setPlaceholder(new Label("Nessun brano caricato"));
 
-        this.listView.setItems(this.observer.getObservablePlaylists());
-        this.listView.setOnMouseClicked(e->{
-            System.out.println("SELECTED PLAYLIST: "+listView.getSelectionModel().getSelectedItem().getName());
-            System.out.println(observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).toString());
+        tableView.setPlaceholder(new Label("Nessun brano caricato"));
+        tableView.setRowFactory(tr -> {
+            TableRow<Song> row = new TableRow<>();
+            return row;
         });
-        
+
+        listView.setItems(observer.getObservablePlaylists());
+        listView.setOnMouseClicked(e -> {
+            System.out.println("SELECTED PLAYLIST: " + listView.getSelectionModel().getSelectedItem().getName());
+            // observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).forEach(s->System.out.println(s.getName()));
+            tableView.setItems(observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
+        });
+
         listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
             @Override
             public ListCell<Playlist> call(ListView<Playlist> lv) {
-                return new ListCell<Playlist>() {
+                ListCell<Playlist> cell = new ListCell<Playlist>() {
                     @Override
                     public void updateItem(Playlist item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item == null) {
                             setText(null);
                         } else {
-                            if(item.getName() == "default") {
+                            if (item.getName() == "default") {
                                 setText("Tutti i brani");
-                            }
-                            else{
+                            } else {
                                 setText(item.getName());
                             }
                         }
                     }
                 };
+                return cell;
             }
         });
 
-        
-        this.volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov,
-                Number old_val, Number new_val) {
-                    System.out.println("VOLUME: "+new_val);
-            }
-        });
+        columnFile.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        columnTitle.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.TITLE)));
+        columnAuthor.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ARTIST)));
+        columnAlbum.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ALBUM)));
+        columnGenre.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
+
+        volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> observer.setVolume(new_val.intValue()));
+
     }
 
     @Override
     public void show() {
         this.primaryStage = this.environment.getMainStage();
+        // this.primaryStage.setOnCloseRequest(e->observer.terminate());
+        this.primaryStage.setOnCloseRequest(e -> System.exit(0));
         this.environment.displayScreen(FXMLSCREEN);
     }
 
     @Override
-    public void setObserver(PlayerUIObserver observer) {
+    public void setObserver(PlayerController observer) {
 
         // this.observer = observer;
 
+    }
+
+    public void updatePosition() {
+        System.out.println("Pos");
     }
 
     @FXML
@@ -123,23 +136,16 @@ public class PlayerScreenController implements PlayerUI {
             System.out.println("NEW PLAYLIST: " + result.get());
             this.observer.newPlaylist(result.get());
         }
-
-        //result.ifPresent(name -> System.out.println("Nuova Playlist: " + name));
     }
 
     @FXML
     private void play() {
-
-        System.out.println("play");
-        this.observer.play();
-        // AudioSystem.getAudioSystem().getDynamicPlayer().play();
-
+        observer.play();
     }
 
     @FXML
     private void stopPlay() {
-        System.out.println("stop");
-        // AudioSystem.getAudioSystem().getDynamicPlayer().pause();
+        observer.stop();
     }
 
     @FXML
@@ -156,18 +162,25 @@ public class PlayerScreenController implements PlayerUI {
 
     @FXML
     private void openFile() {
-        System.out.println("Open");
-
         FileChooser fileChooser = new FileChooser();
-        // fileChooser.setSelectedExtensionFilter();
-        // new FileChooser.ExtensionFilter("*.mp3");
-        File file = fileChooser.showOpenDialog(this.primaryStage);
-        observer.loadSong(file);
+        fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio file", "*.mp3", "*.wav"));
+        List<File> openedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
+        if (openedFiles != null)
+            openedFiles.forEach(f -> {
+                try {
+                    observer.loadSong(f);
+                } catch (Exception e) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Errore");
+                    alert.setHeaderText("Impossibile aprire il file " + f.getName());
+                    alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
+                    alert.showAndWait();
+                }
+            });
     }
-    
+
     @FXML
     private void positionChanged() {
-        System.out.println("SET POSITION: "+positionSlider.getValue());
         observer.moveToMoment(positionSlider.getValue());
     }
 
