@@ -5,15 +5,19 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.jwave.controller.EditorControllerImpl;
 import org.jwave.model.player.MetaData;
 import org.jwave.model.player.Song;
+import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.PlayerUI;
 import org.jwave.view.PlayerController;
+
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,6 +29,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -57,6 +62,8 @@ public class PlayerScreenController implements PlayerUI {
     @FXML
     private MenuItem btnEditor;
     @FXML
+    private ChoiceBox choiceMode;
+    @FXML
     private Label labelLeft, labelRight, labelSong;
     @FXML
     private Button btnPlay, btnNewPlaylist;
@@ -80,6 +87,19 @@ public class PlayerScreenController implements PlayerUI {
             TableRow<Song> row = new TableRow<>();
             return row;
         });
+        
+        choiceMode.getItems().add("1");
+        choiceMode.getItems().add("2");
+        choiceMode.getItems().add("3");
+        
+        //PlayMode
+
+        choiceMode.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+          @Override
+          public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
+            System.out.println(choiceMode.getItems().get((Integer) number2));
+          }
+        });
 
         MenuItem addToPlaylist = new MenuItem("Aggiungi a playlist");
         addToPlaylist.setOnAction(e->{
@@ -97,9 +117,9 @@ public class PlayerScreenController implements PlayerUI {
 
         listView.setItems(controller.getObservablePlaylists());
         listView.setOnMouseClicked(e -> {
-            System.out.println("SELECTED PLAYLIST: " + listView.getSelectionModel().getSelectedItem().getName());
-            // observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).forEach(s->System.out.println(s.getName()));
-            tableView.setItems(controller.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
+            try{
+                tableView.setItems(controller.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
+            } catch (Exception x){}
         });
 
         listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
@@ -147,7 +167,7 @@ public class PlayerScreenController implements PlayerUI {
     }
 
     @Override
-    public void setObserver(PlayerController observer) {
+    public void setController(PlayerController observer) {
 
         // this.observer = observer;
 
@@ -226,6 +246,22 @@ public class PlayerScreenController implements PlayerUI {
     public void updatePosition(Integer ms, Integer lenght) {
         if (!positionSlider.isValueChanging() && lockedPositionSlider == false)
             positionSlider.setValue((ms * 10000) / lenght);
+        
+        String elapsed = String.format("%d:%d", 
+                TimeUnit.MILLISECONDS.toMinutes(ms),
+                TimeUnit.MILLISECONDS.toSeconds(ms) - 
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))
+            );
+        String remaining = ("-"+String.format("%d:%d", 
+                TimeUnit.MILLISECONDS.toMinutes(lenght-ms),
+                TimeUnit.MILLISECONDS.toSeconds(lenght-ms) - 
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(lenght-ms))
+            ));
+        Platform.runLater(() -> {
+            labelLeft.setText(elapsed);
+            labelRight.setText(remaining);
+        });
+        
     }
 
     @FXML
@@ -244,6 +280,11 @@ public class PlayerScreenController implements PlayerUI {
         this.environment.loadScreen(FXMLSCREEN.EDITOR, new EditorScreenController(this.environment, new EditorControllerImpl()));
         this.environment.displayScreen(FXMLSCREEN.EDITOR);
 
+    }
+
+    @Override
+    public void updateReproductionInfo(Song song) {
+        this.labelSong.setText(song.getName());      
     }
 
 }
