@@ -18,8 +18,8 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     private static final int BUFFER_SIZE = 1024;
     private static final int OUT_BIT_DEPTH = 16;
     private static final float LOWER_VOLUME_BOUND = 0f;
-    private static final float UPPER_VOLUME_BOUND = 70.0f;
-    private static final float NORMALIZER = 60f;
+    private static final float UPPER_VOLUME_BOUND = 50.0f;
+    private static final float NORMALIZER = 40f;
     
     private final Minim minim; 
     private FilePlayer player;
