@@ -169,11 +169,11 @@ public final class PlaylistController {
     }
     
     private static void savePlaylist(final Playlist playlist, final String name) throws IOException {
-        final Path outFile = Paths.get(getDefaultSavePath().toString() + System.getProperty(SEPARATOR) + name + DEF_EXTENSION);
+        final Path outFile = Paths.get(getDefaultSavePath().toString() + System.getProperty(SEPARATOR) + name);
         Files.deleteIfExists(outFile);
         Files.createFile(outFile);
         try (final ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(
-                new FileOutputStream(new File(getDefaultSavePath().toString() + System.getProperty(SEPARATOR) + name))))) {
+                new FileOutputStream(new File(outFile.toString()))))) {
             oos.writeObject(playlist);
         }
     }
