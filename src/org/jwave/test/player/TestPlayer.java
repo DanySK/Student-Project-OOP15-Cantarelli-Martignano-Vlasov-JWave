@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
+import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistManager;
@@ -79,12 +80,15 @@ public class TestPlayer {
         } catch (Exception ex) {
             fail("An exception occurring while creating file");
         }
+        
         assertEquals("Now default playlist dimension should be 1.", manager.getDefaultPlaylist().getDimension(), 1); 
         final Playlist playlist = manager.createNewPlaylist("z1b");
+        
         try {
             final Playlist playlistTwo = manager.createNewPlaylist("z1b");
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException ie) { }
+        
         manager.setQueue(playlist);
         assertEquals("the playing queue isn't equal to the playlist set as new playing queue", manager.getPlayingQueue(), playlist);        
         assertEquals("the playing queue" + playlist.getName() + "should be empty", playlist.getDimension(), 0);
@@ -92,9 +96,18 @@ public class TestPlayer {
         assertEquals("the playing queue" + playlist.getName() + "should have one song.", playlist.getDimension(), 1);
         manager.deletePlaylist(playlist.getPlaylistID());
         manager.setQueue(manager.getDefaultPlaylist());
+        
         try {
             manager.selectPlaylist(playlist.getPlaylistID());
             fail("Expected a NoSuchElementException to be thrown");
         } catch (NoSuchElementException ie) { }
+        
+        manager.getPlayingQueue().addSong(songTwo);
+        assertEquals("Now playing queue dimension should be 2.", manager.getDefaultPlaylist().getDimension(), 2); 
+        manager.renamePlaylist(manager.getPlayingQueue(), "renamed");
+        assertEquals("Expected a different name for playing the queue", manager.getPlayingQueue().getName(), "renamed");
+        manager.reset();
+        assertEquals("Expected that the default playlist was the current playing queue", manager.getDefaultPlaylist(), manager.getPlayingQueue());
+        assertEquals("Expected current play mode to be NO_LOOP", manager.getPlayMode(), PlayMode.NO_LOOP);
     }
 }
