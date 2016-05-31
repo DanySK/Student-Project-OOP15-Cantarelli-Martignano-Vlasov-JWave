@@ -127,7 +127,7 @@ public interface DynamicPlayer {
     /**
      * resets this player.
      */
-    void clearPlayer();
+    void resetPlayer();
     
     /**
      * Releases all the resources related to this player.
