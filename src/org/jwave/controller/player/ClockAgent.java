@@ -8,6 +8,7 @@ import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.PlayMode;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.Song;
+import org.jwave.view.PlayerController;
 
 import ddf.minim.Controller;
 
@@ -29,7 +30,7 @@ public class ClockAgent implements Runnable {
     private final Thread t;
     private final DynamicPlayer dynPlayer;
     private PlaylistManager playlistManager;
-    private Set<Controller> controllerSet;
+    private Set<PlayerController> controllerSet;
     private final ClockAgent.Mode mode;
     private volatile boolean stopped;
     
@@ -94,7 +95,7 @@ public class ClockAgent implements Runnable {
      * @param newController
      *          the controller to be added.
      */
-    public void addController(final Controller newController) {
+    public void addController(final PlayerController newController) {
         this.controllerSet.add(newController);
     }
     
