@@ -1,4 +1,4 @@
-package org.jwave.controller.player;
+package org.jwave.model;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -10,11 +10,6 @@ import java.io.InputStream;
  * A FileSystemHandler contains some basic methods needed by the system.
  */
 public final class FileSystemHandler {
-   
-    private static final FileSystemHandler SINGLETON = new FileSystemHandler();
-  
-    private FileSystemHandler() { };
-  
 
   /**
    * @return       String
@@ -40,14 +35,5 @@ public final class FileSystemHandler {
      */
     public InputStream createInput(final String absoluteFileName) throws FileNotFoundException {
         return new BufferedInputStream(new FileInputStream(new File(absoluteFileName)));
-    }
-
-    /**
-     * 
-     * @return
-     *          the singleton instance of the file system handler.
-     */
-    public static FileSystemHandler getFileSystemHandler() {
-        return SINGLETON;
     }
 }

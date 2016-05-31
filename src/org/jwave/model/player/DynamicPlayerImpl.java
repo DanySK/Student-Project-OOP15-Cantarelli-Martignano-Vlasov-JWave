@@ -2,7 +2,7 @@ package org.jwave.model.player;
 
 import java.util.Optional;
 
-import org.jwave.controller.player.FileSystemHandler;
+import org.jwave.model.FileSystemHandler;
 
 import ddf.minim.AudioOutput;
 import ddf.minim.AudioPlayer;
@@ -33,7 +33,7 @@ public class DynamicPlayerImpl implements DynamicPlayer {
      * Creates a new DynamicPlayerImpl.
      */
     public DynamicPlayerImpl() { 
-        this.minim = new Minim(FileSystemHandler.getFileSystemHandler());
+        this.minim = new Minim(new FileSystemHandler());
         this.volumeControl = new Gain();
         this.started = false;
         this.paused = false;
