@@ -11,6 +11,11 @@ import org.jwave.controller.editor.Editor;
 import org.jwave.controller.editor.EditorImpl;
 import org.jwave.model.player.SongImpl;
 
+/**
+ * Song loaded for testing purposes must have a minimum length (of >300s), otherwise
+ * cursor positioning will not work as expected and tests will fail incorrectly.
+ *
+ */
 public class TestEditorImpl {
 	private static final Editor songEditor = new EditorImpl();
 	

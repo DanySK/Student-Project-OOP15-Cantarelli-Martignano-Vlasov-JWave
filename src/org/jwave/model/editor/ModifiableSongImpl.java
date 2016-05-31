@@ -73,16 +73,17 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	
 	private CutImpl generateCutFromSelection(final int from, final int to, final int at) {
 		int copiedCutLength = to - from;
-		int i, j;
-		int totalCopied;					/* counter for the total amount of ms copied */
-		int currentCutIndex;				/* counter for iterating cut indices */
-		int currentSegmentIndex;			/* counter for iterating segment indices */
-		int currentSegmentLength;			
-		int initialSegmentOffset;			/* offset of copied part, relative to the start of the first segment */
-		int copiedOffset;					/* offset of the copied */
-		ArrayList<Segment> copiedSegments; 	/* a buffer used to collect segments from the copied selection */
 		
-		if (previousCopy.size() == 0) {			
+		if (previousCopy.size() == 0) {						
+			int i, j;
+			int totalCopied;					/* counter for the total amount of ms copied */
+			int currentCutIndex;				/* counter for iterating cut indices */
+			int currentSegmentIndex;			/* counter for iterating segment indices */
+			int currentSegmentLength;			
+			int initialSegmentOffset;			/* offset of copied part, relative to the start of the first segment */
+			int copiedOffset;					/* offset of the copied */
+			ArrayList<Segment> copiedSegments; 	/* a buffer used to collect segments from the copied selection */			
+			
 			copiedSegments = new ArrayList<>();
 			
 			currentCutIndex = -1;
@@ -145,15 +146,7 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 		int cutToDivideIndex = 0;
 		Optional<Cut> cutToDivide = Optional.empty();
 		Cut cutToInsert;
-		int leftHalfLength;
-		int rightHalfLength;
-		int halfPoint;
-		ArrayList<Segment> leftSegments = new ArrayList<>();  /* the segments will make up the left cut */
-		ArrayList<Segment> rightSegments = new ArrayList<>(); /* the segments will make up the right cut */
-		CutImpl leftCut;
-		CutImpl rightCut;	
-		
-		int i, segmentCounter;
+		int i;
 		
 		/*
 		 * First we get the cut that we will be dividing in two parts
@@ -167,6 +160,15 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 		}
 		
 		if (cutToDivide.isPresent()) {
+			int leftHalfLength;
+			int rightHalfLength;
+			int halfPoint;
+			ArrayList<Segment> leftSegments = new ArrayList<>();  /* the segments will make up the left cut */
+			ArrayList<Segment> rightSegments = new ArrayList<>(); /* the segments will make up the right cut */
+			CutImpl leftCut;
+			CutImpl rightCut;
+			int segmentCounter;			
+			
 			cutToInsert = generateCutFromSelection(from, to, at);
 			
 			leftHalfLength = at - cutToDivide.get().getFrom();
@@ -176,17 +178,22 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			i = 0;
 			segmentCounter = 0;
 			while (segmentCounter + (cutToDivide.get().getSegment(i).getLength()) < leftHalfLength) {
-				leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
-				segmentCounter += (cutToDivide.get().getSegment(i).getTo() - cutToDivide.get().getSegment(i).getFrom());
+				leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(),
+						        		         cutToDivide.get().getSegment(i).getTo()));
+				segmentCounter += (cutToDivide.get().getSegment(i).getLength());
 				i++;
 			}
 			
 			/* the two middle segments that "touch" the inserted cut */
-			leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter) - 1));
-			rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter), cutToDivide.get().getSegment(i).getTo()));
+			leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(),
+							 cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter) - 1));
+			rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom() +
+											          (leftHalfLength - segmentCounter),
+										      cutToDivide.get().getSegment(i).getTo()));
 			
 			for (i++; i < cutToDivide.get().getSegments().size(); i++) {
-				rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
+				rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(),
+						                          cutToDivide.get().getSegment(i).getTo()));
 			}
 			
 			leftCut = new CutImpl(cutToDivide.get().getFrom(), halfPoint - 1, leftSegments);
@@ -264,12 +271,14 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			segmentCounter = 0;
 			
 			while (segmentCounter + (firstCutToDivide.get().getSegment(i).getLength()) < newFirstCutLength) {
-				leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(), firstCutToDivide.get().getSegment(i).getTo()));				
+				leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(),
+								                 firstCutToDivide.get().getSegment(i).getTo()));				
 				segmentCounter += (firstCutToDivide.get().getSegment(i).getLength() + 1);
 				i++;
 			}
 			
-			leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(), firstCutToDivide.get().getSegment(i).getFrom() + (newFirstCutLength - segmentCounter)));			
+			leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(),
+							 firstCutToDivide.get().getSegment(i).getFrom() + (newFirstCutLength - segmentCounter)));			
 		}
 		
 		for (i = 0; i < cuts.size(); i++) {
