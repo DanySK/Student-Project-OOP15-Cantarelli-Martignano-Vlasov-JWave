@@ -125,6 +125,17 @@ public class PlayerScreenController implements PlayerUI {
             result.ifPresent(playlist->controller.addSongToPlaylist(tableView.getSelectionModel().getSelectedItem(), playlist));
         });
         tableView.setContextMenu(new ContextMenu(addToPlaylist));
+        
+        tableView.setRowFactory( tv -> {
+            TableRow<Song> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    Song rowData = row.getItem();
+                    controller.selectSong(rowData);
+                }
+            });
+            return row ;
+        });
 
         listView.setItems(controller.getObservablePlaylists());
         listView.setOnMouseClicked(e -> {
@@ -177,12 +188,6 @@ public class PlayerScreenController implements PlayerUI {
         this.environment.displayScreen(FXMLSCREEN);
     }
 
-    @Override
-    public void setController(PlayerController observer) {
-
-        // this.observer = observer;
-
-    }
 
     public void updatePosition() {
         System.out.println("Pos");
