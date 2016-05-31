@@ -142,26 +142,23 @@ public final class PlaylistController {
      * 
      * @return
      *          the default playlist.
+     *          
      * @throws IOException 
      * @throws ClassNotFoundException 
      * @throws IllegalArgumentException 
      */
-    public static Playlist loadDefaultPlaylist() {
-        final Path defaultDir = getDefaultSavePath();
-        DirectoryStream<Path> stream;
+    public static Playlist loadDefaultPlaylist() throws IOException {
+        final Path defaultPlaylist = Paths.get(getDefaultSavePath() + System.getProperty(SEPARATOR) + DEF_PLAYLIST_NAME);
+        Playlist out;     
         try {
-            stream = Files.newDirectoryStream(defaultDir);
-            for (Path file : stream) {
-                if (Files.exists(file) && Files.isDirectory(file) && file.getFileName().toString().equals(DEF_PLAYLIST_NAME)) {
-                    return loadPlaylist(file.toFile());   
-                }
-             }
-            final Playlist defaultOut = new PlaylistImpl(DEF_PLAYLIST_NAME);
-            saveDefaultPlaylistToFile(defaultOut, defaultOut.getName());
-            return defaultOut; 
-        } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
-            return new PlaylistImpl(DEF_PLAYLIST_NAME);
-        }
+                out = loadPlaylist(defaultPlaylist.toFile());
+            } catch (ClassNotFoundException | IOException e) {
+                Files.deleteIfExists(defaultPlaylist);
+                final Playlist def = new PlaylistImpl(DEF_PLAYLIST_NAME);
+                saveDefaultPlaylistToFile(def, def.getName());
+                return def;
+            }
+        return out;
     }
     
     private static void savePlaylist(final Playlist playlist, final String name) throws IOException {
