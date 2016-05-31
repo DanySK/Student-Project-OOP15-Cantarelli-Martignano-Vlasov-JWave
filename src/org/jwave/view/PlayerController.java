@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import org.jwave.model.player.Song;
+import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.Playlist;
 
 import javafx.collections.ObservableList;
@@ -42,5 +43,7 @@ public interface PlayerController {
     public ObservableList<Song> getObservablePlaylistContent(Playlist playlist);
     
     public void terminate();
+
+    public void setMode(PlayMode mode);
 
 }

@@ -15,6 +15,7 @@ import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
 import org.jwave.model.player.Song;
+import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.model.playlist.PlaylistManager;
 import org.jwave.model.playlist.PlaylistManagerImpl;
@@ -207,6 +208,11 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
     @Override
     public void updateReproductionInfo(Song song) {
-        //UIs.forEach(e -> e.updatePosition(ms, player.getLength()));
+        UIs.forEach(e -> e.updateReproductionInfo(song));
+    }
+
+    @Override
+    public void setMode(PlayMode mode) {
+        manager.setPlayMode(mode);
     }
 }

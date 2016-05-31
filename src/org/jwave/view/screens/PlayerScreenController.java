@@ -62,7 +62,7 @@ public class PlayerScreenController implements PlayerUI {
     @FXML
     private MenuItem btnEditor;
     @FXML
-    private ChoiceBox choiceMode;
+    private ChoiceBox<String> choiceMode;
     @FXML
     private Label labelLeft, labelRight, labelSong;
     @FXML
@@ -88,18 +88,29 @@ public class PlayerScreenController implements PlayerUI {
             return row;
         });
         
-        choiceMode.getItems().add("1");
-        choiceMode.getItems().add("2");
-        choiceMode.getItems().add("3");
-        
-        //PlayMode
+        choiceMode.getItems().add("Straight");
+        choiceMode.getItems().add("Shuffle");
+        choiceMode.getItems().add("Loop song");
+        choiceMode.getItems().add("Loop Playlist");
 
-        choiceMode.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-          @Override
-          public void changed(ObservableValue<? extends Number> observableValue, Number number, Number number2) {
-            System.out.println(choiceMode.getItems().get((Integer) number2));
-          }
-        });
+        choiceMode.getSelectionModel()
+            .selectedItemProperty()
+            .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                switch(newValue) {
+                case "Straight":
+                    controller.setMode(PlayMode.NO_LOOP);
+                    break;
+                case "Shuffle":
+                    controller.setMode(PlayMode.SHUFFLE);
+                    break;
+                case "Loop song":
+                    controller.setMode(PlayMode.LOOP_ONE);
+                    break;
+                case "Loop Playlist":
+                    controller.setMode(PlayMode.LOOP_ALL);
+                    break;
+                }
+            } );
 
         MenuItem addToPlaylist = new MenuItem("Aggiungi a playlist");
         addToPlaylist.setOnAction(e->{
@@ -279,12 +290,13 @@ public class PlayerScreenController implements PlayerUI {
         System.out.println("gotoEditor");
         this.environment.loadScreen(FXMLSCREEN.EDITOR, new EditorScreenController(this.environment, new EditorControllerImpl()));
         this.environment.displayScreen(FXMLSCREEN.EDITOR);
-
     }
 
     @Override
     public void updateReproductionInfo(Song song) {
-        this.labelSong.setText(song.getName());      
+        Platform.runLater(() -> {
+            labelSong.setText(song.getName());
+        });     
     }
 
 }
