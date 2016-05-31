@@ -144,6 +144,11 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         this.paused = value;
     }
     
+    /**
+     * Clear the player.
+     * @return
+     *  true if the operation succeded.
+     */
     private boolean clearPlayer() {
         if (this.player != null) {
             this.stop();

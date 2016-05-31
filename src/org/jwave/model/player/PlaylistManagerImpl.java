@@ -4,16 +4,13 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.jwave.controller.player.FileSystemHandler;
 import org.jwave.model.playlist.strategies.PlaylistNavigator;
 import org.jwave.model.playlist.strategies.PlaylistNavigatorFactory;
-
-import ddf.minim.AudioPlayer;
-import ddf.minim.Minim;
 
 /**
  * This is an implementation of {@link PlaylistManager}.
@@ -106,7 +103,7 @@ public class PlaylistManagerImpl implements PlaylistManager {
     }
     
     @Override
-    public Playlist selectPlaylist(final UUID playlistID) {
+    public Playlist selectPlaylist(final UUID playlistID) throws NoSuchElementException {
         return this.availablePlaylists.stream()
                 .filter(p -> p.getName().equals(playlistID))
                 .findAny()

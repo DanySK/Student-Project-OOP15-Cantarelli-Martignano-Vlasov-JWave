@@ -140,8 +140,8 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 	}
 	
 	@Override
-	public void clearPlayer() {
-		this.decoratedDynamicPlayer.clearPlayer();
+	public void resetPlayer() {
+		this.decoratedDynamicPlayer.resetPlayer();
 	}
 
 	@Override

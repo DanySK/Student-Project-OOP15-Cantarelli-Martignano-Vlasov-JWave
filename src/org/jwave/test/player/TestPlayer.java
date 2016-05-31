@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.NoSuchElementException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +24,7 @@ public class TestPlayer {
     private static final String PATH_ONE = "/home/canta/Music/Mistery.mp3";
     private static final String PATH_TWO = "/home/canta/Music/Snow Time.mp3";
     private static Song songOne;
+    private static Song songTwo;
     private static DynamicPlayer player;
     private static PlaylistManager manager;
     
@@ -30,6 +32,7 @@ public class TestPlayer {
     public static void oneTimeSetUp() {
         player = new DynamicPlayerImpl();
         songOne = new SongImpl(new File(PATH_ONE));
+        songTwo = new SongImpl(new File(PATH_TWO));
         manager = new PlaylistManagerImpl(new PlaylistImpl("defaultProva"));
     }
     
@@ -82,6 +85,16 @@ public class TestPlayer {
             final Playlist playlistTwo = manager.createNewPlaylist("z1b");
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException ie) { }
-        
+        manager.setQueue(playlist);
+        assertEquals("the playing queue isn't equal to the playlist set as new playing queue", manager.getPlayingQueue(), playlist);        
+        assertEquals("the playing queue" + playlist.getName() + "should be empty", playlist.getDimension(), 0);
+        manager.getPlayingQueue().addSong(songOne);
+        assertEquals("the playing queue" + playlist.getName() + "should have one song.", playlist.getDimension(), 1);
+        manager.deletePlaylist(playlist.getPlaylistID());
+        manager.setQueue(manager.getDefaultPlaylist());
+        try {
+            manager.selectPlaylist(playlist.getPlaylistID());
+            fail("Expected a NoSuchElementException to be thrown");
+        } catch (NoSuchElementException ie) { }
     }
 }
