@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.NoSuchElementException;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jwave.model.player.DynamicPlayer;
@@ -31,16 +32,15 @@ public class TestPlayer {
     
     @BeforeClass
     public static void oneTimeSetUp() {
-        player = new DynamicPlayerImpl();
         songOne = new SongImpl(new File(PATH_ONE));
         songTwo = new SongImpl(new File(PATH_TWO));
-        manager = new PlaylistManagerImpl(new PlaylistImpl("defaultProva"));
     }
     
-//    @Before
-//    public void setUp() {
-//        
-//    }
+    @Before
+    public void setUp() {
+        player = new DynamicPlayerImpl();
+        manager = new PlaylistManagerImpl(new PlaylistImpl("defaultProva"));
+    }
     
     @Test
     public void testPlayerInitialization() {
@@ -60,6 +60,98 @@ public class TestPlayer {
         assertTrue("Player should be in pause", player.isPaused());
         player.stop();
         assertTrue("Player should have started the loaded song at least one time.", player.hasStarted());
+        player.cue(player.getLength() / 2);
+        assertEquals("Expected different position", player.getPosition(), (player.getLength() / 2));
+    }
+    
+    @Test
+    public void testSequenceOfPlayPause() {
+        player.setPlayer(songOne);
+        player.play();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.pause();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.play();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.pause();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.play();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.pause();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.play();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.pause();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.play();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.pause();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.play();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.pause();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.play();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player.pause();
+        try {
+            Thread.sleep(10L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertTrue("Player should be in pause", player.isPaused());
     }
     
     @Test
