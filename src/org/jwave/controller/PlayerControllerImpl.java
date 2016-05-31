@@ -24,7 +24,7 @@ import org.jwave.view.PlayerUI;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public final class PlayerControllerImpl implements PlayerController {
+public final class PlayerControllerImpl implements PlayerController, UpdatableController {
 
     private final DynamicPlayer player;
     private final DynamicPlayer editorPlayer;
@@ -203,5 +203,10 @@ public final class PlayerControllerImpl implements PlayerController {
     public void terminate() {
         this.player.releasePlayerResources();
         // this.agent.KILL
+    }
+
+    @Override
+    public void updateReproductionInfo(Song song) {
+        //UIs.forEach(e -> e.updatePosition(ms, player.getLength()));
     }
 }

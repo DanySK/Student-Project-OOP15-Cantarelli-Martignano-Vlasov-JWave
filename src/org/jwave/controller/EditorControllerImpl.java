@@ -3,29 +3,20 @@ package org.jwave.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
-import org.jwave.model.playlist.Playlist;
 import org.jwave.model.playlist.PlaylistImpl;
 import org.jwave.model.playlist.PlaylistManager;
 import org.jwave.model.playlist.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
-import org.jwave.view.PlayerController;
 import org.jwave.view.PlayerUI;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-public final class EditorControllerImpl implements EditorController {
+public final class EditorControllerImpl implements EditorController, UpdatableController {
 
     private final DynamicPlayer player;
     private final DynamicPlayer editorPlayer;
@@ -115,6 +106,12 @@ public final class EditorControllerImpl implements EditorController {
 
     @Override
     public void moveToMoment(double value) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void updateReproductionInfo(Song song) {
         // TODO Auto-generated method stub
         
     }
