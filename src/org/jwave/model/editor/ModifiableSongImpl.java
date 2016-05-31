@@ -25,22 +25,25 @@ import ddf.minim.javasound.FloatSampleBuffer;
 public class ModifiableSongImpl extends ModifiableSongDecorator implements ModifiableSong {
 	private final static Minim minim = new Minim(new FileSystemHandler());
 	
-	private final List<Cut> cuts;
-	private final AudioSample songSample;
+	private static final int BUFFER_SIZE = 1024;
 	
-	private final List<Segment> previousCopy;
+	private final List<Cut> cuts;					/* all the cuts that make up this modifiable song */
+	private final AudioSample songSample;   		/* where to get actual audio data from */
+	
+	private final List<Segment> previousCopy;		/* any previously copied segments */
 	
 	public ModifiableSongImpl(final Song decoratedSong) {
 		super(decoratedSong);
 		
-		this.songSample = minim.loadSample(this.getAbsolutePath(), 2048);
+		this.songSample = minim.loadSample(this.getAbsolutePath(), BUFFER_SIZE);
 		
 		if (decoratedSong instanceof ModifiableSong) {
 			ModifiableSong modifiableSong = (ModifiableSong) decoratedSong;
 			this.cuts = new ArrayList<>(modifiableSong.getCuts());
 		} else {
 			this.cuts = new ArrayList<>();
-			this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
+			this.cuts.add(new CutImpl(0, this.songSample.length(), 
+						  new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
 		}
 		
 		previousCopy = new ArrayList<>();
@@ -49,7 +52,8 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	@Override
 	public void resetModifications() {
 		this.cuts.clear();
-		this.cuts.add(new CutImpl(0, this.songSample.length(), new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
+		this.cuts.add(new CutImpl(0, this.songSample.length(),
+					  new ArrayList<Segment>(Arrays.asList(new SegmentImpl(0, this.songSample.length())))));
 	}
 	
 	@Override
@@ -69,16 +73,18 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	
 	private CutImpl generateCutFromSelection(final int from, final int to, final int at) {
 		int copiedCutLength = to - from;
-		int i, j;
-		int totalCopied;
-		int currentCutIndex;
-		int currentSegmentIndex;
-		int currentSegmentLength;
-		int initialSegmentOffset;
-		int copiedOffset;		
 		
-		if (previousCopy.size() == 0) {			
-			ArrayList<Segment> copiedSegments = new ArrayList<>();
+		if (previousCopy.size() == 0) {						
+			int i, j;
+			int totalCopied;					/* counter for the total amount of ms copied */
+			int currentCutIndex;				/* counter for iterating cut indices */
+			int currentSegmentIndex;			/* counter for iterating segment indices */
+			int currentSegmentLength;			
+			int initialSegmentOffset;			/* offset of copied part, relative to the start of the first segment */
+			int copiedOffset;					/* offset of the copied */
+			ArrayList<Segment> copiedSegments; 	/* a buffer used to collect segments from the copied selection */			
+			
+			copiedSegments = new ArrayList<>();
 			
 			currentCutIndex = -1;
 			currentSegmentIndex = -1;	
@@ -111,13 +117,13 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			i = currentCutIndex;
 			j = currentSegmentIndex;
 			while (totalCopied < copiedCutLength) {
-				currentSegmentLength = cuts.get(i).getSegment(j).getTo() - (cuts.get(i).getSegment(j).getFrom() + initialSegmentOffset);
+				currentSegmentLength = cuts.get(i).getSegment(j).getTo() 
+									   - (cuts.get(i).getSegment(j).getFrom() + initialSegmentOffset);
 			
 				copiedSegments.add(new SegmentImpl(cuts.get(i).getSegment(j).getFrom() + initialSegmentOffset,
-											  totalCopied + currentSegmentLength < copiedCutLength ? 
-													  		cuts.get(i).getSegment(j).getTo() :
-													  		cuts.get(i).getSegment(j).getTo() - (totalCopied + currentSegmentLength - copiedCutLength)
-													  	  ));
+				        totalCopied + currentSegmentLength < copiedCutLength ? 
+				        cuts.get(i).getSegment(j).getTo() :
+						cuts.get(i).getSegment(j).getTo() - (totalCopied + currentSegmentLength - copiedCutLength)));
 				
 				initialSegmentOffset = 0;
 				totalCopied += copiedSegments.get(copiedSegments.size() - 1).getLength() + 1;
@@ -140,15 +146,7 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 		int cutToDivideIndex = 0;
 		Optional<Cut> cutToDivide = Optional.empty();
 		Cut cutToInsert;
-		
-		int leftHalfLength, rightHalfLength, halfPoint;
-		ArrayList<Segment> leftSegments = new ArrayList<>();
-		ArrayList<Segment> rightSegments = new ArrayList<>();		
-		
-		CutImpl leftCut;
-		CutImpl rightCut;	
-		
-		int i, segmentCounter;
+		int i;
 		
 		/*
 		 * First we get the cut that we will be dividing in two parts
@@ -162,6 +160,15 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 		}
 		
 		if (cutToDivide.isPresent()) {
+			int leftHalfLength;
+			int rightHalfLength;
+			int halfPoint;
+			ArrayList<Segment> leftSegments = new ArrayList<>();  /* the segments will make up the left cut */
+			ArrayList<Segment> rightSegments = new ArrayList<>(); /* the segments will make up the right cut */
+			CutImpl leftCut;
+			CutImpl rightCut;
+			int segmentCounter;			
+			
 			cutToInsert = generateCutFromSelection(from, to, at);
 			
 			leftHalfLength = at - cutToDivide.get().getFrom();
@@ -171,17 +178,22 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			i = 0;
 			segmentCounter = 0;
 			while (segmentCounter + (cutToDivide.get().getSegment(i).getLength()) < leftHalfLength) {
-				leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
-				segmentCounter += (cutToDivide.get().getSegment(i).getTo() - cutToDivide.get().getSegment(i).getFrom());
+				leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(),
+						        		         cutToDivide.get().getSegment(i).getTo()));
+				segmentCounter += (cutToDivide.get().getSegment(i).getLength());
 				i++;
 			}
 			
 			/* the two middle segments that "touch" the inserted cut */
-			leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter) - 1));
-			rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter), cutToDivide.get().getSegment(i).getTo()));
+			leftSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(),
+							 cutToDivide.get().getSegment(i).getFrom() + (leftHalfLength - segmentCounter) - 1));
+			rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom() +
+											          (leftHalfLength - segmentCounter),
+										      cutToDivide.get().getSegment(i).getTo()));
 			
 			for (i++; i < cutToDivide.get().getSegments().size(); i++) {
-				rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(), cutToDivide.get().getSegment(i).getTo()));
+				rightSegments.add(new SegmentImpl(cutToDivide.get().getSegment(i).getFrom(),
+						                          cutToDivide.get().getSegment(i).getTo()));
 			}
 			
 			leftCut = new CutImpl(cutToDivide.get().getFrom(), halfPoint - 1, leftSegments);
@@ -259,12 +271,14 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			segmentCounter = 0;
 			
 			while (segmentCounter + (firstCutToDivide.get().getSegment(i).getLength()) < newFirstCutLength) {
-				leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(), firstCutToDivide.get().getSegment(i).getTo()));				
+				leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(),
+								                 firstCutToDivide.get().getSegment(i).getTo()));				
 				segmentCounter += (firstCutToDivide.get().getSegment(i).getLength() + 1);
 				i++;
 			}
 			
-			leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(), firstCutToDivide.get().getSegment(i).getFrom() + (newFirstCutLength - segmentCounter)));			
+			leftSegments.add(new SegmentImpl(firstCutToDivide.get().getSegment(i).getFrom(),
+							 firstCutToDivide.get().getSegment(i).getFrom() + (newFirstCutLength - segmentCounter)));			
 		}
 		
 		for (i = 0; i < cuts.size(); i++) {
@@ -335,10 +349,9 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	@Override
 	public boolean isMaxResolution(int from, int to, int samples) {	
 		float[] leftChannel = this.songSample.getChannel(AudioSample.LEFT);
-		
 		int sampleSize = (int) ((leftChannel.length * (float) ((float) this.getModifiedLength() / (float) this.getLength())) / (float) samples);
 		
-		if (sampleSize < 1) {
+		if (sampleSize <= 1) {
 			return true;
 		} else {
 			return false;
@@ -346,8 +359,9 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	}
 	
 	@Override
-	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
-	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	/*
+	 * Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
+	 */
 	public List<SimpleSampleInfo> getSimpleWaveform(int from, int to, int samples) throws IllegalArgumentException {
 		if (this.isMaxResolution(from, to, samples)) {
 			List<SimpleSampleInfo> waveformValues = new ArrayList<SimpleSampleInfo>();
@@ -362,11 +376,7 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			float[] samplesLeft = new float[sampleSize];
 			float[] samplesRight = new float[sampleSize];			
 	
-			int totalChunks = (leftChannel.length / sampleSize) + 1;
-			
-//			System.out.println(leftChannel.length);
-			  
-			lengthOfChunks = (float) this.getLength() / (float) totalChunks;
+			int totalChunks = (leftChannel.length / sampleSize) + 1;			
 			
 			int startCutIndex = 0;
 			int endCutIndex = 0;
@@ -374,7 +384,9 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			int startSegmentOffset = 0;
 			int endSegmentIndex = -1;
 			int endSegmentLength = 0;
-			int currentOffset; // used to track at which point in cut we are
+			int currentOffset;	/* used to track at which point in cut we are */
+			
+			lengthOfChunks = (float) this.getLength() / (float) totalChunks;
 			
 			for (int i = 0; i < cuts.size(); i++) {
 				if (cuts.get(i).getFrom() <= from && cuts.get(i).getTo() >= from) {
@@ -452,7 +464,6 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	}	
 	
 	@Override
-	// Code based on example taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	// Example code taken from minim repository (Minim/examples/Analysis/offlineAnalysis/offlineAnalysis.pde)
 	public List<GroupedSampleInfo> getAggregatedWaveform(int from, int to, int samples) {
 		List<GroupedSampleInfo> waveformValues = new ArrayList<GroupedSampleInfo>();
@@ -604,6 +615,7 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 	}
 	
 	@Override
+	/* https://github.com/ddf/Minim/blob/master/src/ddf/minim/javasound/JSBufferedSampleRecorder.java */
 	public void exportSong(String exportPath) {
 		String exportName = exportPath;
 		AudioFileFormat.Type type = AudioFileFormat.Type.WAVE;

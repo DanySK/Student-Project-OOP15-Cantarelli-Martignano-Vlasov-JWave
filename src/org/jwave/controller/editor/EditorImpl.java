@@ -27,7 +27,7 @@ public class EditorImpl implements Editor {
 	@Override
 	public ModifiableSongImpl getSong() throws IllegalStateException {
 		if (this.isSongLoaded()) {
-			return new ModifiableSongImpl(this.song);
+			return this.song;
 		} else {
 			throw new IllegalStateException();
 		}

@@ -72,7 +72,7 @@ public interface ModifiableSong extends Song {
      * Checks if asked for sample size in a given interval would end up being
      * at maximum resolution, in which case the number of values given for
      * each sample would be only two (amplitude of the left channel and the
-     * right channel). Otherwise the values per sample group (no longer single
+     * right channel). Otherwise the values for each sample group (no longer single
      * samples) would be 8.
      * 
      * @param from
