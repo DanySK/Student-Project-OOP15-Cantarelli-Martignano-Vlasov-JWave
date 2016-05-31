@@ -42,6 +42,7 @@ public class PlaylistImpl implements Playlist, Serializable {
         this.playlistID = UUID.randomUUID();
         this.idList = new LinkedList<>();
         this.map = new HashMap<>();
+        System.out.println("entra nel costruttore");
         this.set = new HashSet<>();
     }
     
@@ -109,9 +110,7 @@ public class PlaylistImpl implements Playlist, Serializable {
 
     @Override
     public void clearObservers() {
-        if (!this.set.isEmpty()) {
-            this.set = new HashSet<>();
-        }   
+        this.set = new HashSet<>();
     }
 
     @Override
@@ -160,5 +159,10 @@ public class PlaylistImpl implements Playlist, Serializable {
             throw new IllegalArgumentException("Out of playlsit borders");
         }
         return this.map.get(this.idList.get(index));
+    }
+
+    @Override
+    public void refreshContent() {
+        this.map.values().forEach(s -> s.refreshMetaData());
     }
 }

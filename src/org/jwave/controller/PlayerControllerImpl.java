@@ -45,7 +45,14 @@ public final class PlayerControllerImpl implements PlayerController {
 
         this.player = new DynamicPlayerImpl();
         this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
-        this.manager = new PlaylistManagerImpl(PlaylistController.loadDefaultPlaylist());
+        final Playlist def = PlaylistController.loadDefaultPlaylist();
+        this.manager = new PlaylistManagerImpl(def);
+        try {
+            PlaylistController.saveDefaultPlaylistToFile(def, def.getName());
+        } catch (IOException e) {
+            System.out.println("Porca paletta");
+            e.printStackTrace();
+        }
         this.agent = new ClockAgent(player, manager, ClockAgent.Mode.PLAYER);
         this.agent.addController(this);
         this.agent.startClockAgent();

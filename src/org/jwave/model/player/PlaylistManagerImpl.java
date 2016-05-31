@@ -36,10 +36,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.defaultQueue = newDefaultQueue;
         this.availablePlaylists = new HashSet<>();
         this.currentIndex = Optional.empty();
-        this.loadedPlaylist = this.defaultQueue;
+        this.loadedPlaylist = newDefaultQueue;
         this.playMode = PlayMode.NO_LOOP;
         this.navigator = this.navFactory.createNavigator(this.playMode, 
                 this.loadedPlaylist.getDimension(), Optional.empty());
+        System.out.println("name " + this.loadedPlaylist.getName());
         this.loadedPlaylist.addEObserver(this.navigator);
     }
 

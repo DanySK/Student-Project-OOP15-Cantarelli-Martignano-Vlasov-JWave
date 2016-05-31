@@ -23,7 +23,7 @@ public class SongImpl implements Song, Serializable {
     
     private final File decorated;
     private final UUID songID;
-    private final transient MetaDataRetriever metaData;
+    private transient MetaDataRetriever metaData;
     
     /**
      * Creates a new song object.
@@ -64,5 +64,11 @@ public class SongImpl implements Song, Serializable {
     @Override
     public UUID getSongID() {   //check if it is better to return a defensive copy
         return this.songID;
+    }
+
+    @Override
+    public void refreshMetaData() {
+        final Path pathForMetaData = Paths.get(this.decorated.getAbsolutePath());
+        this.metaData = new MetaDataRetrieverImpl(pathForMetaData); 
     }
 }

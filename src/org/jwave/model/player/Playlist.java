@@ -132,4 +132,6 @@ public interface Playlist extends ESource<Integer> {
      *          the new playlist name.
      */
     void setName(final String newName);
+    
+    void refreshContent();
 }

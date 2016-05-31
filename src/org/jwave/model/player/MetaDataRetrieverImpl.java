@@ -36,8 +36,8 @@ public class MetaDataRetrieverImpl implements MetaDataRetriever {
 
     private final Path filePath;
     private Mp3File song;
-    private ID3v1 id3v1Tag;
-    private ID3v2 id3v2Tag;
+    private transient ID3v1 id3v1Tag;
+    private transient ID3v2 id3v2Tag;
     private final Map<MetaData, String> datas;
     
     /**

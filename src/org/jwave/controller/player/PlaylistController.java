@@ -103,6 +103,8 @@ public final class PlaylistController {
         try (final ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(
                 new FileInputStream(playlist)))) {
             final Playlist extractedPlaylist = (Playlist) ois.readObject();
+            extractedPlaylist.clearObservers();
+            extractedPlaylist.refreshContent();
             return extractedPlaylist;
         }
     }
@@ -147,20 +149,13 @@ public final class PlaylistController {
      * @throws IllegalArgumentException 
      */
     public static Playlist loadDefaultPlaylist() {
-        final Path defaultDir = getDefaultSavePath();
-        DirectoryStream<Path> stream;
+        final Path defPath = Paths.get(getDefaultSavePath().toString(), System.getProperty(SEPARATOR), DEF_PLAYLIST_NAME);
         try {
-            stream = Files.newDirectoryStream(defaultDir);
-            for (Path file : stream) {
-                if (Files.exists(file) && Files.isDirectory(file) && file.getFileName().toString().equals(DEF_PLAYLIST_NAME)) {
-                    return loadPlaylist(file.toFile());   
-                }
-             }
-            final Playlist defaultOut = new PlaylistImpl(DEF_PLAYLIST_NAME);
-            saveDefaultPlaylistToFile(defaultOut, defaultOut.getName());
-            return defaultOut; 
-        } catch (IOException | IllegalArgumentException | ClassNotFoundException e) {
-            return new PlaylistImpl(DEF_PLAYLIST_NAME);
+            final Playlist out = loadPlaylist(defPath.toFile());
+            return out;
+        } catch (ClassNotFoundException | IOException e) {
+            Playlist def = new PlaylistImpl(DEF_PLAYLIST_NAME);
+            return def;
         }
     }
     

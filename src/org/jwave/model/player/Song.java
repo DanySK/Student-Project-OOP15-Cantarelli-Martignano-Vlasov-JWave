@@ -37,4 +37,6 @@ public interface Song {
      *          all the metadata contained in this song.
      */
     MetaDataRetriever getMetaData();
+    
+    void refreshMetaData();
 }

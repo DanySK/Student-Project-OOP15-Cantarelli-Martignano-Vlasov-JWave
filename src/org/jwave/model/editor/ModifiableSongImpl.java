@@ -744,4 +744,9 @@ public class ModifiableSongImpl extends ModifiableSongDecorator implements Modif
 			}
 		}
 	}
+
+    @Override
+    public void refreshMetaData() {
+        this.decoratedSong.refreshMetaData();
+    }
 }
