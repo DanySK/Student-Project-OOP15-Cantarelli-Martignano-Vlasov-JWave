@@ -1,19 +1,18 @@
 package org.jwave.model.player;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.jwave.model.ESource;
 
 /**
- * A playlist is a collection of {@link}Song.
+ * A playlist is a collection of {@link Song}.
  *
  */
 public interface Playlist extends ESource<Integer> {
     
     /**
-     * Add a song to the playlist.
+     * Adds a song to the playlist.
      * 
      * @param newSong
      *          the song to be added.
@@ -66,6 +65,13 @@ public interface Playlist extends ESource<Integer> {
     
     /**
      * 
+     * @return
+     *          wether playlist is empty or not.
+     */
+    boolean isEmpty();
+    
+    /**
+     * 
      * 
      * @param songID
      *          the song identifier.
@@ -102,13 +108,6 @@ public interface Playlist extends ESource<Integer> {
     /**
      * 
      * @return
-     *          wether playlist is empty or not.
-     */
-    boolean isEmpty();
-    
-    /**
-     * 
-     * @return
      *          the playlist name.
      */
     String getName();
@@ -133,5 +132,8 @@ public interface Playlist extends ESource<Integer> {
      */
     void setName(final String newName);
     
+    /**
+     * Refreshes the metadata of the songs contained in this playlist.
+     */
     void refreshContent();
 }

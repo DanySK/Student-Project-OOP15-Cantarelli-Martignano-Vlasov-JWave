@@ -1,7 +1,7 @@
 package org.jwave.model.player;
 
 /**
- * An enum that models the concept of MetaData.
+ * An enum that models the concept of MetaData contained in an MP3 file.
  *  
  */
 public enum MetaData {

@@ -8,7 +8,7 @@ import java.util.Optional;
 import com.mpatric.mp3agic.NotSupportedException;
 
 /**
- * This interface models metadata.
+ * A meta data retriever manages metadata contained in an audio file.
  *
  */
 public interface MetaDataRetriever {
@@ -37,7 +37,8 @@ public interface MetaDataRetriever {
      *          the new MetaDataValue
      *          
      * @param newValue
-     *          the new value to be set.         
+     *          the new value to be set.  
+     *                 
      * @throws SecurityException 
      * @throws NoSuchMethodException 
      * @throws InvocationTargetException 
