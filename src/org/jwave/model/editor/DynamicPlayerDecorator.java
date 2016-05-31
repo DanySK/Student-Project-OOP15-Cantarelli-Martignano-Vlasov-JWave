@@ -98,7 +98,7 @@ public abstract class DynamicPlayerDecorator implements DynamicPlayer {
 			    
 			    return true;
 			} else {
-				this.pause();
+				this.stop();
 				
 				return false;
 			}
