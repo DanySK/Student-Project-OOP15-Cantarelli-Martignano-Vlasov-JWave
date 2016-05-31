@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -156,9 +158,10 @@ public class PlaylistManagerImpl implements PlaylistManager {
     
     @Override
     public Collection<Playlist> getAvailablePlaylists() {
-        final Set<Playlist> out = new HashSet<>(this.availablePlaylists);
+        final List<Playlist> out = new LinkedList<>();
         out.add(this.defaultQueue);
-        return Collections.unmodifiableSet(out);
+        out.addAll(this.availablePlaylists);
+        return Collections.unmodifiableList(out);
     }
 
     @Override

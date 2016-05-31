@@ -79,15 +79,19 @@ public final class MetaDataManagerImpl implements MetaDataManager {
     public void setData(final MetaData metaDataValue, final String newValue) throws IllegalAccessException, 
     IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         this.datas.put(metaDataValue, newValue);
-        this.setTag(metaDataValue, newValue);
+        if (this.song != null) {
+            this.setTag(metaDataValue, newValue);
+        }
     }
     
     @Override
     public void writeMetaDataToFile() throws NotSupportedException, IOException {
-        final String outPath = this.song.getFilename() + "~";
-        this.song.save(outPath);
-        Files.copy(Paths.get(outPath), this.filePath, StandardCopyOption.REPLACE_EXISTING);
-        Files.deleteIfExists(Paths.get(outPath));
+        if (this.song != null) {
+            final String outPath = this.song.getFilename() + "~";
+            this.song.save(outPath);
+            Files.copy(Paths.get(outPath), this.filePath, StandardCopyOption.REPLACE_EXISTING);
+            Files.deleteIfExists(Paths.get(outPath));
+        }
     }
    
     private void fillWithTags() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, 
