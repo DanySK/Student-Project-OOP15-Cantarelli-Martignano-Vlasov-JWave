@@ -2,7 +2,7 @@ package org.jwave.model.editor;
 
 import java.util.UUID;
 
-import org.jwave.model.player.MetaDataRetriever;
+import org.jwave.model.player.MetaDataManager;
 import org.jwave.model.player.Song;
 
 public abstract class ModifiableSongDecorator implements Song {
@@ -28,7 +28,7 @@ public abstract class ModifiableSongDecorator implements Song {
 	}
 	
 	@Override
-    final public MetaDataRetriever getMetaData() {
+    final public MetaDataManager getMetaData() {
         return decoratedSong.getMetaData();
     }
 }
