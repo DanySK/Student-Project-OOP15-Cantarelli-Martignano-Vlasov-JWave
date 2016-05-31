@@ -22,6 +22,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -114,7 +115,7 @@ public class PlayerScreenController implements PlayerUI {
 
         MenuItem addToPlaylist = new MenuItem("Aggiungi a playlist");
         addToPlaylist.setOnAction(e->{
-            List<Playlist> choices = controller.getObservablePlaylists().stream().filter(p->p.getName() != "default").collect(Collectors.toList());
+            List<Playlist> choices = controller.getObservablePlaylists().stream().filter(p->!p.getName().equals("default")).collect(Collectors.toList());
             ChoiceDialog<Playlist> dialog = new ChoiceDialog<>(choices.get(0), choices);
             //dialog.
             dialog.setTitle("Aggiungi a playlist");
@@ -137,6 +138,7 @@ public class PlayerScreenController implements PlayerUI {
             return row ;
         });
 
+        
         listView.setItems(controller.getObservablePlaylists());
         listView.setOnMouseClicked(e -> {
             try{
@@ -154,7 +156,7 @@ public class PlayerScreenController implements PlayerUI {
                         if (item == null) {
                             setText(null);
                         } else {
-                            if (item.getName() == "default") {
+                            if (item.getName().equals("default") ) {
                                 setText("Tutti i brani");
                             } else {
                                 setText(item.getName());
