@@ -102,13 +102,19 @@ public class DynamicPlayerImpl implements DynamicPlayer {
     
     @Override
     public boolean isPaused() {
-        this.checkPlayerLoaded();
+//        this.checkPlayerLoaded();
+        if (this.isEmpty()) {
+            return false;
+        }
         return this.paused;
     }
     
     @Override
     public boolean hasStarted() {
-        this.checkPlayerLoaded();
+//        this.checkPlayerLoaded();
+        if (this.isEmpty()) {
+            return false;
+        }
         return this.started;
     }
 
