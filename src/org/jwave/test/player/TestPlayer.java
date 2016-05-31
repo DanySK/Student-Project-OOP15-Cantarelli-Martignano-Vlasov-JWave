@@ -7,11 +7,11 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
+import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistImpl;
 import org.jwave.model.player.PlaylistManager;
 import org.jwave.model.player.PlaylistManagerImpl;
@@ -21,6 +21,7 @@ import org.jwave.model.player.SongImpl;
 public class TestPlayer {
 
     private static final String PATH_ONE = "/home/canta/Music/Mistery.mp3";
+    private static final String PATH_TWO = "/home/canta/Music/Snow Time.mp3";
     private static Song songOne;
     private static DynamicPlayer player;
     private static PlaylistManager manager;
@@ -32,10 +33,10 @@ public class TestPlayer {
         manager = new PlaylistManagerImpl(new PlaylistImpl("defaultProva"));
     }
     
-    @Before
-    public void setUp() {
-        
-    }
+//    @Before
+//    public void setUp() {
+//        
+//    }
     
     @Test
     public void testPlayerInitialization() {
@@ -66,5 +67,21 @@ public class TestPlayer {
             manager.selectSongFromPlayingQueueAtIndex(0);
             fail("Expected IllegalStateException to be thrown");
         } catch (IllegalArgumentException ex) { }
+    }
+    
+    @Test
+    public void testPlaylistManagerFunctionalities() {
+        try {
+            manager.addAudioFile(new File(PATH_ONE));
+        } catch (Exception ex) {
+            fail("An exception occurring while creating file");
+        }
+        assertEquals("Now default playlist dimension should be 1.", manager.getDefaultPlaylist().getDimension(), 1); 
+        final Playlist playlist = manager.createNewPlaylist("z1b");
+        try {
+            final Playlist playlistTwo = manager.createNewPlaylist("z1b");
+            fail("Expected an IllegalArgumentException to be thrown");
+        } catch (IllegalArgumentException ie) { }
+        
     }
 }
