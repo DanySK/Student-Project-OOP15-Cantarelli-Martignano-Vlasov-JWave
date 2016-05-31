@@ -111,7 +111,7 @@ public interface DynamicPlayer {
      * @param amount
      *          the amount of volume to be set.         
      */
-    void setVolume(int amount);
+    void setVolume(float amount);
     
     /**
      * Sets the player by loading a song.
