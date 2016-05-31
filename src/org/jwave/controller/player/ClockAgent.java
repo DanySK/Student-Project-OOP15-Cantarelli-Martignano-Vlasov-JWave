@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.jwave.controller.UpdatableController;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.Song;
 import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.PlaylistManager;
-import org.jwave.view.PlayerController;
 
 /**
  * This class is a clock for {@link DynamicPlayer}, determining controls at a specified interval. 
@@ -35,7 +35,7 @@ public class ClockAgent implements Runnable {
     private final Thread t;
     private final DynamicPlayer dynPlayer;
     private PlaylistManager playlistManager;
-    private Set<PlayerController> controllerSet;
+    private Set<UpdatableController> controllerSet;
     private final ClockAgent.Mode mode;
     private volatile boolean stopped;
     
@@ -45,8 +45,6 @@ public class ClockAgent implements Runnable {
      * @param player
      *          the player this clock agent has to control.
      *          
-     * @param editorPlayer
-     * 			the editor player this clock agent has to control.
      *          
      * @param manager
      *          the manager this clock agent has to maintain referenced.
@@ -81,8 +79,13 @@ public class ClockAgent implements Runnable {
         default:
             this.checkPlayer();
         }
-        if(dynPlayer.isPlaying())
-            this.notifyControllers();
+        if (this.dynPlayer.isPlaying()) {
+            this.controllerSet.forEach(c -> {
+                c.updatePosition(this.dynPlayer.getPosition());
+                c.updateReproductionInfo(this.dynPlayer.getLoaded().get());
+            });
+            
+        }
     }
     
     /**
@@ -99,7 +102,7 @@ public class ClockAgent implements Runnable {
      * @param newController
      *          the controller to be added.
      */
-    public void addController(final PlayerController newController) {
+    public void addController(final UpdatableController newController) {
         this.controllerSet.add(newController);
     }
     
@@ -149,12 +152,6 @@ public class ClockAgent implements Runnable {
     private void checkEditor() {
         if (this.dynPlayer.getLoaded().isPresent()) {
             this.dynPlayer.isPlaying();
-        }
-    }
-    
-    private void notifyControllers() {
-        if (!this.dynPlayer.isEmpty()) {
-            this.controllerSet.forEach(c -> c.updatePosition(this.dynPlayer.getPosition()));
         }
     }
 }
