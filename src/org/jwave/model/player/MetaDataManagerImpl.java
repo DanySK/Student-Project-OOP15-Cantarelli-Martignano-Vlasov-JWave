@@ -26,10 +26,10 @@ import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
 /**
- * This class is an implementation of {@link MetaDataRetriever}.
+ * This class is an implementation of {@link MetaDataManager}.
  *
  */
-public final class MetaDataRetrieverImpl implements MetaDataRetriever {
+public final class MetaDataManagerImpl implements MetaDataManager {
 
     private static final String ID3V1 = "ID3v1";
     private static final String ID3V2 = "ID3v2";
@@ -46,7 +46,7 @@ public final class MetaDataRetrieverImpl implements MetaDataRetriever {
      * @param absolutePath
      *          path of the file that has to 
      */
-    public MetaDataRetrieverImpl(final Path absolutePath)  {
+    public MetaDataManagerImpl(final Path absolutePath)  {
         this.filePath = absolutePath;
         this.datas = new EnumMap<>(MetaData.class);
         try {
