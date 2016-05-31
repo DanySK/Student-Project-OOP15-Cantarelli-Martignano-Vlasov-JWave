@@ -1,6 +1,5 @@
 package org.jwave.controller;
 
-import java.util.Stack;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.screens.PlayerScreenController;
 import com.sun.javafx.application.PlatformImpl;
