@@ -13,6 +13,7 @@ import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
+import org.jwave.model.player.MetaData;
 import org.jwave.model.player.MetaDataRetriever;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.PlaylistManager;
@@ -70,25 +71,16 @@ public final class Controller implements PlayerUIObserver {
 
     @Override
     public void loadSong(final File song) throws Exception {
-        System.out.println("load " + song.getPath() + "  " + song);
-
-        this.manager.addAudioFile(song);
-
+        Song newSong = this.manager.addAudioFile(song);
         
-        //player.setPlayer(new SongImpl(song));
-        //songs.get(manager.getDefaultPlaylist()).add(song);
-
-        manager.getDefaultPlaylist().getPlaylistContent().forEach(e -> {
-            System.out.println(e.getName());
-        });
-        
-        /*
+        //In case of first opening, there are no other songs, the song is automatically queued 
         if (this.player.isEmpty()) {
             manager.setQueue(manager.getDefaultPlaylist());
-            this.player
-                    .setPlayer(manager.selectSongFromPlayingQueueAtIndex(manager.getPlayingQueue().getDimension() - 1));
+            player.setPlayer(newSong);
+            manager.next();
         }
-        */
+
+        //PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(), manager.getDefaultPlaylist().getName());
     }
 
     @Override
@@ -105,6 +97,11 @@ public final class Controller implements PlayerUIObserver {
                 this.player.play();
             }
         }
+        System.out.println("\n\n\n\n\n\n\n\n\n\n");
+        this.manager.getPlayingQueue().getPlaylistContent().forEach(e->{
+            System.out.println((e == player.getLoaded().get() ? "->" : "  ") + e.getName());
+            
+        });
     }
 
     @Override
@@ -161,23 +158,27 @@ public final class Controller implements PlayerUIObserver {
         this.player.setPlayer(song);
         this.player.play();
     }
-
-    public ObservableList<Playlist> getObservablePlaylists() {
-        return this.playlists;
-    }
-
+    
     @Override
     public void moveToMoment(Double percentage) {
         this.player.cue((int) ((percentage * player.getLength()) / 100));
     }
 
+    public void setVolume(Integer amount) {
+        this.player.setVolume(amount);
+    }
+    
+    public ObservableList<Playlist> getObservablePlaylists() {
+        return this.playlists;
+    }
+
     @Override
     public ObservableList<Song> getObservablePlaylistContent(Playlist playlist) {
-
-        System.out.println(playlist.getName() + " SONGS ");
-        this.songs.get(playlist).forEach(e -> {
-            System.out.println(e.toString());
-        });
         return songs.get(playlist);
+    }
+
+    public void terminate(){
+        this.player.releasePlayerResources();
+        //this.agent.KILL
     }
 }

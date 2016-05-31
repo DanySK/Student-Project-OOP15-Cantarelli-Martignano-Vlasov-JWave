@@ -21,6 +21,8 @@ public interface PlayerUIObserver {
     
     public void moveToMoment(Double percentage);
     
+    public void setVolume(Integer amount);
+    
     public void stop();
     
     public void next();
@@ -34,5 +36,7 @@ public interface PlayerUIObserver {
     public ObservableList<Playlist> getObservablePlaylists();
     
     public ObservableList<Song> getObservablePlaylistContent(Playlist playlist);
+    
+    public void terminate();
 
 }

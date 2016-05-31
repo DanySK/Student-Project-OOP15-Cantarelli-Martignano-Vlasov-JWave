@@ -1,40 +1,33 @@
 package org.jwave.view.screens;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.jwave.controller.Controller;
+import org.jwave.model.player.MetaData;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.Song;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.PlayerUI;
 import org.jwave.view.PlayerUIObserver;
-
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.Duration;
 
 /**
  * Controller for the Player screen.
@@ -58,19 +51,23 @@ public class PlayerScreenController implements PlayerUI {
     @FXML
     private ListView<Playlist> listView;
     @FXML
-    private TableView<?> tableView;
+    private TableView<Song> tableView;
+    @FXML
+    private TableColumn<Song, String> columnTitle, columnAuthor, columnAlbum, columnGenre;
 
     public PlayerScreenController(FXEnvironment environment, PlayerUIObserver controller) {
         this.observer = controller;
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
-        this.tableView.setPlaceholder(new Label("Nessun brano caricato"));
+        
+        
+        tableView.setPlaceholder(new Label("Nessun brano caricato"));
 
-        this.listView.setItems(this.observer.getObservablePlaylists());
-        this.listView.setOnMouseClicked(e -> {
+        listView.setItems(observer.getObservablePlaylists());
+        listView.setOnMouseClicked(e -> {
             System.out.println("SELECTED PLAYLIST: " + listView.getSelectionModel().getSelectedItem().getName());
-            System.out.println(
-                    observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).toString());
+            //observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()).forEach(s->System.out.println(s.getName()));
+            tableView.setItems(observer.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
         });
 
         listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
@@ -93,17 +90,37 @@ public class PlayerScreenController implements PlayerUI {
                 };
             }
         });
-
-        this.volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                System.out.println("VOLUME: " + new_val);
+        
+        columnTitle.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Song,String>, ObservableValue<String>>() {          
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<Song, String> param) {
+                // TODO Auto-generated method stub
+                return new SimpleStringProperty(param.getValue().getMetaData().retrieve(MetaData.TITLE));
             }
         });
+        columnAuthor.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Song,String>, ObservableValue<String>>() {          
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<Song, String> param) {
+                // TODO Auto-generated method stub
+                return new SimpleStringProperty(param.getValue().getAbsolutePath());
+            }
+        });
+        
+        volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                System.out.println("VOLUME: " + new_val.intValue());
+                observer.setVolume(new_val.intValue());
+            }
+        });
+  
+        
     }
 
     @Override
     public void show() {
         this.primaryStage = this.environment.getMainStage();
+        //this.primaryStage.setOnCloseRequest(e->observer.terminate());
+        this.primaryStage.setOnCloseRequest(e->System.exit(0));
         this.environment.displayScreen(FXMLSCREEN);
     }
 
@@ -124,24 +141,16 @@ public class PlayerScreenController implements PlayerUI {
             System.out.println("NEW PLAYLIST: " + result.get());
             this.observer.newPlaylist(result.get());
         }
-
-        // result.ifPresent(name -> System.out.println("Nuova Playlist: " +
-        // name));
     }
 
     @FXML
     private void play() {
-
-        System.out.println("play");
-        this.observer.play();
-        // AudioSystem.getAudioSystem().getDynamicPlayer().play();
-
+        observer.play();
     }
 
     @FXML
     private void stopPlay() {
-        System.out.println("stop");
-        // AudioSystem.getAudioSystem().getDynamicPlayer().pause();
+        observer.stop();
     }
 
     @FXML
@@ -176,8 +185,8 @@ public class PlayerScreenController implements PlayerUI {
 
     @FXML
     private void positionChanged() {
-        System.out.println("SET POSITION: " + positionSlider.getValue());
         observer.moveToMoment(positionSlider.getValue());
     }
+    
 
 }
