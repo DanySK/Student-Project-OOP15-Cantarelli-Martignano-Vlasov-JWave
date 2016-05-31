@@ -1,8 +1,9 @@
-package org.jwave.model.playlist.strategies;
+package org.jwave.model.playlist.navigator;
 
 import java.util.Optional;
 
-import org.jwave.model.player.PlayMode;
+import org.jwave.model.playlist.PlayMode;
+import org.jwave.model.playlist.PlaylistNavigator;
 
 /**
  * This class is a playlist navigator factory.
@@ -25,7 +26,8 @@ public class PlaylistNavigatorFactory {
      * @return
      *          a new playlist navigator.
      */
-    public PlaylistNavigator createNavigator(final PlayMode type, final int playlistDimension, final Optional<Integer> currentIndex) {
+    public PlaylistNavigator createNavigator(final PlayMode type, final int playlistDimension, 
+            final Optional<Integer> currentIndex) {
         switch (type) {
             case SHUFFLE:        
                 return new ShuffleNavigator(playlistDimension);

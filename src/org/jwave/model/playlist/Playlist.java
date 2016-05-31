@@ -1,9 +1,10 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.jwave.model.ESource;
+import org.jwave.model.player.Song;
 
 /**
  * A playlist is a collection of {@link Song}.

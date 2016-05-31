@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jwave.model.player.MetaData;
-import org.jwave.model.player.Playlist;
 import org.jwave.model.player.Song;
+import org.jwave.model.playlist.Playlist;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.PlayerUI;
 import org.jwave.view.PlayerController;

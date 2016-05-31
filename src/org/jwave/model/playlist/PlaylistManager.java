@@ -1,10 +1,12 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.jwave.model.player.Song;
 
 /**
  * Interface that models the concept of playlist manager. A playlist manager manages playlists and contains the 

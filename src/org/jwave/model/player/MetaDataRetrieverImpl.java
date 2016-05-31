@@ -29,7 +29,7 @@ import com.mpatric.mp3agic.UnsupportedTagException;
  * This class is an implementation of {@link MetaDataRetriever}.
  *
  */
-public class MetaDataRetrieverImpl implements MetaDataRetriever {
+public final class MetaDataRetrieverImpl implements MetaDataRetriever {
 
     private static final String ID3V1 = "ID3v1";
     private static final String ID3V2 = "ID3v2";

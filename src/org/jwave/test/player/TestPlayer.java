@@ -13,13 +13,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
-import org.jwave.model.player.PlayMode;
-import org.jwave.model.player.Playlist;
-import org.jwave.model.player.PlaylistImpl;
-import org.jwave.model.player.PlaylistManager;
-import org.jwave.model.player.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
 import org.jwave.model.player.SongImpl;
+import org.jwave.model.playlist.PlayMode;
+import org.jwave.model.playlist.Playlist;
+import org.jwave.model.playlist.PlaylistImpl;
+import org.jwave.model.playlist.PlaylistManager;
+import org.jwave.model.playlist.PlaylistManagerImpl;
 
 /**
  * This class is an automated test for testing some features of DynamicPLayer and PlaylistManager.

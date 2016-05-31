@@ -1,4 +1,4 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist;
 
 /**
  * An enum defining play modes. a play mode is a way a playlist is scanned.

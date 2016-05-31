@@ -1,4 +1,4 @@
-package org.jwave.model.playlist.strategies;
+package org.jwave.model.playlist.navigator;
 
 import java.util.Optional;
 

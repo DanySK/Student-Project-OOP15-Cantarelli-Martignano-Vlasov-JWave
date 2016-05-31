@@ -18,8 +18,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jwave.model.player.Playlist;
-import org.jwave.model.player.PlaylistImpl;
+import org.jwave.model.playlist.Playlist;
+import org.jwave.model.playlist.PlaylistImpl;
 
 /**
  * Defines the controller methods.

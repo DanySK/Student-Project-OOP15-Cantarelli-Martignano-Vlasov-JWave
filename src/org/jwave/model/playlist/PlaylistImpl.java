@@ -1,4 +1,4 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.jwave.model.EObserver;
+import org.jwave.model.player.Song;
 
 /**
  * This is an implementation of {@link Playlist} that can be serialized.

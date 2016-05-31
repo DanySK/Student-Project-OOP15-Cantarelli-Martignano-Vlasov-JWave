@@ -1,4 +1,4 @@
-package org.jwave.model.player;
+package org.jwave.model.playlist;
 
 import java.io.File;
 import java.util.Collection;
@@ -9,8 +9,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.jwave.model.playlist.strategies.PlaylistNavigator;
-import org.jwave.model.playlist.strategies.PlaylistNavigatorFactory;
+import org.jwave.model.player.DynamicPlayer;
+import org.jwave.model.player.DynamicPlayerImpl;
+import org.jwave.model.player.Song;
+import org.jwave.model.player.SongImpl;
+import org.jwave.model.playlist.navigator.PlaylistNavigatorFactory;
 
 /**
  * This is an implementation of {@link PlaylistManager}.

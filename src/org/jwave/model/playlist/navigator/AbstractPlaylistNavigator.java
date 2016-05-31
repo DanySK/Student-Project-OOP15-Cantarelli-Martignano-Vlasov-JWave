@@ -1,8 +1,9 @@
-package org.jwave.model.playlist.strategies;
+package org.jwave.model.playlist.navigator;
 
 import java.util.Optional;
 
 import org.jwave.model.ESource;
+import org.jwave.model.playlist.PlaylistNavigator;
 
 /**
  * This is an implementation of {@link}PlaylistNavigator.
