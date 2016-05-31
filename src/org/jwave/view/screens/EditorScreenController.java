@@ -1,54 +1,32 @@
 package org.jwave.view.screens;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.jwave.controller.EditorController;
 import org.jwave.controller.PlayerControllerImpl;
-import org.jwave.model.player.MetaData;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.model.player.Song;
-import org.jwave.view.EditorUI;
 import org.jwave.view.FXEnvironment;
-import org.jwave.view.PlayerUI;
-import org.jwave.view.PlayerController;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import org.jwave.view.UI;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 /**
  * Controller for the Player screen.
  * 
- * @author Alessandro Martignano
- *
  */
-public class EditorScreenController implements EditorUI {
+public class EditorScreenController implements UI {
 
     private final FXMLScreens FXMLSCREEN = FXMLScreens.PLAYER;
     private final FXEnvironment environment;
@@ -77,7 +55,6 @@ public class EditorScreenController implements EditorUI {
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
 
-        
     }
 
     @Override
@@ -88,17 +65,9 @@ public class EditorScreenController implements EditorUI {
         this.environment.displayScreen(FXMLSCREEN);
     }
 
-    @Override
-    public void setObserver(PlayerController observer) {
-
-        // this.observer = observer;
-
-    }
-
     public void updatePosition() {
         System.out.println("Pos");
     }
-
 
     @FXML
     private void play() {
@@ -109,7 +78,6 @@ public class EditorScreenController implements EditorUI {
     private void stopPlay() {
         controller.stop();
     }
-
 
     @FXML
     private void openFile() {
@@ -146,12 +114,18 @@ public class EditorScreenController implements EditorUI {
     private void lockSlider() {
         lockedPositionSlider = true;
     }
-    
-    
+
     @FXML
     private void gotoPlayer() {
-        this.environment.loadScreen(FXMLSCREEN.PLAYER, new PlayerScreenController(this.environment, new PlayerControllerImpl()));
+        this.environment.loadScreen(FXMLScreens.PLAYER,
+                new PlayerScreenController(this.environment, new PlayerControllerImpl()));
         this.environment.show();
+    }
+
+    @Override
+    public void updateReproductionInfo(Song song) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

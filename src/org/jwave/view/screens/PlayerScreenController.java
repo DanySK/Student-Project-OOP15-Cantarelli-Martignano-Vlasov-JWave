@@ -2,29 +2,21 @@ package org.jwave.view.screens;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 import org.jwave.controller.EditorControllerImpl;
+import org.jwave.controller.PlayerController;
 import org.jwave.model.player.MetaData;
 import org.jwave.model.player.Song;
 import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.view.FXEnvironment;
-import org.jwave.view.PlayerUI;
-import org.jwave.view.PlayerController;
-
+import org.jwave.view.UI;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -48,11 +40,9 @@ import javafx.util.Callback;
 
 /**
  * Controller for the Player screen.
- * 
- * @author Alessandro Martignano
  *
  */
-public class PlayerScreenController implements PlayerUI {
+public class PlayerScreenController implements UI {
 
     private final FXMLScreens FXMLSCREEN = FXMLScreens.PLAYER;
     private final FXEnvironment environment;
@@ -82,68 +72,72 @@ public class PlayerScreenController implements PlayerUI {
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
-
         tableView.setPlaceholder(new Label("Nessun brano caricato"));
         tableView.setRowFactory(tr -> {
             TableRow<Song> row = new TableRow<>();
             return row;
         });
-        
+
+        // Sets the choices for the reproduction modes
         choiceMode.getItems().add("Straight");
         choiceMode.getItems().add("Shuffle");
         choiceMode.getItems().add("Loop song");
         choiceMode.getItems().add("Loop Playlist");
+        choiceMode.getSelectionModel().selectedItemProperty()
+                .addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    switch (newValue) {
+                    case "Straight":
+                        controller.setMode(PlayMode.NO_LOOP);
+                        break;
+                    case "Shuffle":
+                        controller.setMode(PlayMode.SHUFFLE);
+                        break;
+                    case "Loop song":
+                        controller.setMode(PlayMode.LOOP_ONE);
+                        break;
+                    case "Loop Playlist":
+                        controller.setMode(PlayMode.LOOP_ALL);
+                        break;
+                    }
+                });
 
-        choiceMode.getSelectionModel()
-            .selectedItemProperty()
-            .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                switch(newValue) {
-                case "Straight":
-                    controller.setMode(PlayMode.NO_LOOP);
-                    break;
-                case "Shuffle":
-                    controller.setMode(PlayMode.SHUFFLE);
-                    break;
-                case "Loop song":
-                    controller.setMode(PlayMode.LOOP_ONE);
-                    break;
-                case "Loop Playlist":
-                    controller.setMode(PlayMode.LOOP_ALL);
-                    break;
-                }
-            } );
-
+        // Sets the right-click menù on a song displayed in the table
         MenuItem addToPlaylist = new MenuItem("Aggiungi a playlist");
-        addToPlaylist.setOnAction(e->{
-            List<Playlist> choices = controller.getObservablePlaylists().stream().filter(p->!p.getName().equals("default")).collect(Collectors.toList());
+        addToPlaylist.setOnAction(e -> {
+            List<Playlist> choices = controller.getObservablePlaylists().stream()
+                    .filter(p -> !p.getName().equals("default")).collect(Collectors.toList());
             ChoiceDialog<Playlist> dialog = new ChoiceDialog<>(choices.get(0), choices);
-            //dialog.
+            // dialog.
             dialog.setTitle("Aggiungi a playlist");
-            dialog.setHeaderText("Scegli la playlist in cui inserire "+tableView.getSelectionModel().getSelectedItem().getName());
-
-            // Traditional way to get the response value.
+            dialog.setHeaderText(
+                    "Scegli la playlist in cui inserire " + tableView.getSelectionModel().getSelectedItem().getName());
             Optional<Playlist> result = dialog.showAndWait();
-            result.ifPresent(playlist->controller.addSongToPlaylist(tableView.getSelectionModel().getSelectedItem(), playlist));
+            result.ifPresent(playlist -> controller.addSongToPlaylist(tableView.getSelectionModel().getSelectedItem(),
+                    playlist));
         });
         tableView.setContextMenu(new ContextMenu(addToPlaylist));
-        
-        tableView.setRowFactory( tv -> {
+
+        // Sets the double-click event on the songs in the table
+        tableView.setRowFactory(tv -> {
             TableRow<Song> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     Song rowData = row.getItem();
                     controller.selectSong(rowData);
                 }
             });
-            return row ;
+            return row;
         });
 
-        
+        // Sets the click event on the listView items (playlists) which will
+        // display the content in the table
         listView.setItems(controller.getObservablePlaylists());
         listView.setOnMouseClicked(e -> {
-            try{
-                tableView.setItems(controller.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
-            } catch (Exception x){}
+            try {
+                tableView.setItems(
+                        controller.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
+            } catch (Exception x) {
+            }
         });
 
         listView.setCellFactory(new Callback<ListView<Playlist>, ListCell<Playlist>>() {
@@ -156,7 +150,7 @@ public class PlayerScreenController implements PlayerUI {
                         if (item == null) {
                             setText(null);
                         } else {
-                            if (item.getName().equals("default") ) {
+                            if (item.getName().equals("default")) {
                                 setText("Tutti i brani");
                             } else {
                                 setText(item.getName());
@@ -168,28 +162,25 @@ public class PlayerScreenController implements PlayerUI {
             }
         });
 
+        //Sets the columns bindings
         columnFile.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
-        columnTitle.setCellValueFactory(
-                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.TITLE)));
-        columnAuthor.setCellValueFactory(
-                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ARTIST)));
-        columnAlbum.setCellValueFactory(
-                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ALBUM)));
-        columnGenre.setCellValueFactory(
-                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
-
-        volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> controller.setVolume(new_val.intValue()));
+        columnTitle.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.TITLE)));
+        columnAuthor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ARTIST)));
+        columnAlbum.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ALBUM)));
+        columnGenre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
+        volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+            controller.setVolume(new_val.intValue());
+            System.out.println("VOLUME: "+new_val);
+            });
 
     }
 
     @Override
     public void show() {
         this.primaryStage = this.environment.getMainStage();
-        // this.primaryStage.setOnCloseRequest(e->observer.terminate());
         this.primaryStage.setOnCloseRequest(e -> System.exit(0));
         this.environment.displayScreen(FXMLSCREEN);
     }
-
 
     public void updatePosition() {
         System.out.println("Pos");
@@ -219,13 +210,11 @@ public class PlayerScreenController implements PlayerUI {
 
     @FXML
     private void next() {
-        System.out.println("next");
         controller.next();
     }
 
     @FXML
     private void prev() {
-        System.out.println("prev");
         controller.previous();
     }
 
@@ -248,7 +237,8 @@ public class PlayerScreenController implements PlayerUI {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Errore");
                     alert.setHeaderText("Impossibile accedere alla playlist.");
-                    alert.setContentText("Le canzoni saranno comunque disponibili alla riproduzione ma non saranno memorizzate in maniera permanente.");
+                    alert.setContentText(
+                            "Le canzoni saranno comunque disponibili alla riproduzione ma non saranno memorizzate in maniera permanente.");
                     alert.showAndWait();
                 }
             });
@@ -264,46 +254,37 @@ public class PlayerScreenController implements PlayerUI {
     public void updatePosition(Integer ms, Integer lenght) {
         if (!positionSlider.isValueChanging() && lockedPositionSlider == false)
             positionSlider.setValue((ms * 10000) / lenght);
-        
-        String elapsed = String.format("%d:%d", 
-                TimeUnit.MILLISECONDS.toMinutes(ms),
-                TimeUnit.MILLISECONDS.toSeconds(ms) - 
-                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms))
-            );
-        String remaining = ("-"+String.format("%d:%d", 
-                TimeUnit.MILLISECONDS.toMinutes(lenght-ms),
-                TimeUnit.MILLISECONDS.toSeconds(lenght-ms) - 
-                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(lenght-ms))
-            ));
+
+        String elapsed = String.format("%d:%02d", TimeUnit.MILLISECONDS.toMinutes(ms),
+                TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms)));
+        String remaining = ("-" + String.format("%d:%02d", TimeUnit.MILLISECONDS.toMinutes(lenght - ms),
+                TimeUnit.MILLISECONDS.toSeconds(lenght - ms)
+                        - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(lenght - ms))));
         Platform.runLater(() -> {
             labelLeft.setText(elapsed);
             labelRight.setText(remaining);
         });
-        
+
     }
 
     @FXML
     private void lockSlider() {
         lockedPositionSlider = true;
     }
-    
-    @FXML
-    private void selectMode(){
-        
-    }
-    
+
     @FXML
     private void gotoEditor() {
         System.out.println("gotoEditor");
-        this.environment.loadScreen(FXMLSCREEN.EDITOR, new EditorScreenController(this.environment, new EditorControllerImpl()));
-        this.environment.displayScreen(FXMLSCREEN.EDITOR);
+        this.environment.loadScreen(FXMLScreens.EDITOR,
+                new EditorScreenController(this.environment, new EditorControllerImpl()));
+        this.environment.displayScreen(FXMLScreens.EDITOR);
     }
 
     @Override
     public void updateReproductionInfo(Song song) {
         Platform.runLater(() -> {
             labelSong.setText(song.getName());
-        });     
+        });
     }
 
 }

@@ -14,15 +14,14 @@ import org.jwave.model.playlist.PlaylistImpl;
 import org.jwave.model.playlist.PlaylistManager;
 import org.jwave.model.playlist.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
-import org.jwave.view.PlayerUI;
+import org.jwave.view.UI;
 
 public final class EditorControllerImpl implements EditorController, UpdatableController {
 
     private final DynamicPlayer player;
-    private final DynamicPlayer editorPlayer;
     private final PlaylistManager manager;
     private final ClockAgent agent;
-    private final Set<PlayerUI> UIs;
+    private final Set<UI> UIs;
 
     public EditorControllerImpl() {
 
@@ -33,8 +32,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
             e.printStackTrace();
         }
 
-        this.player = new DynamicPlayerImpl();
-        this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
+        this.player = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(new PlaylistImpl("editor"));
         this.agent = new ClockAgent(player, manager, ClockAgent.Mode.PLAYER);
         // this.agent.addController(this);
@@ -45,7 +43,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
 
     }
 
-    public void attachUI(PlayerUI UI) {
+    public void attachUI(UI UI) {
         UIs.add(UI);
     }
 
@@ -101,18 +99,17 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
 
     public void terminate() {
         this.player.releasePlayerResources();
-        // this.agent.KILL
     }
 
     @Override
     public void moveToMoment(double value) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void updateReproductionInfo(Song song) {
         // TODO Auto-generated method stub
-        
+
     }
 }

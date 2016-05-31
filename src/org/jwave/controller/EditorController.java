@@ -13,5 +13,4 @@ public interface EditorController {
 
     void moveToMoment(double value);
 
-
 }

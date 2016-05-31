@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
@@ -19,8 +18,7 @@ import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.model.playlist.PlaylistManager;
 import org.jwave.model.playlist.PlaylistManagerImpl;
-import org.jwave.view.PlayerController;
-import org.jwave.view.PlayerUI;
+import org.jwave.view.UI;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,12 +26,11 @@ import javafx.collections.ObservableList;
 public final class PlayerControllerImpl implements PlayerController, UpdatableController {
 
     private final DynamicPlayer player;
-    private final DynamicPlayer editorPlayer;
     private final PlaylistManager manager;
     private final ClockAgent agent;
     private final ObservableList<Playlist> playlists;
     private final Map<Playlist, ObservableList<Song>> songs;
-    private final Set<PlayerUI> UIs;
+    private final Set<UI> UIs;
 
     public PlayerControllerImpl() {
 
@@ -45,7 +42,6 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         }
 
         this.player = new DynamicPlayerImpl();
-        this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         final Playlist def = PlaylistController.loadDefaultPlaylist();
         this.manager = new PlaylistManagerImpl(def);
         try {
@@ -79,12 +75,9 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
     }
 
-    public void attachUI(PlayerUI UI) {
-        UIs.add(UI);
-    }
 
     @Override
-    public void loadSong(final File song) throws IllegalArgumentException, IOException{
+    public void loadSong(final File song) throws IllegalArgumentException, IOException {
         Song newSong = this.manager.addAudioFile(song);
 
         // In case of first opening, there are no other songs, the song is
@@ -97,8 +90,9 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
         this.songs.get(manager.getDefaultPlaylist()).add(newSong);
 
-        PlaylistController.saveDefaultPlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
-        //PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
+        PlaylistController.saveDefaultPlaylistToFile(manager.getDefaultPlaylist(),
+                manager.getDefaultPlaylist().getName());
+        // PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
         // manager.getDefaultPlaylist().getName());
     }
 
@@ -173,13 +167,12 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
     @Override
     public void selectSong(Song song) {
-        // System.out.println("select "+ song.getAbsolutePath());
         this.player.setPlayer(song);
         this.player.play();
     }
 
     public void updatePosition(Integer ms) {
-            UIs.forEach(e -> e.updatePosition(ms, player.getLength()));
+        UIs.forEach(e -> e.updatePosition(ms, player.getLength()));
     }
 
     @Override
@@ -214,5 +207,11 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
     @Override
     public void setMode(PlayMode mode) {
         manager.setPlayMode(mode);
+    }
+
+    @Override
+    public void attachUI(UI UI) {
+        UIs.add(UI);
+
     }
 }

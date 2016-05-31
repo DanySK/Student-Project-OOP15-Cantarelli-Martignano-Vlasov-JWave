@@ -97,7 +97,7 @@
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <ChoiceBox fx:id="choiceMode" onContextMenuRequested="#selectMode" prefWidth="150.0">
+                        <ChoiceBox fx:id="choiceMode" prefWidth="150.0">
                            <HBox.margin>
                               <Insets right="20.0" />
                            </HBox.margin>
@@ -151,7 +151,7 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" HBox.hgrow="NEVER">
                      <children>
-                        <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="5.0" max="10.0" minorTickCount="2" prefHeight="38.0" prefWidth="177.0" showTickMarks="true" value="10.0">
+                        <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="14.0" max="70.0" minorTickCount="1" prefHeight="38.0" prefWidth="177.0" showTickMarks="true" value="70.0">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>

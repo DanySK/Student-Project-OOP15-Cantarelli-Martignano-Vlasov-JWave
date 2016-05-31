@@ -10,13 +10,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        
-        PlatformImpl.startup(() -> { });
+        PlatformImpl.startup(() -> {
+        });
         PlayerControllerImpl controller = new PlayerControllerImpl();
         FXEnvironment environment = new FXEnvironment();
-        PlayerScreenController player = new PlayerScreenController(environment,controller);
+        PlayerScreenController player = new PlayerScreenController(environment, controller);
         controller.attachUI(player);
-        //player.setObserver(controller);
+        // player.setObserver(controller);
 
         Platform.runLater(() -> {
             try {
@@ -29,7 +29,7 @@ public class Main {
             }
             player.show();
         });
-        
+
     }
 
 }
