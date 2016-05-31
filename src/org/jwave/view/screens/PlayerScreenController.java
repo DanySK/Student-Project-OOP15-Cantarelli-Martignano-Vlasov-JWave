@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.jwave.controller.EditorControllerImpl;
 import org.jwave.model.player.MetaData;
 import org.jwave.model.player.Playlist;
 import org.jwave.model.player.Song;
@@ -53,6 +54,10 @@ public class PlayerScreenController implements PlayerUI {
     private Stage primaryStage;
     private boolean lockedPositionSlider;
 
+    @FXML
+    private MenuItem btnEditor;
+    @FXML
+    private Label labelLeft, labelRight, labelSong;
     @FXML
     private Button btnPlay, btnNewPlaylist;
     @FXML
@@ -226,6 +231,19 @@ public class PlayerScreenController implements PlayerUI {
     @FXML
     private void lockSlider() {
         lockedPositionSlider = true;
+    }
+    
+    @FXML
+    private void selectMode(){
+        
+    }
+    
+    @FXML
+    private void gotoEditor() {
+        System.out.println("gotoEditor");
+        this.environment.loadScreen(FXMLSCREEN.EDITOR, new EditorScreenController(this.environment, new EditorControllerImpl()));
+        this.environment.displayScreen(FXMLSCREEN.EDITOR);
+
     }
 
 }

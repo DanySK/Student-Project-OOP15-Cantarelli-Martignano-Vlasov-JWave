@@ -34,7 +34,7 @@ public final class PlayerControllerImpl implements PlayerController {
     private final Map<Playlist, ObservableList<Song>> songs;
     private final Set<PlayerUI> UIs;
 
-    PlayerControllerImpl() {
+    public PlayerControllerImpl() {
 
         try {
             PlaylistController.checkDefaultDir();
