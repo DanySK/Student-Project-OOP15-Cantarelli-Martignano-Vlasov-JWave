@@ -24,6 +24,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -43,28 +44,25 @@ public class EditorScreenController implements UI {
     @FXML
     private MenuItem btnEditor;
     @FXML
-    private Label labelLeft, labelRight, labelSong;
+    private Label labelLeft, labelRight, labelSong, labelFrom, labelTo;
     @FXML
     private Button btnPlay, btnNewPlaylist;
     @FXML
-    private volatile Slider sliderPosition, sliderVolume;
-    @FXML
-    private ListView<Playlist> listView;
-    @FXML
-    private TableView<Song> tableView;
-    @FXML
-    private TableColumn<Song, String> columnFile, columnTitle, columnAuthor, columnAlbum, columnGenre;
+    private volatile Slider sliderPosition, sliderVolume, sliderCursor1, sliderCursor2;
     @FXML
     private LineChart<Integer, Float> lineChartLeft;
     @FXML
     private LineChart<Integer, Float> lineChartRight;
+    @FXML
+    private VBox vboxChartContainer;
 
     public EditorScreenController(FXEnvironment environment, EditorController controller) {
         this.controller = controller;
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
-        
+        this.controller.addGraph(this);
+
         sliderVolume.valueProperty().addListener((ov, old_val, new_val) -> {
             controller.setVolume(new_val.intValue());
             System.out.println(new_val);
@@ -99,7 +97,8 @@ public class EditorScreenController implements UI {
 
     @FXML
     private void cut() {
-
+        System.out.println("CUT");
+        controller.cut((int)sliderCursor1.getValue(), (int)sliderCursor2.getValue());        
     }
 
     @FXML
@@ -107,8 +106,10 @@ public class EditorScreenController implements UI {
 
     }
 
-    @FXML
-    private void paintWaveForm(List<GroupedSampleInfo> samplesList) {
+    public void paintWaveForm(List<GroupedSampleInfo> samplesList) {
+        
+        lineChartLeft.getData().clear();
+        lineChartRight.getData().clear();
 
         System.out.println("paint" + Thread.currentThread());
 
@@ -146,7 +147,7 @@ public class EditorScreenController implements UI {
 
         try {
             controller.loadSong(openedFile);
-            //paintWaveForm(new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0,this.controller.getEditor().getModifiedSongLength(), 2000)));
+            paintWaveForm(new ArrayList<GroupedSampleInfo>(this.controller.getWaveform()));
 
         } catch (Exception e) {
             Alert alert = new Alert(AlertType.ERROR);
@@ -155,6 +156,8 @@ public class EditorScreenController implements UI {
             alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
             alert.showAndWait();
         }
+        
+        
     }
     
     @FXML
@@ -192,8 +195,9 @@ public class EditorScreenController implements UI {
 
     @Override
     public void updateReproductionInfo(Song song) {
-        // TODO Auto-generated method stub
-
+        Platform.runLater(() -> {
+            labelSong.setText(song.getName());
+        });
     }
 
     @FXML
@@ -204,6 +208,15 @@ public class EditorScreenController implements UI {
         alert.setHeaderText("");
         alert.setContentText("Editing   Aleksejs Vlasovs\nView      Alessandro Martignano\nPlayer    Dario Cantarelli");
         alert.showAndWait();
+    }
+    
+    public void updateGraphLenght(int ms) {
+        vboxChartContainer.setPrefWidth(ms);
+        System.out.println("SET WIDTH");
+        sliderCursor1.setMax(ms);
+        sliderCursor2.setMax(ms);
+        lineChartLeft.setPrefWidth(ms);
+        lineChartRight.setPrefWidth(ms);
     }
 
 }

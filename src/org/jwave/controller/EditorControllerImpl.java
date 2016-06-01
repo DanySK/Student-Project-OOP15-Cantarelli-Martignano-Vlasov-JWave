@@ -2,7 +2,9 @@ package org.jwave.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.jwave.controller.editor.Editor;
@@ -10,6 +12,7 @@ import org.jwave.controller.editor.EditorImpl;
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
+import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
 import org.jwave.model.playlist.PlaylistImpl;
@@ -17,6 +20,7 @@ import org.jwave.model.playlist.PlaylistManager;
 import org.jwave.model.playlist.PlaylistManagerImpl;
 import org.jwave.model.player.Song;
 import org.jwave.view.UI;
+import org.jwave.view.screens.EditorScreenController;
 
 /**
  * Implementation of the controller of the editor
@@ -26,6 +30,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
 
     private static final float MINIMUM_SONG_POSITION_PERCENTAGE = 0;
     private static final float MAXIMUM_SONG_POSITION_PERCENTAGE = 10000;
+    private static final int SAMPLES_RESOLUTION = 1000;
+    private static final int SONG_LENGHT_SCALING_FACTOR = 100;
 
     private final DynamicPlayer player;
     private final DynamicPlayer editorPlayer;
@@ -33,6 +39,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     private final ClockAgent agent;
     private final Set<UI> uis;
     private final Editor editor;
+    private final Set<EditorScreenController> graphs;
 
     public EditorControllerImpl() {
 
@@ -51,6 +58,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.agent.startClockAgent();
         this.uis = new HashSet<>();
         this.editor = new EditorImpl();
+        this.graphs = new HashSet<>();
+        
 
         manager.setQueue(manager.getDefaultPlaylist());
 
@@ -74,11 +83,15 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         Song newSong = this.manager.addAudioFile(song);
         this.editor.loadSongToEdit(newSong);
         Song newEditableSong = this.editor.getSong();
-
-        //manager.setQueue(manager.getDefaultPlaylist());
         editorPlayer.setPlayer(newEditableSong);
-
+        graphs.forEach(e->{
+        e.updateGraphLenght(editor.getModifiedSongLength()/SONG_LENGHT_SCALING_FACTOR);
+        System.out.println("UPDATE GRAPH "+editor.getModifiedSongLength()/SONG_LENGHT_SCALING_FACTOR);
+        });
     }
+    
+    
+    
 
     /**
      * 
@@ -103,6 +116,16 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
      */
     public void stop() {
         this.editorPlayer.stop();
+    }
+    
+    /**
+     * 
+     */
+    public void cut(int from, int to) {
+        this.editor.setSelectionFrom(from);
+        editor.setSelectionTo(to);
+        editor.cutSelection();
+        graphs.forEach(e->e.paintWaveForm(editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION)));
     }
 
     /**
@@ -135,7 +158,6 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         if (percentage < MINIMUM_SONG_POSITION_PERCENTAGE || percentage > MAXIMUM_SONG_POSITION_PERCENTAGE)
             throw new IllegalArgumentException();
         if (!this.editorPlayer.isEmpty()) {
-            System.out.println("CUE");
             editorPlayer.cue((int) ((percentage * editorPlayer.getLength()) / 10000));
         }
     }
@@ -163,8 +185,31 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         uis.forEach(e -> e.updateReproductionInfo(song));
     }
 
-    public Editor getEditor() {
-        return this.editor;
+    @Override
+    public void copy(int from, int to) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void paste(int to) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void addGraph(EditorScreenController graphView) {
+        graphs.add(graphView);
+        
+    }
+
+
+    /**
+     * 
+     */
+    @Override
+    public List<GroupedSampleInfo> getWaveform() {
+        return editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION);
     }
 
 }

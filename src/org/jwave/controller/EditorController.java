@@ -2,9 +2,13 @@ package org.jwave.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 import org.jwave.controller.editor.Editor;
+import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.view.UI;
+import org.jwave.view.screens.EditorScreenController;
 
 /**
  * A generic controller of the editor.
@@ -20,6 +24,11 @@ public interface EditorController {
     /**
      * 
      */
+    public void addGraph(EditorScreenController graphView);
+    
+    /**
+     * 
+     */
     void play();
     
     /**
@@ -31,6 +40,26 @@ public interface EditorController {
      * 
      */
     void stop();
+    
+    /**
+     * 
+     * @param from
+     * @param to
+     */
+    void cut(int from, int to);
+    
+    /**
+     * 
+     * @param from
+     * @param to
+     */
+    void copy(int from, int to);
+    
+    /**
+     * 
+     * @param to
+     */
+    void paste(int to);
 
     /**
      * @param f
@@ -52,6 +81,9 @@ public interface EditorController {
      */
     public void setVolume(Integer amount);
 
-    Editor getEditor();
+
+    public List<GroupedSampleInfo> getWaveform();
+
+
 
 }
