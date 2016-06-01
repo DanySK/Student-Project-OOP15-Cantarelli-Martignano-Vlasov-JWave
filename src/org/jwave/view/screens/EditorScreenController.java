@@ -1,15 +1,21 @@
 package org.jwave.view.screens;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jwave.controller.EditorController;
+import org.jwave.controller.EditorControllerImpl;
 import org.jwave.controller.PlayerControllerImpl;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.model.player.Song;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.UI;
+
+import com.sun.javafx.application.PlatformImpl;
+import com.sun.media.jfxmediaimpl.platform.Platform;
+
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -32,7 +38,7 @@ import javafx.stage.Stage;
  */
 public class EditorScreenController implements UI {
 
-    private final FXMLScreens FXMLSCREEN = FXMLScreens.PLAYER;
+    private final FXMLScreens FXMLSCREEN = FXMLScreens.EDITOR;
     private final FXEnvironment environment;
     private final EditorController controller;
     private Stage primaryStage;
@@ -45,7 +51,7 @@ public class EditorScreenController implements UI {
     @FXML
     private Button btnPlay, btnNewPlaylist;
     @FXML
-    private volatile Slider positionSlider, volumeSlider;
+    private volatile Slider sliderPosition, sliderVolume;
     @FXML
     private ListView<Playlist> listView;
     @FXML
@@ -62,15 +68,19 @@ public class EditorScreenController implements UI {
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
-
+        
+        sliderVolume.valueProperty().addListener((ov, old_val, new_val) -> {
+            controller.setVolume(new_val.intValue());
+            System.out.println(new_val);
+        });
     }
 
     @Override
     public void show() {
+        System.out.println("DONE?");
         this.primaryStage = this.environment.getMainStage();
-        // this.primaryStage.setOnCloseRequest(e->observer.terminate());
         this.primaryStage.setOnCloseRequest(e -> System.exit(0));
-        this.environment.displayScreen(FXMLSCREEN);
+        this.environment.displayScreen(FXMLSCREEN);  
     }
 
     public void updatePosition() {
@@ -103,47 +113,48 @@ public class EditorScreenController implements UI {
     }
 
     @FXML
+    private void paintWaveForm(List<GroupedSampleInfo> samplesList) {
+
+        System.out.println("paint" + Thread.currentThread());
+
+        XYChart.Series<Integer, Float> leftSeries = new XYChart.Series<>();
+
+        leftSeries.setName("Left Channel");
+
+        for (int i = 0; i < samplesList.size(); i++) {
+            leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMax()));
+            leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMin()));
+        }
+
+        lineChartLeft.setCreateSymbols(false);
+        lineChartLeft.getData().add(leftSeries);
+
+        XYChart.Series<Integer, Float> rightSeries = new XYChart.Series<>();
+
+        rightSeries.setName("Right Channel");
+
+        for (int i = 0; i < samplesList.size(); i++) {
+            rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMax()));
+            rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMin()));
+        }
+
+        lineChartRight.setCreateSymbols(false);
+        lineChartRight.getData().add(rightSeries);
+
+    }
+
+    @FXML
     private void openFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio file", "*.mp3", "*.wav"));
         File openedFile = fileChooser.showOpenDialog(primaryStage);
 
         try {
-            try {
-                controller.loadSong(openedFile);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            controller.loadSong(openedFile);
+            paintWaveForm(new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0,
+                    this.controller.getEditor().getModifiedSongLength(), 2000)));
 
-            List<GroupedSampleInfo> samplesList = new ArrayList<GroupedSampleInfo>(this.controller.getEditor()
-                    .getAggregatedWaveform(0, this.controller.getEditor().getModifiedSongLength(), 2000));
-
-            XYChart.Series<Integer, Float> leftSeries = new XYChart.Series<>();
-
-            leftSeries.setName("Left Channel");
-
-            for (int i = 0; i < samplesList.size(); i++) {
-                leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMax()));
-                leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMin()));
-            }
-
-            lineChartLeft.setCreateSymbols(false);
-            lineChartLeft.getData().add(leftSeries);
-
-            XYChart.Series<Integer, Float> rightSeries = new XYChart.Series<>();
-
-            rightSeries.setName("Right Channel");
-
-            for (int i = 0; i < samplesList.size(); i++) {
-                rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMax()));
-                rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMin()));
-            }
-
-            lineChartRight.setCreateSymbols(false);
-            lineChartRight.getData().add(rightSeries);
-
-        } catch (Exception a) {
+        } catch (Exception e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Errore");
             alert.setHeaderText("Impossibile aprire il file " + openedFile.getName());
@@ -154,14 +165,14 @@ public class EditorScreenController implements UI {
 
     @FXML
     private void changePosition() {
-        controller.moveToMoment(positionSlider.getValue());
+        controller.moveToMoment(sliderPosition.getValue());
         lockedPositionSlider = false;
     }
 
     @Override
     public void updatePosition(Integer ms, Integer lenght) {
-        if (!positionSlider.isValueChanging() && lockedPositionSlider == false)
-            positionSlider.setValue((ms * 10000) / lenght);
+        if (!sliderPosition.isValueChanging() && lockedPositionSlider == false)
+            sliderPosition.setValue((ms * 10000) / lenght);
     }
 
     @FXML
@@ -170,10 +181,8 @@ public class EditorScreenController implements UI {
     }
 
     @FXML
-    private void gotoPlayer() {
-        this.environment.loadScreen(FXMLScreens.PLAYER,
-                new PlayerScreenController(this.environment, new PlayerControllerImpl()));
-        this.environment.show();
+    private void goToPlayer() {
+        this.environment.displayScreen(FXMLSCREEN.PLAYER);
     }
 
     @Override

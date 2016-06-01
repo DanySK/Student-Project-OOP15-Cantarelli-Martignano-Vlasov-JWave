@@ -165,7 +165,8 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         try {
             PlaylistController.savePlaylistToFile(playlist, playlist.getName());
         } catch (IOException e) {
-            System.out.println("AHIA");
+            e.printStackTrace();
+            System.out.println("Unable to add song " + song.getName() + " to playlist " + playlist);
         }
         songs.get(playlist).add(song);
     }

@@ -48,7 +48,7 @@
                         <MenuItem mnemonicParsing="false" text="Select All" />
                         <MenuItem mnemonicParsing="false" text="Unselect All" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Player" />
+                  <MenuItem mnemonicParsing="false" onAction="#goToPlayer" text="Player" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

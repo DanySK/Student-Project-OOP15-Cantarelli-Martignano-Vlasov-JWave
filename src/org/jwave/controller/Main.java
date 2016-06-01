@@ -1,6 +1,7 @@
 package org.jwave.controller;
 
 import org.jwave.view.FXEnvironment;
+import org.jwave.view.screens.EditorScreenController;
 import org.jwave.view.screens.PlayerScreenController;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
@@ -12,11 +13,13 @@ public class Main {
 
         PlatformImpl.startup(() -> {
         });
-        PlayerControllerImpl controller = new PlayerControllerImpl();
         FXEnvironment environment = new FXEnvironment();
-        PlayerScreenController player = new PlayerScreenController(environment, controller);
-        controller.attachUI(player);
-        // player.setObserver(controller);
+        PlayerController playerController = new PlayerControllerImpl();        
+        PlayerScreenController playerScreen = new PlayerScreenController(environment, playerController);
+        playerController.attachUI(playerScreen);
+        EditorController editorController = new EditorControllerImpl();
+        EditorScreenController editorScreen = new EditorScreenController(environment, editorController);
+        //attachUi
 
         Platform.runLater(() -> {
             try {
@@ -27,7 +30,7 @@ public class Main {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            player.show();
+            playerScreen.show();
         });
 
     }

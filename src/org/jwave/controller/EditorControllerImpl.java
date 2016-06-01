@@ -74,9 +74,9 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.editor.loadSongToEdit(newSong);
         Song newEditableSong = this.editor.getSong();
 
-        manager.setQueue(manager.getDefaultPlaylist());
-        player.setPlayer(newEditableSong);
-        manager.next();
+        //manager.setQueue(manager.getDefaultPlaylist());
+        editorPlayer.setPlayer(newEditableSong);
+
     }
 
     /**
@@ -113,6 +113,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.editorPlayer.setPlayer(song);
         this.editorPlayer.play();
     }
+    
 
     /**
      * Updates the user interfaces attached with the current position of the
