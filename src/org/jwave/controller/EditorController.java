@@ -3,6 +3,8 @@ package org.jwave.controller;
 import java.io.File;
 import java.io.IOException;
 
+import org.jwave.controller.editor.Editor;
+
 /**
  * A generic controller of the editor.
  *
@@ -36,5 +38,7 @@ public interface EditorController {
      * @param value
      */
     void moveToMoment(double value);
+    
+    Editor getEditor();
 
 }

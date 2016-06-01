@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.jwave.controller.editor.Editor;
+import org.jwave.controller.editor.EditorImpl;
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
 import org.jwave.model.editor.DynamicEditorPlayerImpl;
@@ -28,6 +31,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     private final PlaylistManager manager;
     private final ClockAgent agent;
     private final Set<UI> uis;
+    private final Editor editor;   
 
     public EditorControllerImpl() {
 
@@ -43,6 +47,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.agent = new ClockAgent(player, manager, ClockAgent.Mode.PLAYER);
         this.agent.startClockAgent();
         this.uis = new HashSet<>();
+        this.editor = new EditorImpl();
 
         manager.setQueue(manager.getDefaultPlaylist());
 
@@ -153,6 +158,10 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     @Override
     public void updateReproductionInfo(final Song song) {
         uis.forEach(e -> e.updateReproductionInfo(song));
+    }
+    
+    public Editor getEditor() {
+        return this.editor;
     }
 
 }

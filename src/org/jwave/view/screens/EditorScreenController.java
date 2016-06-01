@@ -1,14 +1,18 @@
 package org.jwave.view.screens;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import org.jwave.controller.EditorController;
 import org.jwave.controller.PlayerControllerImpl;
+import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.model.player.Song;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.UI;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -48,6 +52,10 @@ public class EditorScreenController implements UI {
     private TableView<Song> tableView;
     @FXML
     private TableColumn<Song, String> columnFile, columnTitle, columnAuthor, columnAlbum, columnGenre;
+    @FXML
+    private LineChart<Integer, Float> lineChartLeft;
+    @FXML
+    private LineChart<Integer, Float> lineChartRight;
 
     public EditorScreenController(FXEnvironment environment, EditorController controller) {
         this.controller = controller;
@@ -86,8 +94,40 @@ public class EditorScreenController implements UI {
         List<File> openedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
         if (openedFiles != null)
             openedFiles.forEach(f -> {
-                try {
-                    controller.loadSong(f);
+                //try {
+                    try {
+                        controller.loadSong(f);
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
+                    List<GroupedSampleInfo> samplesList = new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0, this.controller.getEditor().getModifiedSongLength(), 2000));
+                    
+                    XYChart.Series<Integer, Float> leftSeries = new XYChart.Series<>();
+                    
+                    leftSeries.setName("Left Channel");
+                    
+                    for (int i = 0; i < samplesList.size(); i++) {
+                        leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMax()));
+                        leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMin()));
+                    }
+                    
+                    lineChartLeft.setCreateSymbols(false);
+                    lineChartLeft.getData().add(leftSeries);                    
+                    
+                    XYChart.Series<Integer, Float> rightSeries = new XYChart.Series<>();
+                    
+                    rightSeries.setName("Right Channel");
+                    
+                    for (int i = 0; i < samplesList.size(); i++) {
+                        rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMax()));
+                        rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMin()));
+                    }
+                    
+                    lineChartRight.setCreateSymbols(false);
+                    lineChartRight.getData().add(rightSeries); 
+                    /*
                 } catch (Exception a) {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Errore");
@@ -95,6 +135,7 @@ public class EditorScreenController implements UI {
                     alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
                     alert.showAndWait();
                 }
+                */
             });
     }
 
