@@ -87,8 +87,7 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         // automatically queued
         if (this.player.isEmpty()) {
             manager.setQueue(manager.getDefaultPlaylist());
-            player.setPlayer(newSong);
-            manager.next();
+            player.setPlayer(manager.selectSongFromPlayingQueueAtIndex(0));
         }
 
         this.songs.get(manager.getDefaultPlaylist()).add(newSong);
@@ -168,7 +167,7 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
     @Override
     public void selectSong(Song song) {
-        this.player.setPlayer(song);
+        this.player.setPlayer(this.manager.selectSongFromPlayingQueue(song.getSongID()));
         this.player.play();
     }
 
