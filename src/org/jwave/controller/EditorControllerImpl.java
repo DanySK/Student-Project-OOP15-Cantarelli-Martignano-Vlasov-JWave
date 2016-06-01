@@ -47,6 +47,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(new PlaylistImpl("editor"));
         this.agent = new ClockAgent(editorPlayer, manager, ClockAgent.Mode.PLAYER);
+        this.agent.addController(this);
         this.agent.startClockAgent();
         this.uis = new HashSet<>();
         this.editor = new EditorImpl();

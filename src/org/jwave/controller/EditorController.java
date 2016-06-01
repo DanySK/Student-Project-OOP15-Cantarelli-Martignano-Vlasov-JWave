@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jwave.controller.editor.Editor;
+import org.jwave.view.UI;
 
 /**
  * A generic controller of the editor.
@@ -11,6 +12,11 @@ import org.jwave.controller.editor.Editor;
  */
 public interface EditorController {
 
+    /**
+     * @param UI
+     */
+    public void attachUI(UI UI);
+    
     /**
      * 
      */

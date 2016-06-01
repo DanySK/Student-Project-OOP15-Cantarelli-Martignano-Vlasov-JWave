@@ -19,7 +19,7 @@ public class Main {
         playerController.attachUI(playerScreen);
         EditorController editorController = new EditorControllerImpl();
         EditorScreenController editorScreen = new EditorScreenController(environment, editorController);
-        //attachUi
+        editorController.attachUI(editorScreen);
 
         Platform.runLater(() -> {
             try {
