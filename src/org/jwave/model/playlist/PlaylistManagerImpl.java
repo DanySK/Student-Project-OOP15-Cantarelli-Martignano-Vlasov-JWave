@@ -100,26 +100,12 @@ public class PlaylistManagerImpl implements PlaylistManager {
     
     @Override
     public Optional<Song> next() {
-        if (this.loadedPlaylist.isEmpty()) {
-            throw new IllegalStateException();
-        }
-        final Optional<Integer> nextIndex = this.navigator.next();
-        if (nextIndex.isPresent()) {
-            return Optional.of(this.loadedPlaylist.getSongAtIndex(nextIndex.get()));
-        }
-        return Optional.empty();
+        return this.retrieveSong(this.navigator.next());
     }
 
     @Override
     public Optional<Song> prev() {
-        if (this.loadedPlaylist.isEmpty()) {
-            throw new IllegalStateException();
-        }
-        final Optional<Integer> prevIndex = this.navigator.prev();
-        if (prevIndex.isPresent()) {
-            return Optional.of(this.loadedPlaylist.getSongAtIndex(prevIndex.get()));
-        }
-        return Optional.empty();
+        return this.retrieveSong(this.navigator.prev());
     }
     
     @Override
@@ -200,4 +186,11 @@ public class PlaylistManagerImpl implements PlaylistManager {
         this.loadedPlaylist.clearObservers();
         this.loadedPlaylist.addEObserver(this.navigator);
     }  
+    
+    private Optional<Song> retrieveSong(Optional<Integer> index) {
+        if(index.isPresent()) {
+            return Optional.of(this.loadedPlaylist.getSongAtIndex(index.get()));
+        }
+        return Optional.empty();
+    }
 }

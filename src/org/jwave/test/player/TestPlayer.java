@@ -27,8 +27,6 @@ import org.jwave.model.playlist.PlaylistManagerImpl;
  */
 public final class TestPlayer {
 
-    private static final String PATH_ONE = "/home/canta/Music/Mistery.mp3";
-    private static final String PATH_TWO = "/home/canta/Music/Snow Time.mp3";
     private static Song songOne;
     private static Song songTwo;
     private static DynamicPlayer player;
@@ -36,8 +34,10 @@ public final class TestPlayer {
     
     @BeforeClass
     public static void oneTimeSetUp() {
-        songOne = new SongImpl(new File(PATH_ONE));
-        songTwo = new SongImpl(new File(PATH_TWO));
+        songOne = new SongImpl(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
+    + System.getProperty("file.separator") + "Mistery.mp3"));
+        songTwo = new SongImpl(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
+                + System.getProperty("file.separator") + "Snow Time.mp3"));
     }
     
     @Before
@@ -173,7 +173,8 @@ public final class TestPlayer {
     @Test
     public void testPlaylistManagerFunctionalities() {
         try {
-            manager.addAudioFile(new File(PATH_ONE));
+            manager.addAudioFile(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
+                    + System.getProperty("file.separator") + "Snow Time.mp3"));
         } catch (Exception ex) {
             fail("An exception occurring while creating file");
         }
