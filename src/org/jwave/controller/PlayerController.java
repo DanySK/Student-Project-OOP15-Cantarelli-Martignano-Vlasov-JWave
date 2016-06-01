@@ -47,6 +47,11 @@ public interface PlayerController {
     /**
      * 
      */
+    public boolean isPlaying();
+    
+    /**
+     * 
+     */
     public void pause();
 
     /**

@@ -153,6 +153,7 @@ public class PlayerScreenController implements UI {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     Song rowData = row.getItem();
                     controller.selectSong(rowData);
+                    btnPlay.setGraphic(new ImageView("/icons/pause.png"));
                 }
             });
             return row;
@@ -234,6 +235,10 @@ public class PlayerScreenController implements UI {
     @FXML
     private void play() {
         controller.play();
+        if(controller.isPlaying())
+            btnPlay.setGraphic(new ImageView("/icons/pause.png"));
+        else
+            btnPlay.setGraphic(new ImageView("/icons/play.png"));
     }
 
     @FXML

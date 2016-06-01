@@ -111,6 +111,11 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
             }
         }
     }
+    
+    @Override
+    public boolean isPlaying() {
+        return this.player.isPlaying();
+    };
 
     @Override
     public void stop() {
