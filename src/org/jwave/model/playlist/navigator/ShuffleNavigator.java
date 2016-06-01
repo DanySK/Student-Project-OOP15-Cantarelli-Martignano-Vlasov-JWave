@@ -37,7 +37,7 @@ public final class ShuffleNavigator extends AbstractPlaylistNavigator {
            } 
            this.incIndex();
        } else {
-           if (this.getPlaylistDimension() > 0) {       //init case
+           if (this.getPlaylistDimension() > 0) { 
                this.shuffle();
                this.incIndex();
            }
