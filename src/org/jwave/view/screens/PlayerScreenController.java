@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 import org.jwave.controller.EditorControllerImpl;
 import org.jwave.controller.PlayerController;
 import org.jwave.model.player.MetaData;
@@ -19,7 +18,6 @@ import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.UI;
-
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -27,7 +25,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ContextMenu;
@@ -66,7 +63,7 @@ public class PlayerScreenController implements UI {
     @FXML
     private Label labelLeft, labelRight, labelSong;
     @FXML
-    private Button btnPlay, btnNext, btnPrev, btnNewPlaylist;
+    private Button btnPlay, btnStop, btnNext, btnPrev, btnNewPlaylist;
     @FXML
     private volatile Slider positionSlider, volumeSlider;
     @FXML
@@ -87,6 +84,15 @@ public class PlayerScreenController implements UI {
             return row;
         });
 
+        btnPlay.setGraphic(new ImageView("/icons/play.png"));
+        btnStop.setGraphic(new ImageView("/icons/stop.png"));
+        btnNext.setGraphic(new ImageView("/icons/next.png"));
+        btnPrev.setGraphic(new ImageView("/icons/prev.png"));
+        btnPlay.setText("");
+        btnStop.setText("");
+        btnNext.setText("");
+        btnPrev.setText("");
+        
         
         InputStream is;
         try {
@@ -314,7 +320,7 @@ public class PlayerScreenController implements UI {
         alert.setTitle("About JWave");
         alert.setHeaderText("");
         alert.setContentText("Editing   Aleksejs Vlasovs\nView      Alessandro Martignano\nPlayer    Dario Cantarelli");
-        Optional<ButtonType> result = alert.showAndWait();
+        alert.showAndWait();
     }
 
     @Override
