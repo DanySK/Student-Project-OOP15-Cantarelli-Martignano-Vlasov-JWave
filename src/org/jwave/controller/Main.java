@@ -27,7 +27,7 @@ public class Main {
                 primaryStage.setTitle("JWave");
                 environment.start(primaryStage);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
+                System.out.println("Unable to load graphic environment.");
                 e.printStackTrace();
             }
             playerScreen.show();

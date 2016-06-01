@@ -2,11 +2,9 @@ package org.jwave.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.jwave.controller.editor.Editor;
 import org.jwave.controller.editor.EditorImpl;
 import org.jwave.controller.player.ClockAgent;
@@ -26,14 +24,13 @@ import org.jwave.view.screens.EditorScreenController;
  * Implementation of the controller of the editor
  *
  */
-public final class EditorControllerImpl implements EditorController, UpdatableController {
+public final class EditorControllerImpl implements EditorController, UpdatableUI {
 
     private static final float MINIMUM_SONG_POSITION_PERCENTAGE = 0;
     private static final float MAXIMUM_SONG_POSITION_PERCENTAGE = 10000;
     private static final int SAMPLES_RESOLUTION = 1000;
     private static final int SONG_LENGHT_SCALING_FACTOR = 100;
-
-    private final DynamicPlayer player;
+    
     private final DynamicPlayer editorPlayer;
     private final PlaylistManager manager;
     private final ClockAgent agent;
@@ -50,7 +47,6 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
             e.printStackTrace();
         }
 
-        this.player = new DynamicPlayerImpl();
         this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(new PlaylistImpl("editor"));
         this.agent = new ClockAgent(editorPlayer, manager, ClockAgent.Mode.PLAYER);
@@ -90,11 +86,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         });
     }
     
-    
-    
-
-    /**
-     * 
+    /* (non-Javadoc)
+     * @see org.jwave.controller.EditorController#play()
      */
     public void play() {
         if (!editorPlayer.isEmpty()) {
@@ -102,8 +95,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         }
     }
 
-    /**
-     * 
+    /* (non-Javadoc)
+     * @see org.jwave.controller.EditorController#pause()
      */
     public void pause() {
         if (this.editorPlayer.isPlaying()) {
@@ -111,21 +104,25 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         }
     }
 
-    /*
-     *
+    /* (non-Javadoc)
+     * @see org.jwave.controller.EditorController#stop()
      */
     public void stop() {
         this.editorPlayer.stop();
     }
     
-    /**
-     * 
+    /* (non-Javadoc)
+     * @see org.jwave.controller.EditorController#cut(int, int)
      */
     public void cut(int from, int to) {
-        this.editor.setSelectionFrom(from);
-        editor.setSelectionTo(to);
+        editor.printSongDebug();
+        editor.setSelectionFrom(from*SONG_LENGHT_SCALING_FACTOR);
+        editor.setSelectionTo(to*SONG_LENGHT_SCALING_FACTOR);
+        editor.printSongDebug();
         editor.cutSelection();
+        editor.printSongDebug();
         graphs.forEach(e->e.paintWaveForm(editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION)));
+        editorPlayer.setPlayer(editor.getSong());
     }
 
     /**
@@ -185,27 +182,38 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         uis.forEach(e -> e.updateReproductionInfo(song));
     }
 
+    /* (non-Javadoc)
+     * @see org.jwave.controller.EditorController#copy(int, int)
+     */
     @Override
     public void copy(int from, int to) {
-        // TODO Auto-generated method stub
-        
+        editor.setSelectionFrom(from*SONG_LENGHT_SCALING_FACTOR);
+        editor.setSelectionTo(to*SONG_LENGHT_SCALING_FACTOR);
+        editor.copySelection();
     }
 
+    /* (non-Javadoc)
+     * @see org.jwave.controller.EditorController#paste(int)
+     */
     @Override
-    public void paste(int to) {
-        // TODO Auto-generated method stub
-        
+    public void paste(int from) {
+        editor.setSelectionFrom(from*SONG_LENGHT_SCALING_FACTOR);
+        editor.pasteCopiedSelection();
     }
 
+    /*
+     * Adds an observer graph that will be plotted over time
+     */
     @Override
     public void addGraph(EditorScreenController graphView) {
         graphs.add(graphView);
         
     }
 
-
     /**
      * 
+     * @return A list of GroupedSampleInfo GroupedSampleInfo for plotting the
+     *         waveform of the song.
      */
     @Override
     public List<GroupedSampleInfo> getWaveform() {
