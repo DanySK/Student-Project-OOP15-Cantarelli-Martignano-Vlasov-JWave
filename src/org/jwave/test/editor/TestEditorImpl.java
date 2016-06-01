@@ -24,7 +24,7 @@ public class TestEditorImpl {
         songEditor.loadSongToEdit(new SongImpl(
         						new File(System.getProperty("user.dir") + 
         								System.getProperty("file.separator") + "res" + 
-        								System.getProperty("file.separator") + "Mistery.mp3")));
+        								System.getProperty("file.separator") + "Snow Time.mp3")));
     }
     
     @Before
@@ -82,7 +82,7 @@ public class TestEditorImpl {
 		assertTrue(songEditor.getSong().getCut(3).getSegment(0).getFrom() == 5000 && songEditor.getSong().getCut(3).getSegment(0).getTo() == 9999);
 		assertTrue(songEditor.getSong().getCut(3).getSegment(1).getFrom() == 50000 && songEditor.getSong().getCut(3).getSegment(1).getTo() == 52499);
 		
-		assertTrue(songEditor.getSong().getCut(4).getFrom() == 57500 && songEditor.getSong().getCut(4).getTo() == 313040);
+		assertTrue(songEditor.getSong().getCut(4).getFrom() == 57500 && songEditor.getSong().getCut(4).getTo() == songEditor.getOriginalSongLength() + 12501);
 		assertTrue(songEditor.getSong().getCut(4).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(4).getSegment(0).getFrom() == 44999 && songEditor.getSong().getCut(4).getSegment(0).getTo() == songEditor.getOriginalSongLength());		
 	}
@@ -380,7 +380,7 @@ public class TestEditorImpl {
 		assertTrue(songEditor.getSong().getCut(0).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(0).getSegment(0).getFrom() == 0 && songEditor.getSong().getCut(0).getSegment(0).getTo() == 99999);
 		
-		assertTrue(songEditor.getSong().getCut(1).getFrom() == 100000 && songEditor.getSong().getCut(1).getTo() == 150539);
+		assertTrue(songEditor.getSong().getCut(1).getFrom() == 100000 && songEditor.getSong().getCut(1).getTo() == songEditor.getOriginalSongLength() - 150000);
 		assertTrue(songEditor.getSong().getCut(1).getSegments().size() == 1);
 		assertTrue(songEditor.getSong().getCut(1).getSegment(0).getFrom() == 250000 && songEditor.getSong().getCut(1).getSegment(0).getTo() == songEditor.getOriginalSongLength());			
 	}		
