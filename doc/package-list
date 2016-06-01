@@ -1,0 +1,12 @@
+org.jwave.controller
+org.jwave.controller.editor
+org.jwave.controller.player
+org.jwave.model
+org.jwave.model.editor
+org.jwave.model.player
+org.jwave.model.playlist
+org.jwave.model.playlist.navigator
+org.jwave.test.editor
+org.jwave.test.player
+org.jwave.view
+org.jwave.view.screens
