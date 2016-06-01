@@ -1,12 +1,16 @@
 package org.jwave.view.screens;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 import org.jwave.controller.EditorControllerImpl;
 import org.jwave.controller.PlayerController;
 import org.jwave.model.player.MetaData;
@@ -15,14 +19,13 @@ import org.jwave.model.playlist.PlayMode;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.UI;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -34,6 +37,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -83,9 +87,18 @@ public class PlayerScreenController implements UI {
             return row;
         });
 
-        Image img = new Image(getClass().getResourceAsStream(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
-                + System.getProperty("file.separator") + "icons" + System.getProperty("next.png")));
-        btnNext.setGraphic(new ImageView(img));
+        
+        InputStream is;
+        try {
+            is = new BufferedInputStream(new FileInputStream(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
+                    + System.getProperty("file.separator") + "icons" + System.getProperty("file.separator") + "next.png"));
+            Image img = new Image(is);
+            btnNext.setGraphic(new ImageView(img));
+        } catch (FileNotFoundException e1) {
+           
+            e1.printStackTrace();
+        }
+        
 
         // Sets the choices for the reproduction modes
         choiceMode.getItems().add("Shuffle");
