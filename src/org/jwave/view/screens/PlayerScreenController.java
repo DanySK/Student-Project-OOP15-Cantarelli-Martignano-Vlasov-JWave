@@ -73,11 +73,16 @@ public class PlayerScreenController implements UI {
     @FXML
     private TableColumn<Song, String> columnFile, columnTitle, columnAuthor, columnAlbum, columnGenre;
 
+    /**
+     * @param environment
+     * @param controller
+     */
     public PlayerScreenController(FXEnvironment environment, PlayerController controller) {
         this.controller = controller;
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
+        this.primaryStage = this.environment.getMainStage();
 
         sliderVolume.valueProperty().addListener((ov, old_val, new_val) -> {
             controller.setVolume(new_val.intValue());
@@ -208,6 +213,9 @@ public class PlayerScreenController implements UI {
                 cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
     }
 
+    /* (non-Javadoc)
+     * @see org.jwave.view.UI#show()
+     */
     @Override
     public void show() {
         this.primaryStage = this.environment.getMainStage();
@@ -216,10 +224,16 @@ public class PlayerScreenController implements UI {
 
     }
 
+    /**
+     * 
+     */
     public void updatePosition() {
         System.out.println("Pos");
     }
 
+    /**
+     * 
+     */
     @FXML
     private void newPlaylist() {
         TextInputDialog dialog = new TextInputDialog();
@@ -232,30 +246,51 @@ public class PlayerScreenController implements UI {
         }
     }
 
+    /**
+     * 
+     */
     @FXML
     private void play() {
-        controller.play();
+        
         if (controller.isPlaying())
+        {
+            controller.play();
             btnPlay.setGraphic(new ImageView("/icons/pause.png"));
+        }
         else
+        {
+            controller.pause();
             btnPlay.setGraphic(new ImageView("/icons/play.png"));
+        }
     }
 
+    /**
+     * 
+     */
     @FXML
     private void stopPlay() {
         controller.stop();
     }
 
+    /**
+     * 
+     */
     @FXML
     private void next() {
         controller.next();
     }
 
+    /**
+     * 
+     */
     @FXML
     private void prev() {
         controller.previous();
     }
 
+    /**
+     * 
+     */
     @FXML
     private void openFile() {
         FileChooser fileChooser = new FileChooser();
@@ -282,12 +317,18 @@ public class PlayerScreenController implements UI {
             });
     }
 
+    /**
+     * Communicates the new slider position to the controller then unlocks the slider
+     */
     @FXML
     private void changePosition() {
         controller.moveToMoment(sliderPosition.getValue());
         lockedPositionSlider = false;
     }
 
+    /* (non-Javadoc)
+     * @see org.jwave.view.UI#updatePosition(java.lang.Integer, java.lang.Integer)
+     */
     @Override
     public void updatePosition(Integer ms, Integer lenght) {
         if (!sliderPosition.isValueChanging() && lockedPositionSlider == false)
@@ -305,16 +346,25 @@ public class PlayerScreenController implements UI {
 
     }
 
+    /**
+     * Prevents the slider to be moved (By the controller routine for instance).
+     */
     @FXML
     private void lockSlider() {
         lockedPositionSlider = true;
     }
 
+    /**
+     * 
+     */
     @FXML
     private void gotoEditor() {
         this.environment.displayScreen(FXMLScreens.EDITOR);
     }
 
+    /**
+     * 
+     */
     @FXML
     private void showAboutInfo() {
         System.out.println("asd");
@@ -325,6 +375,9 @@ public class PlayerScreenController implements UI {
         alert.showAndWait();
     }
 
+    /* (non-Javadoc)
+     * @see org.jwave.view.UI#updateReproductionInfo(org.jwave.model.player.Song)
+     */
     @Override
     public void updateReproductionInfo(Song song) {
         Platform.runLater(() -> {

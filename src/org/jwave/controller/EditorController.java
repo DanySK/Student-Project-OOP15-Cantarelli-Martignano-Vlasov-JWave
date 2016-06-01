@@ -2,10 +2,7 @@ package org.jwave.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-
-import org.jwave.controller.editor.Editor;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.view.UI;
 import org.jwave.view.screens.EditorScreenController;
@@ -20,17 +17,17 @@ public interface EditorController {
      * @param UI
      */
     public void attachUI(UI UI);
-    
+
     /**
      * 
      */
     public void addGraph(EditorScreenController graphView);
-    
+
     /**
      * 
      */
     void play();
-    
+
     /**
      * 
      */
@@ -40,26 +37,26 @@ public interface EditorController {
      * 
      */
     void stop();
-    
+
     /**
      * 
      * @param from
      * @param to
      */
     void cut(int from, int to);
-    
+
     /**
      * 
      * @param from
      * @param to
      */
     void copy(int from, int to);
-    
+
     /**
      * 
      * @param to
      */
-    void paste(int to);
+    void paste(int from);
 
     /**
      * @param f
@@ -70,20 +67,21 @@ public interface EditorController {
 
     /**
      * Moves throughout the song.
+     * 
      * @param value
      */
     void moveToMoment(double value);
-    
-
 
     /**
      * @param amount
      */
     public void setVolume(Integer amount);
 
-
+    /**
+     * 
+     * @return A list of GroupedSampleInfo GroupedSampleInfo for plotting the
+     *         waveform of the song.
+     */
     public List<GroupedSampleInfo> getWaveform();
-
-
 
 }

@@ -3,16 +3,11 @@ package org.jwave.view;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jwave.controller.Main;
 import org.jwave.view.screens.FXMLScreens;
-import org.jwave.view.screens.ScreenController;
 
 
 /**
@@ -25,9 +20,6 @@ import org.jwave.view.screens.ScreenController;
  * 
  * It is also possible to force the reloading of the nodes 
  * for heavy .fxml files instead of keeping them cached.
- * 
- * @author Alessandro Martignano
- *
  */
 public final class ScreenLoader {
 
