@@ -2,7 +2,6 @@ package org.jwave.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,7 +25,7 @@ import javafx.collections.ObservableList;
  * An implementation of the player controller.
  *
  */
-public final class PlayerControllerImpl implements PlayerController, UpdatableController {
+final class PlayerControllerImpl implements PlayerController, UpdatableUI {
 
     private final DynamicPlayer player;
     private final PlaylistManager manager;
@@ -78,7 +77,11 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
     }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#loadSong(java.io.File)
+     */
     @Override
     public void loadSong(final File song) throws IllegalArgumentException, IOException {
         Song newSong = this.manager.addAudioFile(song);
@@ -96,32 +99,55 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
                 manager.getDefaultPlaylist().getName());
     }
 
-    @Override
-    public void loadSong(final Path path) {
-
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#play()
+     */
     @Override
     public void play() {
-        if (this.player.isPlaying()) {
-            this.player.pause();
-        } else {
-            if (!player.isEmpty()) {
-                this.player.play();
-            }
+        if (!player.isEmpty()) {
+            this.player.play();
         }
     }
     
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#pause()
+     */
+    @Override
+    public void pause() {
+        if (!player.isEmpty()) {
+            this.player.play();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#isPlaying()
+     */
     @Override
     public boolean isPlaying() {
         return this.player.isPlaying();
     };
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#stop()
+     */
     @Override
     public void stop() {
         this.player.stop();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#next()
+     */
     @Override
     public void next() {
         final boolean wasPlaying = this.player.isPlaying();
@@ -134,6 +160,11 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#previous()
+     */
     @Override
     public void previous() {
         final boolean wasPlaying = this.player.isPlaying();
@@ -146,6 +177,11 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#newPlaylist(java.lang.String)
+     */
     @Override
     public void newPlaylist(String name) {
         Playlist newPlaylist = this.manager.createNewPlaylist(name);
@@ -159,6 +195,13 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jwave.controller.PlayerController#addSongToPlaylist(org.jwave.model.
+     * player.Song, org.jwave.model.playlist.Playlist)
+     */
     @Override
     public void addSongToPlaylist(Song song, Playlist playlist) {
         playlist.addSong(song);
@@ -171,60 +214,110 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         songs.get(playlist).add(song);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jwave.controller.PlayerController#selectSong(org.jwave.model.player.
+     * Song)
+     */
     @Override
     public void selectSong(Song song) {
         this.player.setPlayer(this.manager.selectSongFromPlayingQueue(song.getSongID()));
         this.player.play();
     }
 
+    /*
+     * * Keeps the gui slider updated with the song playing.
+     */
     public void updatePosition(Integer ms) {
         uis.forEach(e -> e.updatePosition(ms, player.getLength()));
     }
 
+    /**
+     * Moves through the song.
+     */
     @Override
     public void moveToMoment(Double percentage) {
         if (!this.player.isEmpty())
             player.cue((int) ((percentage * player.getLength()) / 10000));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#setVolume(java.lang.Integer)
+     */
     public void setVolume(Integer amount) {
         this.player.setVolume(amount);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#getObservablePlaylists()
+     */
+    @Override
     public ObservableList<Playlist> getObservablePlaylists() {
         return this.playlists;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jwave.controller.PlayerController#getObservablePlaylistContent(org.
+     * jwave.model.playlist.Playlist)
+     */
     @Override
     public ObservableList<Song> getObservablePlaylistContent(Playlist playlist) {
         return songs.get(playlist);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#terminate()
+     */
+    @Override
     public void terminate() {
         this.player.releasePlayerResources();
         // this.agent.KILL
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jwave.controller.UpdatableController#updateReproductionInfo(org.jwave
+     * .model.player.Song)
+     */
     @Override
     public void updateReproductionInfo(Song song) {
         uis.forEach(e -> e.updateReproductionInfo(song));
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jwave.controller.PlayerController#setMode(org.jwave.model.playlist.
+     * PlayMode)
+     */
     @Override
     public void setMode(PlayMode mode) {
         manager.setPlayMode(mode);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.controller.PlayerController#attachUI(org.jwave.view.UI)
+     */
     @Override
     public void attachUI(UI UI) {
         uis.add(UI);
 
     }
 
-
-    @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-        
-    }
 }

@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.jwave.controller.UpdatableController;
+import org.jwave.controller.UpdatableUI;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.Song;
 import org.jwave.model.playlist.PlayMode;
@@ -35,7 +35,7 @@ public class ClockAgent implements Runnable {
     private final Thread t;
     private final DynamicPlayer dynPlayer;
     private PlaylistManager playlistManager;
-    private Set<UpdatableController> controllerSet;
+    private Set<UpdatableUI> controllerSet;
     private final ClockAgent.Mode mode;
     private volatile boolean stopped;
     
@@ -102,7 +102,7 @@ public class ClockAgent implements Runnable {
      * @param newController
      *          the controller to be added.
      */
-    public void addController(final UpdatableController newController) {
+    public void addController(final UpdatableUI newController) {
         this.controllerSet.add(newController);
     }
     

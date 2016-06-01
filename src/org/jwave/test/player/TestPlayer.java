@@ -185,6 +185,7 @@ public final class TestPlayer {
         final Playlist playlist = manager.createNewPlaylist("z1b");
         
         try {
+            @SuppressWarnings("unused")
             final Playlist playlistTwo = manager.createNewPlaylist("z1b");
             fail("Expected an IllegalArgumentException to be thrown");
         } catch (IllegalArgumentException ie) { }

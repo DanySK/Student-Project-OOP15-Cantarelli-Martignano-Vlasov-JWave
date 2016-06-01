@@ -30,8 +30,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                        <MenuItem mnemonicParsing="false" text="Save" />
-                        <MenuItem mnemonicParsing="false" text="Save As…" />
+                        <MenuItem mnemonicParsing="false" onAction="#save" text="Save As…" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" text="Quit" />
                     </items>
@@ -82,7 +81,7 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" HBox.hgrow="NEVER">
                      <children>
-                        <Slider fx:id="sliderVolume" majorTickUnit="14.0" max="70.0" minorTickCount="2" showTickMarks="true" />
+                        <Slider fx:id="sliderVolume" majorTickUnit="14.0" max="70.0" minorTickCount="2" showTickMarks="true" value="70.0" />
                      </children>
                      <padding>
                         <Insets left="10.0" right="10.0" />
@@ -169,7 +168,7 @@
                               <Point3D />
                            </rotationAxis>
                         </LineChart>
-                        <Slider fx:id="sliderCursor1" layoutX="10.0" layoutY="263.0" max="10000.0" onMousePressed="#lockSlider" onMouseReleased="#changePosition">
+                        <Slider fx:id="sliderCursor1" layoutX="10.0" layoutY="263.0" max="10000.0">
                            <padding>
                               <Insets left="40.0" right="10.0" />
                            </padding>
@@ -177,7 +176,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </Slider>
-                        <Slider fx:id="sliderCursor2" layoutX="10.0" layoutY="529.0" max="10000.0" onMousePressed="#lockSlider" onMouseReleased="#changePosition">
+                        <Slider fx:id="sliderCursor2" layoutX="10.0" layoutY="529.0" max="10000.0">
                            <padding>
                               <Insets left="40.0" right="10.0" />
                            </padding>
@@ -209,6 +208,6 @@
       </AnchorPane>
     </children>
     <stylesheets>
-        <URL value="@../../../../../../../screens/editor/Player.css" />
+        <URL value="@Editor.css" />
     </stylesheets>
 </VBox>
