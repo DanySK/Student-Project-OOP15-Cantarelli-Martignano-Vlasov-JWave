@@ -72,31 +72,24 @@ public interface DynamicPlayer {
      * 
      * @return
      *          whether the player is playing sound.
-     *          
-     * @throws IllegalStateException
-     *          when no {@link Song} is loaded.          
+     *                    
      */
-    boolean isPlaying() throws IllegalStateException;
+    boolean isPlaying();
     
     /**
      * 
      * @return
      *          whether the player is paused.
-     *          
-     * @throws IllegalStateException
-     *          when no {@link Song} is loaded.          
      */
-    boolean isPaused() throws IllegalStateException;
+    boolean isPaused();
     
     /**
      * 
      * @return
      *          whether the player has started.
      *          
-     * @throws IllegalStateException
-     *          when no {@link Song} is loaded.
      */
-    boolean hasStarted() throws IllegalStateException;
+    boolean hasStarted();
     
     /**
      * 

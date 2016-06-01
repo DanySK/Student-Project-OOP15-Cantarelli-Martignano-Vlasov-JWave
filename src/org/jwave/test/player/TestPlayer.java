@@ -35,9 +35,10 @@ public final class TestPlayer {
     @BeforeClass
     public static void oneTimeSetUp() {
         songOne = new SongImpl(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
-    + System.getProperty("file.separator") + "Mistery.mp3"));
+    + System.getProperty("file.separator") + "songs" + System.getProperty("file.separator") + "Mistery.mp3"));
         songTwo = new SongImpl(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
-                + System.getProperty("file.separator") + "Snow Time.mp3"));
+                + System.getProperty("file.separator") + "songs" + System.getProperty("file.separator") 
+                + "Snow Time.mp3"));
     }
     
     @Before
@@ -174,6 +175,7 @@ public final class TestPlayer {
     public void testPlaylistManagerFunctionalities() {
         try {
             manager.addAudioFile(new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
+                    + System.getProperty("file.separator") + System.getProperty("file.separator") + "songs" 
                     + System.getProperty("file.separator") + "Snow Time.mp3"));
         } catch (Exception ex) {
             fail("An exception occurring while creating file");
