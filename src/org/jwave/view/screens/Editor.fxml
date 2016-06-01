@@ -129,7 +129,7 @@
                <children>
                   <LineChart fx:id="lineChartLeft">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                      <NumberAxis side="BOTTOM" />
                     </xAxis>
                     <yAxis>
                       <NumberAxis side="LEFT" />
@@ -142,7 +142,7 @@
                   </Slider>
                   <LineChart fx:id="lineChartRight" prefHeight="413.0" prefWidth="603.0">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                      <NumberAxis side="BOTTOM" />
                     </xAxis>
                     <yAxis>
                       <NumberAxis side="LEFT" />

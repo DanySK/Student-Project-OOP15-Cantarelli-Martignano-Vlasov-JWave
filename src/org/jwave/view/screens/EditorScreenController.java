@@ -102,7 +102,7 @@ public class EditorScreenController implements UI {
                         e.printStackTrace();
                     }
                     
-                    List<GroupedSampleInfo> samplesList = new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0, this.controller.getEditor().getModifiedSongLength(), 2000));
+                    List<GroupedSampleInfo> samplesList = new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0, this.controller.getEditor().getModifiedSongLength(), 10000));
                     
                     XYChart.Series<Integer, Float> leftSeries = new XYChart.Series<>();
                     

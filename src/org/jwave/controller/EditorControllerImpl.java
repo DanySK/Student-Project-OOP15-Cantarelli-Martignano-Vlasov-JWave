@@ -28,6 +28,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     private static final float MAXIMUM_SONG_POSITION_PERCENTAGE = 10000;
 
     private final DynamicPlayer player;
+    private final DynamicPlayer editorPlayer;
     private final PlaylistManager manager;
     private final ClockAgent agent;
     private final Set<UI> uis;
@@ -42,14 +43,17 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
             e.printStackTrace();
         }
 
-        this.player = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
+        this.player = new DynamicPlayerImpl();
+        this.editorPlayer = new DynamicEditorPlayerImpl(new DynamicPlayerImpl());
         this.manager = new PlaylistManagerImpl(new PlaylistImpl("editor"));
-        this.agent = new ClockAgent(player, manager, ClockAgent.Mode.PLAYER);
+        this.agent = new ClockAgent(editorPlayer, manager, ClockAgent.Mode.PLAYER);
         this.agent.startClockAgent();
         this.uis = new HashSet<>();
         this.editor = new EditorImpl();
 
         manager.setQueue(manager.getDefaultPlaylist());
+        
+
 
     }
 
@@ -69,12 +73,14 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
      */
     public void loadSong(final File song) throws IllegalArgumentException, IOException {
         Song newSong = this.manager.addAudioFile(song);
+        this.editor.loadSongToEdit(newSong);
+        Song newEditableSong = this.editor.getSong();
 
         // In case of first opening, there are no other songs, the song is
         // automatically queued
         if (this.player.isEmpty()) {
             manager.setQueue(manager.getDefaultPlaylist());
-            player.setPlayer(newSong);
+            player.setPlayer(newEditableSong);
             manager.next();
         }
     }
@@ -83,8 +89,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
      * 
      */
     public void play() {
-        if (!player.isEmpty()) {
-            this.player.play();
+        if (!editorPlayer.isEmpty()) {
+            this.editorPlayer.play();
         }
     }
 
@@ -92,8 +98,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
      * 
      */
     public void pause() {
-        if (this.player.isPlaying()) {
-            this.player.pause();
+        if (this.editorPlayer.isPlaying()) {
+            this.editorPlayer.pause();
         }
     }
 
@@ -101,7 +107,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
      *
      */
     public void stop() {
-        this.player.stop();
+        this.editorPlayer.stop();
     }
 
     /**
@@ -110,8 +116,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
      * @param song
      */
     public void selectSong(final Song song) {
-        this.player.setPlayer(song);
-        this.player.play();
+        this.editorPlayer.setPlayer(song);
+        this.editorPlayer.play();
     }
 
     /**
@@ -121,7 +127,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
      * @param ms
      */
     public void updatePosition(final Integer ms) {
-        uis.forEach(e -> e.updatePosition(ms, player.getLength()));
+        uis.forEach(e -> e.updatePosition(ms, editorPlayer.getLength()));
     }
 
     /**
@@ -132,22 +138,22 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     public void moveToMoment(final double percentage) throws IllegalArgumentException {
         if (percentage < MINIMUM_SONG_POSITION_PERCENTAGE || percentage > MAXIMUM_SONG_POSITION_PERCENTAGE)
             throw new IllegalArgumentException();
-        if (!this.player.isEmpty())
-            player.cue((int) ((percentage * player.getLength()) / 10000));
+        if (!this.editorPlayer.isEmpty())
+            editorPlayer.cue((int) ((percentage * editorPlayer.getLength()) / 10000));
     }
 
     /**
      * @param amount
      */
     public void setVolume(final Integer amount) {
-        this.player.setVolume(amount);
+        this.editorPlayer.setVolume(amount);
     }
 
     /**
      * Releases player resources.
      */
     public void terminate() {
-        this.player.releasePlayerResources();
+        this.editorPlayer.releasePlayerResources();
     }
 
 

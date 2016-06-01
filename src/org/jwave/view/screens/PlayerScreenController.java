@@ -72,26 +72,27 @@ public class PlayerScreenController implements UI {
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
-        tableView.setPlaceholder(new Label("Nessun brano caricato"));
+        tableView.setPlaceholder(new Label(""));
         tableView.setRowFactory(tr -> {
             TableRow<Song> row = new TableRow<>();
             return row;
         });
 
         // Sets the choices for the reproduction modes
-        choiceMode.getItems().add("Straight");
         choiceMode.getItems().add("Shuffle");
+        choiceMode.getItems().add("Straight"); 
         choiceMode.getItems().add("Loop song");
         choiceMode.getItems().add("Loop Playlist");
+        choiceMode.getSelectionModel().selectFirst();
         choiceMode.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
                     switch (newValue) {
-                    case "Straight":
-                        controller.setMode(PlayMode.NO_LOOP);
-                        break;
                     case "Shuffle":
                         controller.setMode(PlayMode.SHUFFLE);
                         break;
+                    case "Straight":
+                        controller.setMode(PlayMode.NO_LOOP);
+                        break;           
                     case "Loop song":
                         controller.setMode(PlayMode.LOOP_ONE);
                         break;
