@@ -39,6 +39,13 @@ public interface EditorController {
      */
     void moveToMoment(double value);
     
+
+
+    /**
+     * @param amount
+     */
+    public void setVolume(Integer amount);
+
     Editor getEditor();
 
 }

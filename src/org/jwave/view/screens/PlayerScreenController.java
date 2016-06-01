@@ -65,7 +65,7 @@ public class PlayerScreenController implements UI {
     @FXML
     private Button btnPlay, btnStop, btnNext, btnPrev, btnNewPlaylist;
     @FXML
-    private volatile Slider positionSlider, volumeSlider;
+    private volatile Slider sliderPosition, sliderVolume;
     @FXML
     private ListView<Playlist> listView;
     @FXML
@@ -78,6 +78,11 @@ public class PlayerScreenController implements UI {
         this.environment = environment;
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
+
+        sliderVolume.valueProperty().addListener((ov, old_val, new_val) -> {
+            controller.setVolume(new_val.intValue());
+        });
+
         tableView.setPlaceholder(new Label(""));
         tableView.setRowFactory(tr -> {
             TableRow<Song> row = new TableRow<>();
@@ -92,19 +97,18 @@ public class PlayerScreenController implements UI {
         btnStop.setText("");
         btnNext.setText("");
         btnPrev.setText("");
-        
-        
+
         InputStream is;
         try {
-            is = new BufferedInputStream(new FileInputStream(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
-                    + System.getProperty("file.separator") + "icons" + System.getProperty("file.separator") + "next.png"));
+            is = new BufferedInputStream(new FileInputStream(System.getProperty("user.dir")
+                    + System.getProperty("file.separator") + "res" + System.getProperty("file.separator") + "icons"
+                    + System.getProperty("file.separator") + "next.png"));
             Image img = new Image(is);
             btnNext.setGraphic(new ImageView(img));
         } catch (FileNotFoundException e1) {
-           
+
             e1.printStackTrace();
         }
-        
 
         // Sets the choices for the reproduction modes
         choiceMode.getItems().add("Shuffle");
@@ -202,11 +206,6 @@ public class PlayerScreenController implements UI {
                 cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ALBUM)));
         columnGenre.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
-        volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-            controller.setVolume(new_val.intValue());
-            System.out.println("VOLUME: " + new_val);
-        });
-
     }
 
     @Override
@@ -214,6 +213,7 @@ public class PlayerScreenController implements UI {
         this.primaryStage = this.environment.getMainStage();
         this.primaryStage.setOnCloseRequest(e -> System.exit(0));
         this.environment.displayScreen(FXMLSCREEN);
+
     }
 
     public void updatePosition() {
@@ -235,7 +235,7 @@ public class PlayerScreenController implements UI {
     @FXML
     private void play() {
         controller.play();
-        if(controller.isPlaying())
+        if (controller.isPlaying())
             btnPlay.setGraphic(new ImageView("/icons/pause.png"));
         else
             btnPlay.setGraphic(new ImageView("/icons/play.png"));
@@ -284,14 +284,14 @@ public class PlayerScreenController implements UI {
 
     @FXML
     private void changePosition() {
-        controller.moveToMoment(positionSlider.getValue());
+        controller.moveToMoment(sliderPosition.getValue());
         lockedPositionSlider = false;
     }
 
     @Override
     public void updatePosition(Integer ms, Integer lenght) {
-        if (!positionSlider.isValueChanging() && lockedPositionSlider == false)
-            positionSlider.setValue((ms * 10000) / lenght);
+        if (!sliderPosition.isValueChanging() && lockedPositionSlider == false)
+            sliderPosition.setValue((ms * 10000) / lenght);
 
         String elapsed = String.format("%d:%02d", TimeUnit.MILLISECONDS.toMinutes(ms),
                 TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms)));
@@ -312,10 +312,12 @@ public class PlayerScreenController implements UI {
 
     @FXML
     private void gotoEditor() {
-        System.out.println("gotoEditor");
-        this.environment.loadScreen(FXMLScreens.EDITOR,
-                new EditorScreenController(this.environment, new EditorControllerImpl()));
+        // EditorScreenController editorScreen = new
+        // EditorScreenController(this.environment, new EditorControllerImpl());
+        // this.environment.loadScreen(FXMLScreens.EDITOR,editorScreen);
         this.environment.displayScreen(FXMLScreens.EDITOR);
+        environment.show();
+        // editorScreen.show();
     }
 
     @FXML
