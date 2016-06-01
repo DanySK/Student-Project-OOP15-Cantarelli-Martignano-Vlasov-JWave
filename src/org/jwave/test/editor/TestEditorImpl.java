@@ -25,7 +25,7 @@ public class TestEditorImpl {
         						new File(System.getProperty("user.dir") + 
         								System.getProperty("file.separator") + "res" 
         						        + System.getProperty("file.separator") + "songs" 
-        								+System.getProperty("file.separator") + ""Snow Time.mp3")));
+        								+System.getProperty("file.separator") + "Snow Time.mp3")));
     }
     
     @Before
