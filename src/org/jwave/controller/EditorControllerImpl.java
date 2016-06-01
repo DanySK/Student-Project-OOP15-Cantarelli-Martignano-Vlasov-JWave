@@ -133,8 +133,10 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     public void moveToMoment(final double percentage) throws IllegalArgumentException {
         if (percentage < MINIMUM_SONG_POSITION_PERCENTAGE || percentage > MAXIMUM_SONG_POSITION_PERCENTAGE)
             throw new IllegalArgumentException();
-        if (!this.editorPlayer.isEmpty())
+        if (!this.editorPlayer.isEmpty()) {
+            System.out.println("CUE");
             editorPlayer.cue((int) ((percentage * editorPlayer.getLength()) / 10000));
+        }
     }
 
     /**

@@ -1,21 +1,17 @@
 package org.jwave.view.screens;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.jwave.controller.EditorController;
-import org.jwave.controller.EditorControllerImpl;
-import org.jwave.controller.PlayerControllerImpl;
 import org.jwave.model.editor.GroupedSampleInfo;
 import org.jwave.model.playlist.Playlist;
 import org.jwave.model.player.Song;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.UI;
 
-import com.sun.javafx.application.PlatformImpl;
-import com.sun.media.jfxmediaimpl.platform.Platform;
-
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -77,7 +73,6 @@ public class EditorScreenController implements UI {
 
     @Override
     public void show() {
-        System.out.println("DONE?");
         this.primaryStage = this.environment.getMainStage();
         this.primaryStage.setOnCloseRequest(e -> System.exit(0));
         this.environment.displayScreen(FXMLSCREEN);  
@@ -93,7 +88,7 @@ public class EditorScreenController implements UI {
     }
 
     @FXML
-    private void stopPlay() {
+    private void stop() {
         controller.stop();
     }
 
@@ -151,8 +146,7 @@ public class EditorScreenController implements UI {
 
         try {
             controller.loadSong(openedFile);
-            paintWaveForm(new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0,
-                    this.controller.getEditor().getModifiedSongLength(), 2000)));
+            //paintWaveForm(new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0,this.controller.getEditor().getModifiedSongLength(), 2000)));
 
         } catch (Exception e) {
             Alert alert = new Alert(AlertType.ERROR);
@@ -162,7 +156,12 @@ public class EditorScreenController implements UI {
             alert.showAndWait();
         }
     }
-
+    
+    @FXML
+    private void lockSlider() {
+        lockedPositionSlider = true;
+    }
+    
     @FXML
     private void changePosition() {
         controller.moveToMoment(sliderPosition.getValue());
@@ -173,11 +172,17 @@ public class EditorScreenController implements UI {
     public void updatePosition(Integer ms, Integer lenght) {
         if (!sliderPosition.isValueChanging() && lockedPositionSlider == false)
             sliderPosition.setValue((ms * 10000) / lenght);
-    }
 
-    @FXML
-    private void lockSlider() {
-        lockedPositionSlider = true;
+        String elapsed = String.format("%d:%02d", TimeUnit.MILLISECONDS.toMinutes(ms),
+                TimeUnit.MILLISECONDS.toSeconds(ms) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ms)));
+        String remaining = ("-" + String.format("%d:%02d", TimeUnit.MILLISECONDS.toMinutes(lenght - ms),
+                TimeUnit.MILLISECONDS.toSeconds(lenght - ms)
+                        - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(lenght - ms))));
+
+        Platform.runLater(()->{
+            labelLeft.setText(elapsed);
+            labelRight.setText(remaining);
+        });
     }
 
     @FXML

@@ -312,12 +312,7 @@ public class PlayerScreenController implements UI {
 
     @FXML
     private void gotoEditor() {
-        // EditorScreenController editorScreen = new
-        // EditorScreenController(this.environment, new EditorControllerImpl());
-        // this.environment.loadScreen(FXMLScreens.EDITOR,editorScreen);
         this.environment.displayScreen(FXMLScreens.EDITOR);
-        environment.show();
-        // editorScreen.show();
     }
 
     @FXML
