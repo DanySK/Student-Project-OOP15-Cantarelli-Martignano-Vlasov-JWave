@@ -2,7 +2,6 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -68,11 +67,6 @@
                         <Button fx:id="btnPlay" alignment="CENTER" mnemonicParsing="false" onAction="#play" prefHeight="49.0" prefWidth="83.0" text="▶" textAlignment="CENTER" textOverrun="CLIP">
                            <font>
                               <Font size="30.0" />
-                           </font>
-                        </Button>
-                        <Button fx:id="btnPause" alignment="CENTER_RIGHT" mnemonicParsing="false" text="◼" textOverrun="CLIP">
-                           <font>
-                              <Font size="20.0" />
                            </font>
                         </Button>
                         <Button fx:id="btnStop" alignment="CENTER_RIGHT" layoutX="128.0" layoutY="21.0" mnemonicParsing="false" text="◼" textOverrun="CLIP">

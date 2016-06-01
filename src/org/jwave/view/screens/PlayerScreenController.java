@@ -2,6 +2,7 @@ package org.jwave.view.screens;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -20,8 +21,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ContextMenu;
@@ -33,6 +36,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -51,13 +56,13 @@ public class PlayerScreenController implements UI {
     private boolean lockedPositionSlider;
 
     @FXML
-    private MenuItem btnEditor;
+    private MenuItem btnEditor, about;
     @FXML
     private ChoiceBox<String> choiceMode;
     @FXML
     private Label labelLeft, labelRight, labelSong;
     @FXML
-    private Button btnPlay, btnNewPlaylist;
+    private Button btnPlay, btnNext, btnPrev, btnNewPlaylist;
     @FXML
     private volatile Slider positionSlider, volumeSlider;
     @FXML
@@ -78,9 +83,13 @@ public class PlayerScreenController implements UI {
             return row;
         });
 
+        Image img = new Image(getClass().getResourceAsStream(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
+                + System.getProperty("file.separator") + "icons" + System.getProperty("next.png")));
+        btnNext.setGraphic(new ImageView(img));
+
         // Sets the choices for the reproduction modes
         choiceMode.getItems().add("Shuffle");
-        choiceMode.getItems().add("Straight"); 
+        choiceMode.getItems().add("Straight");
         choiceMode.getItems().add("Loop song");
         choiceMode.getItems().add("Loop Playlist");
         choiceMode.getSelectionModel().selectFirst();
@@ -92,7 +101,7 @@ public class PlayerScreenController implements UI {
                         break;
                     case "Straight":
                         controller.setMode(PlayMode.NO_LOOP);
-                        break;           
+                        break;
                     case "Loop song":
                         controller.setMode(PlayMode.LOOP_ONE);
                         break;
@@ -163,16 +172,20 @@ public class PlayerScreenController implements UI {
             }
         });
 
-        //Sets the columns bindings
+        // Sets the columns bindings
         columnFile.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
-        columnTitle.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.TITLE)));
-        columnAuthor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ARTIST)));
-        columnAlbum.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ALBUM)));
-        columnGenre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
+        columnTitle.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.TITLE)));
+        columnAuthor.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ARTIST)));
+        columnAlbum.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.ALBUM)));
+        columnGenre.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
         volumeSlider.valueProperty().addListener((ov, old_val, new_val) -> {
             controller.setVolume(new_val.intValue());
-            System.out.println("VOLUME: "+new_val);
-            });
+            System.out.println("VOLUME: " + new_val);
+        });
 
     }
 
@@ -279,6 +292,16 @@ public class PlayerScreenController implements UI {
         this.environment.loadScreen(FXMLScreens.EDITOR,
                 new EditorScreenController(this.environment, new EditorControllerImpl()));
         this.environment.displayScreen(FXMLScreens.EDITOR);
+    }
+
+    @FXML
+    private void showAboutInfo() {
+        System.out.println("asd");
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("About JWave");
+        alert.setHeaderText("");
+        alert.setContentText("Editing   Aleksejs Vlasovs\nView      Alessandro Martignano\nPlayer    Dario Cantarelli");
+        Optional<ButtonType> result = alert.showAndWait();
     }
 
     @Override
