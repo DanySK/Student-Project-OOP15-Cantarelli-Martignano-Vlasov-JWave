@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.jwave.controller.player.ClockAgent;
 import org.jwave.controller.player.PlaylistController;
-import org.jwave.model.editor.DynamicEditorPlayerImpl;
 import org.jwave.model.player.DynamicPlayer;
 import org.jwave.model.player.DynamicPlayerImpl;
 import org.jwave.model.player.Song;
@@ -19,10 +18,14 @@ import org.jwave.model.playlist.Playlist;
 import org.jwave.model.playlist.PlaylistManager;
 import org.jwave.model.playlist.PlaylistManagerImpl;
 import org.jwave.view.UI;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/**
+ * 
+ * An implementation of the player controller.
+ *
+ */
 public final class PlayerControllerImpl implements PlayerController, UpdatableController {
 
     private final DynamicPlayer player;
@@ -30,8 +33,11 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
     private final ClockAgent agent;
     private final ObservableList<Playlist> playlists;
     private final Map<Playlist, ObservableList<Song>> songs;
-    private final Set<UI> UIs;
+    private final Set<UI> uis;
 
+    /**
+     * 
+     */
     public PlayerControllerImpl() {
 
         try {
@@ -52,15 +58,12 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
         this.agent = new ClockAgent(player, manager, ClockAgent.Mode.PLAYER);
         this.agent.addController(this);
         this.agent.startClockAgent();
-        this.UIs = new HashSet<>();
-
-        // ScreenRefresher refresher = new ScreenRefresher(player, this);
-        // refresher.start();
+        this.uis = new HashSet<>();
 
         try {
             manager.setAvailablePlaylists(PlaylistController.reloadAvailablePlaylists());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+            System.out.println("Unable to reload playlists.");
             e.printStackTrace();
         }
 
@@ -92,12 +95,10 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
         PlaylistController.saveDefaultPlaylistToFile(manager.getDefaultPlaylist(),
                 manager.getDefaultPlaylist().getName());
-        // PlaylistController.savePlaylistToFile(manager.getDefaultPlaylist(),manager.getDefaultPlaylist().getName());
-        // manager.getDefaultPlaylist().getName());
     }
 
     @Override
-    public void loadSong(Path path) {
+    public void loadSong(final Path path) {
 
     }
 
@@ -172,7 +173,7 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
     }
 
     public void updatePosition(Integer ms) {
-        UIs.forEach(e -> e.updatePosition(ms, player.getLength()));
+        uis.forEach(e -> e.updatePosition(ms, player.getLength()));
     }
 
     @Override
@@ -201,7 +202,7 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
     @Override
     public void updateReproductionInfo(Song song) {
-        UIs.forEach(e -> e.updateReproductionInfo(song));
+        uis.forEach(e -> e.updateReproductionInfo(song));
     }
 
     @Override
@@ -211,7 +212,14 @@ public final class PlayerControllerImpl implements PlayerController, UpdatableCo
 
     @Override
     public void attachUI(UI UI) {
-        UIs.add(UI);
+        uis.add(UI);
 
+    }
+
+
+    @Override
+    public void pause() {
+        // TODO Auto-generated method stub
+        
     }
 }
