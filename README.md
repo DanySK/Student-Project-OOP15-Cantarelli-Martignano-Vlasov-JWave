@@ -1,4 +1,4 @@
-JWave is an open source audio player made available under the GPLv3 license.
+JWave is an open source audio player and editor made available under the GPLv3 license.
 
 Copyright (C) 2016  Dario Cantarelli
 Copyright (C) 2016  Alessandro Martignano
