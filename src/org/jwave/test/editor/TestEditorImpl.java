@@ -21,7 +21,10 @@ public class TestEditorImpl {
 	
     @BeforeClass
     public static void oneTimeSetUp() {
-        songEditor.loadSongToEdit(new SongImpl(new File("/Users/alexvlasov/Downloads/hello.mp3")));
+        songEditor.loadSongToEdit(new SongImpl(
+        						new File(System.getProperty("user.dir") + 
+        								System.getProperty("file.separator") + "res" + 
+        								System.getProperty("file.separator") + "Mistery.mp3")));
     }
     
     @Before
