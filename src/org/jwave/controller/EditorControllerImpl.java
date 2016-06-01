@@ -32,7 +32,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     private final PlaylistManager manager;
     private final ClockAgent agent;
     private final Set<UI> uis;
-    private final Editor editor;   
+    private final Editor editor;
 
     public EditorControllerImpl() {
 
@@ -52,8 +52,6 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.editor = new EditorImpl();
 
         manager.setQueue(manager.getDefaultPlaylist());
-        
-
 
     }
 
@@ -76,13 +74,9 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.editor.loadSongToEdit(newSong);
         Song newEditableSong = this.editor.getSong();
 
-        // In case of first opening, there are no other songs, the song is
-        // automatically queued
-        if (this.player.isEmpty()) {
-            manager.setQueue(manager.getDefaultPlaylist());
-            player.setPlayer(newEditableSong);
-            manager.next();
-        }
+        manager.setQueue(manager.getDefaultPlaylist());
+        player.setPlayer(newEditableSong);
+        manager.next();
     }
 
     /**
@@ -156,7 +150,6 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
         this.editorPlayer.releasePlayerResources();
     }
 
-
     /**
      * Updates attached user interface with the current song in reproduction
      * 
@@ -165,7 +158,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableCo
     public void updateReproductionInfo(final Song song) {
         uis.forEach(e -> e.updateReproductionInfo(song));
     }
-    
+
     public Editor getEditor() {
         return this.editor;
     }

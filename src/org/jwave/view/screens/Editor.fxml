@@ -53,7 +53,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About J-Wave" />
+                        <MenuItem fx:id="btnAbout" mnemonicParsing="false" onAction="#showAboutInfo" text="About J-Wave" />
                     </items>
                 </Menu>
             </menus>
@@ -89,6 +89,31 @@
                      <children>
                         <Slider fx:id="sliderVolume" />
                      </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <Button fx:id="btnCopy" mnemonicParsing="false" onAction="#copy" text="Copy">
+                           <HBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnCut" layoutX="20.0" layoutY="27.0" mnemonicParsing="false" onAction="#cut" text="Cut">
+                           <HBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnPaste" layoutX="75.0" layoutY="27.0" mnemonicParsing="false" onAction="#paste" text="Paste">
+                           <HBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
                      <padding>
                         <Insets left="10.0" right="10.0" />
                      </padding>

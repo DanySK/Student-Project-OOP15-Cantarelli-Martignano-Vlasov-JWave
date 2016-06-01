@@ -1,7 +1,11 @@
 package org.jwave.view.screens;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +66,7 @@ public class PlayerScreenController implements UI {
     @FXML
     private Label labelLeft, labelRight, labelSong;
     @FXML
-    private Button btnPlay, btnNext, btnPrev, btnNewPlaylist;
+    private Button btnPlay, btnStop, btnNext, btnPrev, btnNewPlaylist;
     @FXML
     private volatile Slider positionSlider, volumeSlider;
     @FXML
@@ -83,10 +87,15 @@ public class PlayerScreenController implements UI {
             return row;
         });
 
-        Image img = new Image(getClass().getResourceAsStream(System.getProperty("user.dir") + System.getProperty("file.separator") + "res" 
-                + System.getProperty("file.separator") + "icons" + System.getProperty("next.png")));
-        btnNext.setGraphic(new ImageView(img));
-
+        btnPlay.setGraphic(new ImageView("/icons/play.png"));
+        btnStop.setGraphic(new ImageView("/icons/stop.png"));
+        btnNext.setGraphic(new ImageView("/icons/next.png"));
+        btnPrev.setGraphic(new ImageView("/icons/prev.png"));
+        btnPlay.setText("");
+        btnStop.setText("");
+        btnNext.setText("");
+        btnPrev.setText("");
+        
         // Sets the choices for the reproduction modes
         choiceMode.getItems().add("Shuffle");
         choiceMode.getItems().add("Straight");
@@ -301,7 +310,7 @@ public class PlayerScreenController implements UI {
         alert.setTitle("About JWave");
         alert.setHeaderText("");
         alert.setContentText("Editing   Aleksejs Vlasovs\nView      Alessandro Martignano\nPlayer    Dario Cantarelli");
-        Optional<ButtonType> result = alert.showAndWait();
+        alert.showAndWait();
     }
 
     @Override

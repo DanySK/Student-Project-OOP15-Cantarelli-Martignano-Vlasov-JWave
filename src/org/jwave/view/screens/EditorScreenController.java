@@ -88,55 +88,68 @@ public class EditorScreenController implements UI {
     }
 
     @FXML
+    private void copy() {
+
+    }
+
+    @FXML
+    private void cut() {
+
+    }
+
+    @FXML
+    private void paste() {
+
+    }
+
+    @FXML
     private void openFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio file", "*.mp3", "*.wav"));
-        List<File> openedFiles = fileChooser.showOpenMultipleDialog(primaryStage);
-        if (openedFiles != null)
-            openedFiles.forEach(f -> {
-                //try {
-                    try {
-                        controller.loadSong(f);
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    
-                    List<GroupedSampleInfo> samplesList = new ArrayList<GroupedSampleInfo>(this.controller.getEditor().getAggregatedWaveform(0, this.controller.getEditor().getModifiedSongLength(), 10000));
-                    
-                    XYChart.Series<Integer, Float> leftSeries = new XYChart.Series<>();
-                    
-                    leftSeries.setName("Left Channel");
-                    
-                    for (int i = 0; i < samplesList.size(); i++) {
-                        leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMax()));
-                        leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMin()));
-                    }
-                    
-                    lineChartLeft.setCreateSymbols(false);
-                    lineChartLeft.getData().add(leftSeries);                    
-                    
-                    XYChart.Series<Integer, Float> rightSeries = new XYChart.Series<>();
-                    
-                    rightSeries.setName("Right Channel");
-                    
-                    for (int i = 0; i < samplesList.size(); i++) {
-                        rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMax()));
-                        rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMin()));
-                    }
-                    
-                    lineChartRight.setCreateSymbols(false);
-                    lineChartRight.getData().add(rightSeries); 
-                    /*
-                } catch (Exception a) {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Errore");
-                    alert.setHeaderText("Impossibile aprire il file " + f.getName());
-                    alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
-                    alert.showAndWait();
-                }
-                */
-            });
+        File openedFile = fileChooser.showOpenDialog(primaryStage);
+
+        try {
+            try {
+                controller.loadSong(openedFile);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            List<GroupedSampleInfo> samplesList = new ArrayList<GroupedSampleInfo>(this.controller.getEditor()
+                    .getAggregatedWaveform(0, this.controller.getEditor().getModifiedSongLength(), 2000));
+
+            XYChart.Series<Integer, Float> leftSeries = new XYChart.Series<>();
+
+            leftSeries.setName("Left Channel");
+
+            for (int i = 0; i < samplesList.size(); i++) {
+                leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMax()));
+                leftSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getLeftChannelMin()));
+            }
+
+            lineChartLeft.setCreateSymbols(false);
+            lineChartLeft.getData().add(leftSeries);
+
+            XYChart.Series<Integer, Float> rightSeries = new XYChart.Series<>();
+
+            rightSeries.setName("Right Channel");
+
+            for (int i = 0; i < samplesList.size(); i++) {
+                rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMax()));
+                rightSeries.getData().add(new XYChart.Data<Integer, Float>(i, samplesList.get(i).getRightChannelMin()));
+            }
+
+            lineChartRight.setCreateSymbols(false);
+            lineChartRight.getData().add(rightSeries);
+
+        } catch (Exception a) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Errore");
+            alert.setHeaderText("Impossibile aprire il file " + openedFile.getName());
+            alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
+            alert.showAndWait();
+        }
     }
 
     @FXML
@@ -166,7 +179,17 @@ public class EditorScreenController implements UI {
     @Override
     public void updateReproductionInfo(Song song) {
         // TODO Auto-generated method stub
-        
+
+    }
+
+    @FXML
+    private void showAboutInfo() {
+        System.out.println("asd");
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("About JWave");
+        alert.setHeaderText("");
+        alert.setContentText("Editing   Aleksejs Vlasovs\nView      Alessandro Martignano\nPlayer    Dario Cantarelli");
+        alert.showAndWait();
     }
 
 }
