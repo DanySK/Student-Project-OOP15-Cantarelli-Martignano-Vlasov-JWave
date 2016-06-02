@@ -115,12 +115,9 @@ public final class EditorControllerImpl implements EditorController, UpdatableUI
      * @see org.jwave.controller.EditorController#cut(int, int)
      */
     public void cut(int from, int to) {
-        editor.printSongDebug();
         editor.setSelectionFrom(from*SONG_LENGHT_SCALING_FACTOR);
         editor.setSelectionTo(to*SONG_LENGHT_SCALING_FACTOR);
-        editor.printSongDebug();
         editor.cutSelection();
-        editor.printSongDebug();
         graphs.forEach(e->e.paintWaveForm(editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION)));
         editorPlayer.setPlayer(editor.getSong());
     }
@@ -199,6 +196,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableUI
     public void paste(int from) {
         editor.setSelectionFrom(from*SONG_LENGHT_SCALING_FACTOR);
         editor.pasteCopiedSelection();
+        graphs.forEach(e->e.paintWaveForm(editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION)));
+        editorPlayer.setPlayer(editor.getSong());
     }
 
     /*
@@ -206,8 +205,7 @@ public final class EditorControllerImpl implements EditorController, UpdatableUI
      */
     @Override
     public void addGraph(EditorScreenController graphView) {
-        graphs.add(graphView);
-        
+        graphs.add(graphView);      
     }
 
     /**

@@ -1,17 +1,14 @@
 package org.jwave.view.screens;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.jwave.controller.EditorController;
 import org.jwave.model.editor.GroupedSampleInfo;
-import org.jwave.model.playlist.Playlist;
 import org.jwave.model.player.Song;
 import org.jwave.view.FXEnvironment;
 import org.jwave.view.UI;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -20,11 +17,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -68,21 +62,22 @@ public class EditorScreenController implements UI {
         this.lockedPositionSlider = false;
         this.controller.addGraph(this);
 
-
         sliderVolume.valueProperty().addListener((ov, old_val, new_val) -> {
             controller.setVolume(new_val.intValue());
             System.out.println(new_val);
         });
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jwave.view.UI#show()
      */
     @Override
     public void show() {
         this.primaryStage = this.environment.getMainStage();
         this.primaryStage.setOnCloseRequest(e -> System.exit(0));
-        this.environment.displayScreen(FXMLSCREEN);  
+        this.environment.displayScreen(FXMLSCREEN);
     }
 
     /**
@@ -106,7 +101,7 @@ public class EditorScreenController implements UI {
      */
     @FXML
     private void copy() {
-
+        controller.copy((int) sliderCursor1.getValue(), (int) sliderCursor2.getValue());
     }
 
     /**
@@ -114,8 +109,7 @@ public class EditorScreenController implements UI {
      */
     @FXML
     private void cut() {
-        System.out.println("CUT "+(int)sliderCursor1.getValue()+" "+(int)sliderCursor2.getValue());
-        controller.cut((int)sliderCursor1.getValue(), (int)sliderCursor2.getValue());        
+        controller.cut((int) sliderCursor1.getValue(), (int) sliderCursor2.getValue());
     }
 
     /**
@@ -123,14 +117,15 @@ public class EditorScreenController implements UI {
      */
     @FXML
     private void paste() {
-
+        controller.paste((int) sliderCursor1.getValue());
     }
 
     /**
-     * @param samplesList Plots the graph of the waveform
+     * @param samplesList
+     *            Plots the graph of the waveform
      */
     public void paintWaveForm(List<GroupedSampleInfo> samplesList) {
-        
+
         lineChartLeft.getData().clear();
         lineChartRight.getData().clear();
 
@@ -182,10 +177,9 @@ public class EditorScreenController implements UI {
             alert.setContentText("Il file potrebbe essere danneggiato o in un formato non valido.");
             alert.showAndWait();
         }
-        
-        
+
     }
-    
+
     /**
      * Prevents the slider to be moved (By the controller routine for instance).
      */
@@ -193,9 +187,10 @@ public class EditorScreenController implements UI {
     private void lockSlider() {
         lockedPositionSlider = true;
     }
-    
+
     /**
-     * Communicates the new slider position to the controller then unlocks the slider
+     * Communicates the new slider position to the controller then unlocks the
+     * slider
      */
     @FXML
     private void changePosition() {
@@ -203,8 +198,11 @@ public class EditorScreenController implements UI {
         lockedPositionSlider = false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jwave.view.UI#updatePosition(java.lang.Integer, java.lang.Integer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.view.UI#updatePosition(java.lang.Integer,
+     * java.lang.Integer)
      */
     @Override
     public void updatePosition(Integer ms, Integer lenght) {
@@ -217,7 +215,7 @@ public class EditorScreenController implements UI {
                 TimeUnit.MILLISECONDS.toSeconds(lenght - ms)
                         - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(lenght - ms))));
 
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             labelLeft.setText(elapsed);
             labelRight.setText(remaining);
         });
@@ -231,8 +229,11 @@ public class EditorScreenController implements UI {
         this.environment.displayScreen(FXMLScreens.PLAYER);
     }
 
-    /* (non-Javadoc)
-     * @see org.jwave.view.UI#updateReproductionInfo(org.jwave.model.player.Song)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jwave.view.UI#updateReproductionInfo(org.jwave.model.player.Song)
      */
     @Override
     public void updateReproductionInfo(Song song) {
@@ -240,7 +241,7 @@ public class EditorScreenController implements UI {
             labelSong.setText(song.getName());
         });
     }
-    
+
     /**
      * 
      */
@@ -251,13 +252,12 @@ public class EditorScreenController implements UI {
         File file = fileChooser.showSaveDialog(primaryStage);
         if (file != null) {
             /*
-            try {
-                //ImageIO.write(SwingFXUtils.fromFXImage(pic.getImage(),null), "png", file);
-            } catch (IOException ex) {
-                System.out.println(ex.getMessage());
-            }
-            
-            */
+             * try {
+             * //ImageIO.write(SwingFXUtils.fromFXImage(pic.getImage(),null),
+             * "png", file); } catch (IOException ex) {
+             * System.out.println(ex.getMessage()); }
+             * 
+             */
             System.out.println(file.getAbsolutePath());
         }
     }
@@ -273,10 +273,12 @@ public class EditorScreenController implements UI {
         alert.setContentText("Editing   Aleksejs Vlasovs\nView      Alessandro Martignano\nPlayer    Dario Cantarelli");
         alert.showAndWait();
     }
-    
+
     /**
      * Resizes the graph
-     * @param ms length of the song to be displayed
+     * 
+     * @param ms
+     *            length of the song to be displayed
      */
     public void updateGraphLenght(int ms) {
         vboxChartContainer.setPrefWidth(ms);

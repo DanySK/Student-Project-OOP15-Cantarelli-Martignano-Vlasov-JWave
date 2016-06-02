@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.jwave.controller.EditorControllerImpl;
 import org.jwave.controller.PlayerController;
 import org.jwave.model.player.MetaData;
 import org.jwave.model.player.Song;
