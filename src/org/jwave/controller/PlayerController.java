@@ -89,8 +89,16 @@ public interface PlayerController {
     /**
      * @param song
      * @param playlist
+     * @throws IOException 
      */
-    public void addSongToPlaylist(Song song, Playlist playlist);
+    public void addSongToPlaylist(Song song, Playlist playlist) throws IOException;
+    
+    /**
+     * @param song
+     * @param playlist
+     * @throws IOException 
+     */
+    public void removeSongFromPlaylist(Song song, Playlist playlist) throws IOException;
 
     /**
      * @return A collection that wraps the list of playlists and permit the gui to be notified when changes occurs

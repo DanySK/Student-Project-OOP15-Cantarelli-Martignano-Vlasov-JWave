@@ -15,6 +15,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -41,7 +42,7 @@ public class EditorScreenController implements UI {
     @FXML
     private Label labelLeft, labelRight, labelSong, labelFrom, labelTo;
     @FXML
-    private Button btnPlay, btnNewPlaylist;
+    private Button btnPlay, btnStop, btnNewPlaylist;
     @FXML
     private volatile Slider sliderPosition, sliderVolume, sliderCursor1, sliderCursor2;
     @FXML
@@ -61,6 +62,11 @@ public class EditorScreenController implements UI {
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
         this.controller.addGraph(this);
+        
+        btnPlay.setGraphic(new ImageView("/icons/play.png"));
+        btnStop.setGraphic(new ImageView("/icons/stop.png"));
+        btnPlay.setText("");
+        btnStop.setText("");
 
         sliderVolume.valueProperty().addListener((ov, old_val, new_val) -> {
             controller.setVolume(new_val.intValue());

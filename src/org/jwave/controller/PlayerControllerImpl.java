@@ -30,8 +30,8 @@ final class PlayerControllerImpl implements PlayerController, UpdatableUI {
     private final DynamicPlayer player;
     private final PlaylistManager manager;
     private final ClockAgent agent;
-    private final ObservableList<Playlist> playlists;
-    private final Map<Playlist, ObservableList<Song>> songs;
+    private ObservableList<Playlist> playlists;
+    private Map<Playlist, ObservableList<Song>> songs;
     private final Set<UI> uis;
 
     /**
@@ -110,7 +110,7 @@ final class PlayerControllerImpl implements PlayerController, UpdatableUI {
             this.player.play();
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -190,7 +190,7 @@ final class PlayerControllerImpl implements PlayerController, UpdatableUI {
         try {
             PlaylistController.savePlaylistToFile(newPlaylist, name);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            System.out.println("Unable to create playlist " + name);
             e.printStackTrace();
         }
     }
@@ -203,15 +203,48 @@ final class PlayerControllerImpl implements PlayerController, UpdatableUI {
      * player.Song, org.jwave.model.playlist.Playlist)
      */
     @Override
-    public void addSongToPlaylist(Song song, Playlist playlist) {
+    public void addSongToPlaylist(Song song, Playlist playlist) throws IOException {
         playlist.addSong(song);
-        try {
-            PlaylistController.savePlaylistToFile(playlist, playlist.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Unable to add song " + song.getName() + " to playlist " + playlist);
-        }
+        PlaylistController.savePlaylistToFile(playlist, playlist.getName());
         songs.get(playlist).add(song);
+    }
+
+    /**
+     * 
+     * @param song
+     * @param playlist
+     */
+    @Override
+    public void removeSongFromPlaylist(Song song, Playlist playlist) throws IOException {
+        //Could have been way more easy with more support from the model
+        if (playlist.equals(manager.getDefaultPlaylist())) {
+            manager.getAvailablePlaylists().forEach(p -> {               
+                try {
+                    if (p.equals(manager.getDefaultPlaylist())) {
+                        PlaylistController.saveDefaultPlaylistToFile(p, p.getName());
+                    } else {
+                        PlaylistController.savePlaylistToFile(p, p.getName());
+                    }
+                } catch (Exception x) {
+                    System.out.println("Unable to save playlist " + p.getName());
+                }
+            });
+        } else {
+            // playlist.removeFromPlaylist(song.getSongID());
+            playlist.getPlaylistContent().forEach(s -> {
+                if (song.getName().equals(s.getName())) {
+                    playlist.removeFromPlaylist(s.getSongID());
+                }
+            });
+            PlaylistController.savePlaylistToFile(playlist, playlist.getName());
+        }   
+        //Had to reinitialize because modify them would have implied a ConcurrentOperationException
+        playlists = FXCollections.observableArrayList(this.manager.getAvailablePlaylists());
+        songs = new HashMap<>();
+        manager.getAvailablePlaylists().forEach(e -> {
+            songs.put(e, FXCollections.observableArrayList(e.getPlaylistContent()));
+        });
+
     }
 
     /*

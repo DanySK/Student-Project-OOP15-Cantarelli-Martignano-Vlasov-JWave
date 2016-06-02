@@ -143,16 +143,43 @@ public class PlayerScreenController implements UI {
         addToPlaylist.setOnAction(e -> {
             List<Playlist> choices = controller.getObservablePlaylists().stream()
                     .filter(p -> !p.getName().equals("default")).collect(Collectors.toList());
-            ChoiceDialog<Playlist> dialog = new ChoiceDialog<>(choices.get(0), choices);
-            // dialog.
-            dialog.setTitle("Aggiungi a playlist");
-            dialog.setHeaderText(
-                    "Scegli la playlist in cui inserire " + tableView.getSelectionModel().getSelectedItem().getName());
-            Optional<Playlist> result = dialog.showAndWait();
-            result.ifPresent(playlist -> controller.addSongToPlaylist(tableView.getSelectionModel().getSelectedItem(),
-                    playlist));
+            if (!choices.isEmpty()) {
+                ChoiceDialog<Playlist> dialog = new ChoiceDialog<>(choices.get(0), choices);
+                dialog.setTitle("Aggiungi a playlist");
+                dialog.setHeaderText("Scegli la playlist in cui inserire "
+                        + tableView.getSelectionModel().getSelectedItem().getName());
+                Optional<Playlist> result = dialog.showAndWait();
+                result.ifPresent(playlist -> {
+                    try {
+                        controller.addSongToPlaylist(tableView.getSelectionModel().getSelectedItem(), playlist);
+                    } catch (Exception e1) {
+                        Alert alert = new Alert(AlertType.ERROR);
+                        alert.setTitle("Errore");
+                        alert.setHeaderText("Impossibile inserire la canzone "
+                                + tableView.getSelectionModel().getSelectedItem().getName() + " in " + playlist);
+                        alert.setContentText("Il file potrebbe essere danneggiato.");
+                        alert.showAndWait();
+                    }
+                });
+            }
         });
-        tableView.setContextMenu(new ContextMenu(addToPlaylist));
+        MenuItem removeFromPlaylist = new MenuItem("Rimuovi");
+        removeFromPlaylist.setOnAction(e -> {
+            try {
+                controller.removeSongFromPlaylist(tableView.getSelectionModel().getSelectedItem(),listView.getSelectionModel().getSelectedItem());
+                tableView.setItems(
+                        controller.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));               
+            } catch (Exception e1) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Errore");
+                alert.setHeaderText("Impossibile rimuovere la canzone "
+                        + tableView.getSelectionModel().getSelectedItem().getName() + " da " + listView.getSelectionModel().getSelectedItem());
+                alert.setContentText("Il file potrebbe essere danneggiato.");
+                alert.showAndWait();
+                e1.printStackTrace();
+            }
+        });
+        tableView.setContextMenu(new ContextMenu(addToPlaylist, removeFromPlaylist));
 
         // Sets the double-click event on the songs in the table
         tableView.setRowFactory(tv -> {
@@ -175,6 +202,7 @@ public class PlayerScreenController implements UI {
                 tableView.setItems(
                         controller.getObservablePlaylistContent(listView.getSelectionModel().getSelectedItem()));
             } catch (Exception x) {
+                System.out.println("Unable to retrieve playlists");
             }
         });
 
@@ -212,7 +240,9 @@ public class PlayerScreenController implements UI {
                 cellData -> new SimpleStringProperty(cellData.getValue().getMetaData().retrieve(MetaData.GENRE)));
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jwave.view.UI#show()
      */
     @Override
@@ -250,14 +280,11 @@ public class PlayerScreenController implements UI {
      */
     @FXML
     private void play() {
-        
-        if (controller.isPlaying())
-        {
+
+        if (controller.isPlaying()) {
             controller.play();
             btnPlay.setGraphic(new ImageView("/icons/pause.png"));
-        }
-        else
-        {
+        } else {
             controller.pause();
             btnPlay.setGraphic(new ImageView("/icons/play.png"));
         }
@@ -317,7 +344,8 @@ public class PlayerScreenController implements UI {
     }
 
     /**
-     * Communicates the new slider position to the controller then unlocks the slider
+     * Communicates the new slider position to the controller then unlocks the
+     * slider
      */
     @FXML
     private void changePosition() {
@@ -325,8 +353,11 @@ public class PlayerScreenController implements UI {
         lockedPositionSlider = false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jwave.view.UI#updatePosition(java.lang.Integer, java.lang.Integer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jwave.view.UI#updatePosition(java.lang.Integer,
+     * java.lang.Integer)
      */
     @Override
     public void updatePosition(Integer ms, Integer lenght) {
@@ -374,8 +405,11 @@ public class PlayerScreenController implements UI {
         alert.showAndWait();
     }
 
-    /* (non-Javadoc)
-     * @see org.jwave.view.UI#updateReproductionInfo(org.jwave.model.player.Song)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jwave.view.UI#updateReproductionInfo(org.jwave.model.player.Song)
      */
     @Override
     public void updateReproductionInfo(Song song) {
