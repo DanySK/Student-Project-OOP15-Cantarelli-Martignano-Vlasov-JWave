@@ -127,7 +127,6 @@ public class DynamicPlayerImpl implements DynamicPlayer {
         if (amount < LOWER_VOLUME_BOUND || amount > UPPER_VOLUME_BOUND) {
             throw new IllegalArgumentException("Value not allowed");
         }
-        System.out.println("SET: "+(amount - NORMALIZER));
         this.volumeControl.setValue(amount - NORMALIZER);
     }
     

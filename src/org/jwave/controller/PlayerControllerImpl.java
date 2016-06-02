@@ -42,7 +42,7 @@ final class PlayerControllerImpl implements PlayerController, UpdatableUI {
         try {
             PlaylistController.checkDefaultDir();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            System.out.println("Unable to find the default directory.");
             e.printStackTrace();
         }
 
@@ -218,7 +218,12 @@ final class PlayerControllerImpl implements PlayerController, UpdatableUI {
     public void removeSongFromPlaylist(Song song, Playlist playlist) throws IOException {
         //Could have been way more easy with more support from the model
         if (playlist.equals(manager.getDefaultPlaylist())) {
-            manager.getAvailablePlaylists().forEach(p -> {               
+            manager.getAvailablePlaylists().forEach(p -> {
+                p.getPlaylistContent().forEach(s->{
+                    if(s.getName().equals(song.getName())){
+                        p.removeFromPlaylist(s.getSongID());
+                    }
+                });
                 try {
                     if (p.equals(manager.getDefaultPlaylist())) {
                         PlaylistController.saveDefaultPlaylistToFile(p, p.getName());

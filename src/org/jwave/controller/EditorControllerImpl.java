@@ -118,8 +118,8 @@ public final class EditorControllerImpl implements EditorController, UpdatableUI
         editor.setSelectionFrom(from*SONG_LENGHT_SCALING_FACTOR);
         editor.setSelectionTo(to*SONG_LENGHT_SCALING_FACTOR);
         editor.cutSelection();
-        graphs.forEach(e->e.paintWaveForm(editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION)));
-        editorPlayer.setPlayer(editor.getSong());
+        graphs.forEach(e->e.paintWaveForm(editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION)));   
+        editorPlayer.setPlayer(editor.getSong());      
     }
 
     /**

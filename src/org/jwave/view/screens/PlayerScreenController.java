@@ -256,13 +256,6 @@ public class PlayerScreenController implements UI {
     /**
      * 
      */
-    public void updatePosition() {
-        System.out.println("Pos");
-    }
-
-    /**
-     * 
-     */
     @FXML
     private void newPlaylist() {
         TextInputDialog dialog = new TextInputDialog();
@@ -397,7 +390,6 @@ public class PlayerScreenController implements UI {
      */
     @FXML
     private void showAboutInfo() {
-        System.out.println("asd");
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("About JWave");
         alert.setHeaderText("");

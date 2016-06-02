@@ -60,10 +60,8 @@ public final class ScreenLoader {
     public Node loadFXMLInCache(final FXMLScreens screen, Object controller) throws IOException {
 
         if (cache.containsKey(screen)) {
-            System.out.println(screen + " screen already cached!");
             return cache.get(screen);
         } else { 
-            System.out.println(screen + " screen caching");
             Node loadedNode = loadFXML(screen, controller);
             cache.put(screen, loadedNode);
             return loadedNode;
