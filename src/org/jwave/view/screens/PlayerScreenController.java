@@ -274,7 +274,7 @@ public class PlayerScreenController implements UI {
     @FXML
     private void play() {
 
-        if (controller.isPlaying()) {
+        if (!controller.isPlaying()) {
             controller.play();
             btnPlay.setGraphic(new ImageView("/icons/pause.png"));
         } else {
