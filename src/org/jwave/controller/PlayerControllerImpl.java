@@ -119,7 +119,7 @@ final class PlayerControllerImpl implements PlayerController, UpdatableUI {
     @Override
     public void pause() {
         if (!player.isEmpty()) {
-            this.player.play();
+            this.player.pause();
         }
     }
 

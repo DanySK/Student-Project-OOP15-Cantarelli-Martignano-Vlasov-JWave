@@ -289,6 +289,7 @@ public class PlayerScreenController implements UI {
     @FXML
     private void stopPlay() {
         controller.stop();
+        btnPlay.setGraphic(new ImageView("/icons/play.png"));
     }
 
     /**
