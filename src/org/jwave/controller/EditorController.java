@@ -65,6 +65,8 @@ public interface EditorController {
      */
     void loadSong(File f) throws IllegalArgumentException, IOException;
 
+    void saveFile(String path);
+    
     /**
      * Moves throughout the song.
      * 

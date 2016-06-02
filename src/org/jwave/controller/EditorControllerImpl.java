@@ -218,4 +218,10 @@ public final class EditorControllerImpl implements EditorController, UpdatableUI
         return editor.getAggregatedWaveform(0, editor.getModifiedSongLength(), SAMPLES_RESOLUTION);
     }
 
+    @Override
+    public void saveFile(String path) {
+        editor.exportSong(path);
+        
+    }
+
 }

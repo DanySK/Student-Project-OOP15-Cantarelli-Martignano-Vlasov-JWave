@@ -36,6 +36,7 @@ public class EditorScreenController implements UI {
     private final EditorController controller;
     private Stage primaryStage;
     private boolean lockedPositionSlider;
+    private boolean loaded;
 
     @FXML
     private MenuItem btnEditor;
@@ -62,6 +63,7 @@ public class EditorScreenController implements UI {
         this.environment.loadScreen(FXMLSCREEN, this);
         this.lockedPositionSlider = false;
         this.controller.addGraph(this);
+        this.loaded = false;
         
         btnPlay.setGraphic(new ImageView("/icons/play.png"));
         btnStop.setGraphic(new ImageView("/icons/stop.png"));
@@ -171,7 +173,7 @@ public class EditorScreenController implements UI {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new ExtensionFilter("Audio file", "*.mp3", "*.wav"));
         File openedFile = fileChooser.showOpenDialog(primaryStage);
-
+        this.loaded = true;
         try {
             controller.loadSong(openedFile);
             paintWaveForm(new ArrayList<GroupedSampleInfo>(this.controller.getWaveform()));
@@ -253,19 +255,18 @@ public class EditorScreenController implements UI {
      */
     @FXML
     private void save() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Song");
-        File file = fileChooser.showSaveDialog(primaryStage);
-        if (file != null) {
-            /*
-             * try {
-             * //ImageIO.write(SwingFXUtils.fromFXImage(pic.getImage(),null),
-             * "png", file); } catch (IOException ex) {
-             * System.out.println(ex.getMessage()); }
-             * 
-             */
-            System.out.println(file.getAbsolutePath());
+        if(loaded){
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Song");
+            FileChooser.ExtensionFilter extFilter = 
+            new FileChooser.ExtensionFilter("Wave (*.wav)", "*.wav");
+            fileChooser.getExtensionFilters().add(extFilter);
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null) {
+                controller.saveFile(file.getAbsolutePath());
+            }
         }
+        
     }
 
     /**
